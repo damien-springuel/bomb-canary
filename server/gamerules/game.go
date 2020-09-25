@@ -17,9 +17,11 @@ const (
 )
 
 type game struct {
-	id      string
-	state   state
-	players players
+	id          string
+	state       state
+	players     players
+	leader      string
+	currentTeam players
 }
 
 func newGame(id string) game {
@@ -64,5 +66,16 @@ func (g game) start() (game, error) {
 	}
 
 	g.state = selectingTeam
+	g.leader = g.players[0]
+	return g, nil
+}
+
+func (g game) leaderSelectsMember(name string) (game, error) {
+	newTeam, err := g.currentTeam.add(name)
+	if err != nil {
+		return g, err
+	}
+
+	g.currentTeam = newTeam
 	return g, nil
 }

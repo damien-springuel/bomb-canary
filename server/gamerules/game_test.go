@@ -6,6 +6,17 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+func createNewlyStartedGame() game {
+	newGame := newGame("123")
+	newGame, _ = newGame.addPlayer("Alice")
+	newGame, _ = newGame.addPlayer("Bob")
+	newGame, _ = newGame.addPlayer("Charlie")
+	newGame, _ = newGame.addPlayer("Dan")
+	newGame, _ = newGame.addPlayer("Edith")
+	newGame, _ = newGame.start()
+	return newGame
+}
+
 func Test_CreateGame(t *testing.T) {
 	newGame := newGame("123")
 	g := NewWithT(t)
@@ -125,6 +136,7 @@ func Test_StartGame(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.state).To(Equal(selectingTeam))
+	g.Expect(newGame.leader).To(Equal("Alice"))
 }
 
 func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
@@ -140,4 +152,14 @@ func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
+}
+
+func Test_LeaderSelectsAMember(t *testing.T) {
+	newGame := createNewlyStartedGame()
+
+	newGame, err := newGame.leaderSelectsMember("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.currentTeam).To(Equal(players([]string{"Alice"})))
 }
