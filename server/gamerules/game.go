@@ -116,6 +116,10 @@ func (g game) numberPeopleThatHaveToGoOnNextMission() int {
 }
 
 func (g game) leaderSelectsMember(name string) (game, error) {
+	if g.state != selectingTeam {
+		return g, fmt.Errorf("%w: can only select team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
+	}
+
 	if !g.players.exists(name) {
 		return g, errPlayerNotFound
 	}
@@ -134,6 +138,10 @@ func (g game) leaderSelectsMember(name string) (game, error) {
 }
 
 func (g game) leaderDeselectsMember(name string) (game, error) {
+	if g.state != selectingTeam {
+		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
+	}
+
 	newTeam, err := g.currentTeam.remove(name)
 	if err != nil {
 		return g, err
@@ -145,6 +153,10 @@ func (g game) leaderDeselectsMember(name string) (game, error) {
 }
 
 func (g game) leaderConfirmsTeamSelection() (game, error) {
+	if g.state != selectingTeam {
+		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
+	}
+
 	if g.currentTeam.count() < g.numberPeopleThatHaveToGoOnNextMission() {
 		return g, fmt.Errorf("%w: need %d people, currently have %d", errTeamIsIncomplete, g.numberPeopleThatHaveToGoOnNextMission(), g.currentTeam.count())
 	}
