@@ -17,15 +17,14 @@ const (
 )
 
 type game struct {
-	id          string
 	state       state
 	players     players
 	leader      string
 	currentTeam players
 }
 
-func newGame(id string) game {
-	return game{id: id, state: notStarted}
+func newGame() game {
+	return game{state: notStarted}
 }
 
 func (g game) addPlayer(name string) (game, error) {

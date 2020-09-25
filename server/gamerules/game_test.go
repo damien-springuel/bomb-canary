@@ -7,7 +7,7 @@ import (
 )
 
 func createNewlyStartedGame() game {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, _ = newGame.addPlayer("Bob")
 	newGame, _ = newGame.addPlayer("Charlie")
@@ -18,13 +18,13 @@ func createNewlyStartedGame() game {
 }
 
 func Test_CreateGame(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	g := NewWithT(t)
-	g.Expect(newGame).To(Equal(game{id: "123", state: notStarted}))
+	g.Expect(newGame).To(Equal(game{state: notStarted}))
 }
 
 func Test_AddPlayer(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 
 	g := NewWithT(t)
@@ -32,7 +32,7 @@ func Test_AddPlayer(t *testing.T) {
 }
 
 func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, _ = newGame.addPlayer("Bob")
 	newGame, _ = newGame.addPlayer("Charlie")
@@ -48,7 +48,7 @@ func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 }
 
 func Test_AddPlayer_ShouldErrorIfPlayerAlreadyThere(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, err := newGame.addPlayer("Alice")
 
@@ -57,7 +57,7 @@ func Test_AddPlayer_ShouldErrorIfPlayerAlreadyThere(t *testing.T) {
 }
 
 func Test_AddPlayer_ShouldErrorIfAlready10Players(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("1")
 	newGame, _ = newGame.addPlayer("2")
 	newGame, _ = newGame.addPlayer("3")
@@ -75,7 +75,7 @@ func Test_AddPlayer_ShouldErrorIfAlready10Players(t *testing.T) {
 }
 
 func Test_RemovePlayer(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, err := newGame.removePlayer("Alice")
 
@@ -85,7 +85,7 @@ func Test_RemovePlayer(t *testing.T) {
 }
 
 func Test_RemovePlayer_ShouldErrorIfPlayerNotFound(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, err := newGame.removePlayer("Bob")
 
@@ -95,7 +95,7 @@ func Test_RemovePlayer_ShouldErrorIfPlayerNotFound(t *testing.T) {
 }
 
 func Test_RemovePlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, _ = newGame.addPlayer("Bob")
 	newGame, _ = newGame.addPlayer("Charlie")
@@ -111,7 +111,7 @@ func Test_RemovePlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 }
 
 func Test_StartGame_WhenFewerThan5Players_ShouldError(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, _ = newGame.addPlayer("Bob")
 	newGame, _ = newGame.addPlayer("Charlie")
@@ -124,7 +124,7 @@ func Test_StartGame_WhenFewerThan5Players_ShouldError(t *testing.T) {
 }
 
 func Test_StartGame(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, _ = newGame.addPlayer("Bob")
 	newGame, _ = newGame.addPlayer("Charlie")
@@ -140,7 +140,7 @@ func Test_StartGame(t *testing.T) {
 }
 
 func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
-	newGame := newGame("123")
+	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
 	newGame, _ = newGame.addPlayer("Bob")
 	newGame, _ = newGame.addPlayer("Charlie")
