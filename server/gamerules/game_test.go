@@ -36,6 +36,33 @@ func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
 }
 
+func Test_AddPlayer_ShouldErrorIfPlayerAlreadyThere(t *testing.T) {
+	newGame := newGame("123")
+	newGame, _ = newGame.addPlayer("Alice")
+	newGame, err := newGame.addPlayer("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errPlayerAlreadyInGame))
+}
+
+func Test_AddPlayer_ShouldErrorIfAlready10Players(t *testing.T) {
+	newGame := newGame("123")
+	newGame, _ = newGame.addPlayer("1")
+	newGame, _ = newGame.addPlayer("2")
+	newGame, _ = newGame.addPlayer("3")
+	newGame, _ = newGame.addPlayer("4")
+	newGame, _ = newGame.addPlayer("5")
+	newGame, _ = newGame.addPlayer("6")
+	newGame, _ = newGame.addPlayer("7")
+	newGame, _ = newGame.addPlayer("8")
+	newGame, _ = newGame.addPlayer("9")
+	newGame, _ = newGame.addPlayer("10")
+	newGame, err := newGame.addPlayer("11")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errAlreadyMaxNumberOfPlayers))
+}
+
 func Test_RemovePlayer(t *testing.T) {
 	newGame := newGame("123")
 	newGame, _ = newGame.addPlayer("Alice")

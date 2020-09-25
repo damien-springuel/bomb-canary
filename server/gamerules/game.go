@@ -5,10 +5,17 @@ import (
 	"fmt"
 )
 
+const (
+	minNumberOfPlayers = 5
+	maxNumberOfPlayers = 10
+)
+
 var (
-	errPlayerNotFound        = errors.New("player not found")
-	errNotEnoughPlayers      = errors.New("not enough players")
-	errInvalidStateForAction = errors.New("invalid state for action")
+	errPlayerNotFound            = errors.New("player not found")
+	errNotEnoughPlayers          = errors.New("need 5 players before starting game")
+	errInvalidStateForAction     = errors.New("invalid state for action")
+	errPlayerAlreadyInGame       = errors.New("player already in game")
+	errAlreadyMaxNumberOfPlayers = errors.New("can't have more than 10 players")
 )
 
 type state string
@@ -21,21 +28,27 @@ const (
 type players []string
 
 func (p players) remove(name string) (players, error) {
-	index := 0
-	found := false
-	for i, n := range p {
-		if n == name {
-			index = i
-			found = true
-			break
-		}
-	}
+	index, exists := p.index(name)
 
-	if !found {
+	if !exists {
 		return p, errPlayerNotFound
 	}
 
 	return append(p[:index], p[index+1:]...), nil
+}
+
+func (p players) index(name string) (int, bool) {
+	for i, n := range p {
+		if n == name {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
+func (p players) exists(name string) bool {
+	_, exists := p.index(name)
+	return exists
 }
 
 type game struct {
@@ -51,6 +64,14 @@ func newGame(id string) game {
 func (g game) addPlayer(name string) (game, error) {
 	if g.state != notStarted {
 		return g, fmt.Errorf("%w: can only add player during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
+	}
+
+	if len(g.players) == maxNumberOfPlayers {
+		return g, errAlreadyMaxNumberOfPlayers
+	}
+
+	if g.players.exists(name) {
+		return g, errPlayerAlreadyInGame
 	}
 
 	g.players = append(g.players, name)
@@ -76,7 +97,7 @@ func (g game) start() (game, error) {
 		return g, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
 	}
 
-	if len(g.players) < 5 {
+	if len(g.players) < minNumberOfPlayers {
 		return g, errNotEnoughPlayers
 	}
 
