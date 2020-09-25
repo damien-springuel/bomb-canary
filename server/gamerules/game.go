@@ -15,6 +15,7 @@ var (
 	errAlreadyMaxNumberOfPlayers = fmt.Errorf("can't have more than %d players in game", maxNumberOfPlayers)
 	errNotEnoughPlayers          = fmt.Errorf("new at least %d players in game", minNumberOfPlayers)
 	errTeamIsFull                = errors.New("team is maxed out")
+	errTeamIsIncomplete          = errors.New("team is imcomplete")
 )
 
 type state string
@@ -22,6 +23,7 @@ type state string
 const (
 	notStarted    state = "notStarted"
 	selectingTeam state = "selectingTeam"
+	votingOnTeam  state = "votingOnTeam"
 )
 
 type mission int
@@ -139,5 +141,13 @@ func (g game) leaderDeselectsMember(name string) (game, error) {
 
 	g.currentTeam = newTeam
 
+	return g, nil
+}
+
+func (g game) leaderConfirmsTeamSelection() (game, error) {
+	if g.currentTeam.count() < g.numberPeopleThatHaveToGoOnNextMission() {
+		return g, fmt.Errorf("%w: need %d people, currently have %d", errTeamIsIncomplete, g.numberPeopleThatHaveToGoOnNextMission(), g.currentTeam.count())
+	}
+	g.state = votingOnTeam
 	return g, nil
 }

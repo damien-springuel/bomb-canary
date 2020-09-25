@@ -216,3 +216,25 @@ func Test_LeaderDeselectsAMember_ShouldErrorIfPlayerNotInTeam(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
 }
+
+func Test_LeaderConfirmsSelection(t *testing.T) {
+	newGame := createNewlyStartedGame()
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, err := newGame.leaderConfirmsTeamSelection()
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.state).To(Equal(votingOnTeam))
+}
+
+func Test_LeaderConfirmsSelection_ShouldErrorIfTeamIsIncomplete(t *testing.T) {
+	newGame := createNewlyStartedGame()
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, err := newGame.leaderConfirmsTeamSelection()
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errTeamIsIncomplete))
+}
