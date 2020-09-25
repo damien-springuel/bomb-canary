@@ -53,7 +53,7 @@ func Test_AddPlayer_ShouldErrorIfPlayerAlreadyThere(t *testing.T) {
 	newGame, err := newGame.addPlayer("Alice")
 
 	g := NewWithT(t)
-	g.Expect(err).To(MatchError(errPlayerAlreadyInGame))
+	g.Expect(err).To(MatchError(errPlayerAlreadyInGroup))
 }
 
 func Test_AddPlayer_ShouldErrorIfAlready10Players(t *testing.T) {
@@ -137,6 +137,8 @@ func Test_StartGame(t *testing.T) {
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.state).To(Equal(selectingTeam))
 	g.Expect(newGame.leader).To(Equal("Alice"))
+	g.Expect(newGame.currentTeam).To(BeEmpty())
+	g.Expect(newGame.currentMission).To(Equal(first))
 }
 
 func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
@@ -162,4 +164,34 @@ func Test_LeaderSelectsAMember(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.currentTeam).To(Equal(players([]string{"Alice"})))
+}
+
+func Test_LeaderSelectsAMember_ShouldErrorIfPlayerNotExists(t *testing.T) {
+	newGame := createNewlyStartedGame()
+
+	newGame, err := newGame.leaderSelectsMember("NotThere")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errPlayerNotFound))
+}
+
+func Test_LeaderSelectsAMember_ShouldErrorIfAlreadyInTeam(t *testing.T) {
+	newGame := createNewlyStartedGame()
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, err := newGame.leaderSelectsMember("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errPlayerAlreadyInGroup))
+}
+
+func Test_LeaderSelectsAMember_ShouldErrorIfTeamIsComplete(t *testing.T) {
+	newGame := createNewlyStartedGame()
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, err := newGame.leaderSelectsMember("Charlie")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errTeamIsFull))
 }

@@ -2,27 +2,16 @@ package gamerules
 
 import "errors"
 
-const (
-	minNumberOfPlayers = 5
-	maxNumberOfPlayers = 10
-)
-
 var (
-	errPlayerNotFound            = errors.New("player not found")
-	errNotEnoughPlayers          = errors.New("need 5 players before starting game")
-	errPlayerAlreadyInGame       = errors.New("player already in game")
-	errAlreadyMaxNumberOfPlayers = errors.New("can't have more than 10 players")
+	errPlayerNotFound       = errors.New("player not found")
+	errPlayerAlreadyInGroup = errors.New("player already in group")
 )
 
 type players []string
 
 func (p players) add(name string) (players, error) {
-	if len(p) == maxNumberOfPlayers {
-		return p, errAlreadyMaxNumberOfPlayers
-	}
-
 	if p.exists(name) {
-		return p, errPlayerAlreadyInGame
+		return p, errPlayerAlreadyInGroup
 	}
 
 	return append(p, name), nil
@@ -52,6 +41,6 @@ func (p players) exists(name string) bool {
 	return exists
 }
 
-func (p players) hasMinNumberOfPlayers() bool {
-	return len(p) >= minNumberOfPlayers
+func (p players) count() int {
+	return len(p)
 }
