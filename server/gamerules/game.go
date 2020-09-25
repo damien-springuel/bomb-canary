@@ -27,6 +27,18 @@ const (
 
 type players []string
 
+func (p players) add(name string) (players, error) {
+	if len(p) == maxNumberOfPlayers {
+		return p, errAlreadyMaxNumberOfPlayers
+	}
+
+	if p.exists(name) {
+		return p, errPlayerAlreadyInGame
+	}
+
+	return append(p, name), nil
+}
+
 func (p players) remove(name string) (players, error) {
 	index, exists := p.index(name)
 
@@ -51,6 +63,10 @@ func (p players) exists(name string) bool {
 	return exists
 }
 
+func (p players) hasMinNumberOfPlayers() bool {
+	return len(p) >= minNumberOfPlayers
+}
+
 type game struct {
 	id      string
 	state   state
@@ -66,15 +82,12 @@ func (g game) addPlayer(name string) (game, error) {
 		return g, fmt.Errorf("%w: can only add player during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
 	}
 
-	if len(g.players) == maxNumberOfPlayers {
-		return g, errAlreadyMaxNumberOfPlayers
+	p, err := g.players.add(name)
+	if err != nil {
+		return g, err
 	}
 
-	if g.players.exists(name) {
-		return g, errPlayerAlreadyInGame
-	}
-
-	g.players = append(g.players, name)
+	g.players = p
 	return g, nil
 }
 
@@ -97,7 +110,7 @@ func (g game) start() (game, error) {
 		return g, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
 	}
 
-	if len(g.players) < minNumberOfPlayers {
+	if !g.players.hasMinNumberOfPlayers() {
 		return g, errNotEnoughPlayers
 	}
 
