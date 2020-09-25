@@ -195,3 +195,24 @@ func Test_LeaderSelectsAMember_ShouldErrorIfTeamIsComplete(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errTeamIsFull))
 }
+
+func Test_LeaderDeselectsAMember(t *testing.T) {
+	newGame := createNewlyStartedGame()
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, err := newGame.leaderDeselectsMember("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.currentTeam).To(BeEmpty())
+}
+
+func Test_LeaderDeselectsAMember_ShouldErrorIfPlayerNotInTeam(t *testing.T) {
+	newGame := createNewlyStartedGame()
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, err := newGame.leaderDeselectsMember("Bob")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errPlayerNotFound))
+}

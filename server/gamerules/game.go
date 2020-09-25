@@ -119,7 +119,7 @@ func (g game) leaderSelectsMember(name string) (game, error) {
 	}
 
 	if len(g.currentTeam) == g.numberPeopleThatHaveToGoOnNextMission() {
-		return g, fmt.Errorf("%w: can't have more than %d", errTeamIsFull, g.nu)
+		return g, fmt.Errorf("%w: can't have more than %d", errTeamIsFull, g.numberPeopleThatHaveToGoOnNextMission())
 	}
 
 	newTeam, err := g.currentTeam.add(name)
@@ -128,5 +128,16 @@ func (g game) leaderSelectsMember(name string) (game, error) {
 	}
 
 	g.currentTeam = newTeam
+	return g, nil
+}
+
+func (g game) leaderDeselectsMember(name string) (game, error) {
+	newTeam, err := g.currentTeam.remove(name)
+	if err != nil {
+		return g, err
+	}
+
+	g.currentTeam = newTeam
+
 	return g, nil
 }
