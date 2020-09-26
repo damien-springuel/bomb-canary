@@ -8,6 +8,7 @@ import (
 const (
 	minNumberOfPlayers = 5
 	maxNumberOfPlayers = 10
+	maxVoteFailures    = 5
 )
 
 var (
@@ -21,9 +22,11 @@ var (
 type state string
 
 const (
-	notStarted    state = "notStarted"
-	selectingTeam state = "selectingTeam"
-	votingOnTeam  state = "votingOnTeam"
+	notStarted        state = "notStarted"
+	selectingTeam     state = "selectingTeam"
+	votingOnTeam      state = "votingOnTeam"
+	conductingMission state = "conductingMission"
+	gameOver          state = "gameOver"
 )
 
 type mission int
@@ -59,6 +62,7 @@ type game struct {
 	currentTeam    players
 	currentMission mission
 	teamVotes      votes
+	voteFailures   int
 }
 
 func newGame() game {
@@ -178,6 +182,21 @@ func (g game) voteBy(name string, voter func(name string) (votes, error)) (game,
 	newVotes, err := voter(name)
 	if err != nil {
 		return g, err
+	}
+
+	if newVotes.hasEveryoneVoted(g.players.count()) {
+		if newVotes.hasVotePassed() {
+			g.state = conductingMission
+			g.voteFailures = 0
+		} else {
+			g.state = selectingTeam
+			g.voteFailures += 1
+
+			if g.voteFailures == maxVoteFailures {
+				g.state = gameOver
+			}
+		}
+		newVotes = nil
 	}
 
 	g.teamVotes = newVotes

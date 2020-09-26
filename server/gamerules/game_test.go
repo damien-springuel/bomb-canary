@@ -281,6 +281,7 @@ func Test_ApproveTeam(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.teamVotes).To(Equal(votes(map[string]bool{"Alice": true})))
+	g.Expect(newGame.state).To(Equal(votingOnTeam))
 }
 
 func Test_ApproveTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
@@ -324,9 +325,10 @@ func Test_RejectTeam(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.teamVotes).To(Equal(votes(map[string]bool{"Alice": false})))
+	g.Expect(newGame.state).To(Equal(votingOnTeam))
 }
 
-func Test_RejectTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
+func Test_RejectTeam_ShouldReturnErrorIfAlreadyRejected(t *testing.T) {
 	newGame := createNewlyConfirmedTeamGame()
 	newGame, _ = newGame.rejectTeamBy("Alice")
 	newGame, err := newGame.rejectTeamBy("Alice")
@@ -358,4 +360,104 @@ func Test_RejectTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
+}
+
+func Test_ApproveRejectTeam_ShouldMoveToConductingMissionIfVoteHasMajority(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.rejectTeamBy("Dan")
+	newGame, err := newGame.rejectTeamBy("Edith")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.state).To(Equal(conductingMission))
+}
+
+func Test_ApproveRejectTeam_ShouldMoveToSelectingTeamIfVoteDoesntHaveMajority(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.rejectTeamBy("Charlie")
+	newGame, _ = newGame.rejectTeamBy("Dan")
+	newGame, err := newGame.rejectTeamBy("Edith")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.state).To(Equal(selectingTeam))
+	g.Expect(newGame.voteFailures).To(Equal(1))
+}
+
+func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.rejectTeamBy("Charlie")
+	newGame, _ = newGame.rejectTeamBy("Dan")
+	newGame, _ = newGame.rejectTeamBy("Edith")
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.rejectTeamBy("Charlie")
+	newGame, _ = newGame.rejectTeamBy("Dan")
+	newGame, _ = newGame.rejectTeamBy("Edith")
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.rejectTeamBy("Charlie")
+	newGame, _ = newGame.rejectTeamBy("Dan")
+	newGame, _ = newGame.rejectTeamBy("Edith")
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.rejectTeamBy("Charlie")
+	newGame, _ = newGame.rejectTeamBy("Dan")
+	newGame, _ = newGame.rejectTeamBy("Edith")
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.rejectTeamBy("Charlie")
+	newGame, _ = newGame.rejectTeamBy("Dan")
+	newGame, err := newGame.rejectTeamBy("Edith")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.state).To(Equal(gameOver))
+	g.Expect(newGame.voteFailures).To(Equal(5))
+}
+
+func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.rejectTeamBy("Charlie")
+	newGame, _ = newGame.rejectTeamBy("Dan")
+	newGame, _ = newGame.rejectTeamBy("Edith")
+
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.approveTeamBy("Dan")
+	newGame, err := newGame.approveTeamBy("Edith")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.state).To(Equal(conductingMission))
+	g.Expect(newGame.voteFailures).To(Equal(0))
 }

@@ -30,3 +30,21 @@ func (v votes) approveBy(name string) (votes, error) {
 func (v votes) rejectBy(name string) (votes, error) {
 	return v.voteBy(name, false)
 }
+
+func (v votes) hasEveryoneVoted(nbPlayers int) bool {
+	return len(v) == nbPlayers
+}
+
+func (v votes) hasVotePassed() bool {
+	nbVotes := len(v)
+	majority := (nbVotes / 2) + 1
+
+	nbApproved := 0
+	for _, approved := range v {
+		if approved {
+			nbApproved += 1
+		}
+	}
+
+	return nbApproved >= majority
+}
