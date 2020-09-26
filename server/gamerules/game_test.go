@@ -17,11 +17,21 @@ func createNewlyStartedGame() game {
 	return newGame
 }
 
-func createNewlyConfirmedTeamGame() game {
+func createNewlyVotingOnTeamGame() game {
 	newGame := createNewlyStartedGame()
 	newGame, _ = newGame.leaderSelectsMember("Alice")
 	newGame, _ = newGame.leaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	return newGame
+}
+
+func createNewlyConductingMissionGame() game {
+	newGame := createNewlyVotingOnTeamGame()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.approveTeamBy("Dan")
+	newGame, _ = newGame.approveTeamBy("Edith")
 	return newGame
 }
 
@@ -275,7 +285,7 @@ func Test_LeaderConfirmsSelection_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 }
 
 func Test_ApproveTeam(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, err := newGame.approveTeamBy("Alice")
 
 	g := NewWithT(t)
@@ -285,7 +295,7 @@ func Test_ApproveTeam(t *testing.T) {
 }
 
 func Test_ApproveTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, err := newGame.approveTeamBy("Alice")
 
@@ -294,7 +304,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
 }
 
 func Test_ApproveTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, err := newGame.rejectTeamBy("Alice")
 
@@ -303,7 +313,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 }
 
 func Test_ApproveTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, err := newGame.approveTeamBy("NotThere")
 
 	g := NewWithT(t)
@@ -319,7 +329,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 }
 
 func Test_RejectTeam(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, err := newGame.rejectTeamBy("Alice")
 
 	g := NewWithT(t)
@@ -329,7 +339,7 @@ func Test_RejectTeam(t *testing.T) {
 }
 
 func Test_RejectTeam_ShouldReturnErrorIfAlreadyRejected(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.rejectTeamBy("Alice")
 	newGame, err := newGame.rejectTeamBy("Alice")
 
@@ -338,7 +348,7 @@ func Test_RejectTeam_ShouldReturnErrorIfAlreadyRejected(t *testing.T) {
 }
 
 func Test_RejectTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.rejectTeamBy("Alice")
 	newGame, err := newGame.approveTeamBy("Alice")
 
@@ -347,7 +357,7 @@ func Test_RejectTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 }
 
 func Test_RejectTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, err := newGame.rejectTeamBy("NotThere")
 
 	g := NewWithT(t)
@@ -363,7 +373,7 @@ func Test_RejectTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 }
 
 func Test_ApproveRejectTeam_ShouldMoveToConductingMissionIfVoteHasMajority(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
 	newGame, _ = newGame.approveTeamBy("Charlie")
@@ -376,7 +386,7 @@ func Test_ApproveRejectTeam_ShouldMoveToConductingMissionIfVoteHasMajority(t *te
 }
 
 func Test_ApproveRejectTeam_ShouldMoveToSelectingTeamIfVoteDoesntHaveMajority(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
 	newGame, _ = newGame.rejectTeamBy("Charlie")
@@ -390,7 +400,7 @@ func Test_ApproveRejectTeam_ShouldMoveToSelectingTeamIfVoteDoesntHaveMajority(t 
 }
 
 func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
 	newGame, _ = newGame.rejectTeamBy("Charlie")
@@ -440,7 +450,7 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 }
 
 func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testing.T) {
-	newGame := createNewlyConfirmedTeamGame()
+	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
 	newGame, _ = newGame.rejectTeamBy("Charlie")
@@ -460,4 +470,72 @@ func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testin
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.state).To(Equal(conductingMission))
 	g.Expect(newGame.voteFailures).To(Equal(0))
+}
+
+func Test_SucceedMission(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, err := newGame.succeedMissionBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.missionOutcomes).To(Equal(votes(map[string]bool{"Alice": true})))
+}
+
+func Test_SucceedMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, err := newGame.succeedMissionBy("Charlie")
+
+	g := NewWithT(t)
+	g.Expect(err).To(Equal(errPlayerNotFound))
+}
+
+func Test_SucceedMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, _ = newGame.succeedMissionBy("Alice")
+	newGame, err := newGame.succeedMissionBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(Equal(errPlayerHasAlreadyVoted))
+}
+
+func Test_SucceedMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
+	newGame := createNewlyVotingOnTeamGame()
+	newGame, err := newGame.succeedMissionBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errInvalidStateForAction))
+}
+
+func Test_FailMission(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, err := newGame.failMissionBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.missionOutcomes).To(Equal(votes(map[string]bool{"Alice": true})))
+}
+
+func Test_FailMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, err := newGame.failMissionBy("Charlie")
+
+	g := NewWithT(t)
+	g.Expect(err).To(Equal(errPlayerNotFound))
+}
+
+func Test_FailMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, _ = newGame.failMissionBy("Alice")
+	newGame, err := newGame.failMissionBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(Equal(errPlayerHasAlreadyVoted))
+}
+
+func Test_FailMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
+	newGame := createNewlyVotingOnTeamGame()
+	newGame, err := newGame.failMissionBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errInvalidStateForAction))
 }

@@ -35,7 +35,7 @@ func (v votes) hasEveryoneVoted(nbPlayers int) bool {
 	return len(v) == nbPlayers
 }
 
-func (v votes) hasVotePassed() bool {
+func (v votes) hasMajority() bool {
 	nbVotes := len(v)
 	majority := (nbVotes / 2) + 1
 
@@ -47,4 +47,8 @@ func (v votes) hasVotePassed() bool {
 	}
 
 	return nbApproved >= majority
+}
+
+func (v votes) count() int {
+	return len(v)
 }

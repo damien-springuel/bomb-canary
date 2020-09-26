@@ -56,13 +56,14 @@ var (
 )
 
 type game struct {
-	state          state
-	players        players
-	leader         string
-	currentTeam    players
-	currentMission mission
-	teamVotes      votes
-	voteFailures   int
+	state           state
+	players         players
+	leader          string
+	currentTeam     players
+	currentMission  mission
+	teamVotes       votes
+	voteFailures    int
+	missionOutcomes votes
 }
 
 func newGame() game {
@@ -185,7 +186,7 @@ func (g game) voteBy(name string, voter func(name string) (votes, error)) (game,
 	}
 
 	if newVotes.hasEveryoneVoted(g.players.count()) {
-		if newVotes.hasVotePassed() {
+		if newVotes.hasMajority() {
 			g.state = conductingMission
 			g.voteFailures = 0
 		} else {
@@ -209,4 +210,30 @@ func (g game) approveTeamBy(name string) (game, error) {
 
 func (g game) rejectTeamBy(name string) (game, error) {
 	return g.voteBy(name, g.teamVotes.rejectBy)
+}
+
+func (g game) workOnMissionBy(name string, worker func(name string) (votes, error)) (game, error) {
+	if g.state != conductingMission {
+		return g, fmt.Errorf("%w: can only work on mission during %s state, state was %s", errInvalidStateForAction, conductingMission, g.state)
+	}
+
+	if !g.currentTeam.exists(name) {
+		return g, errPlayerNotFound
+	}
+
+	newOutcomes, err := worker(name)
+	if err != nil {
+		return g, err
+	}
+
+	g.missionOutcomes = newOutcomes
+	return g, nil
+}
+
+func (g game) succeedMissionBy(name string) (game, error) {
+	return g.workOnMissionBy(name, g.missionOutcomes.approveBy)
+}
+
+func (g game) failMissionBy(name string) (game, error) {
+	return g.workOnMissionBy(name, g.missionOutcomes.rejectBy)
 }
