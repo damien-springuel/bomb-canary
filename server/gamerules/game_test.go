@@ -292,6 +292,15 @@ func Test_ApproveTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
 }
 
+func Test_ApproveTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, err := newGame.rejectTeamBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
+}
+
 func Test_ApproveTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 	newGame := createNewlyConfirmedTeamGame()
 	newGame, err := newGame.approveTeamBy("NotThere")
@@ -321,6 +330,15 @@ func Test_RejectTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
 	newGame := createNewlyConfirmedTeamGame()
 	newGame, _ = newGame.rejectTeamBy("Alice")
 	newGame, err := newGame.rejectTeamBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
+}
+
+func Test_RejectTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, _ = newGame.rejectTeamBy("Alice")
+	newGame, err := newGame.approveTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))

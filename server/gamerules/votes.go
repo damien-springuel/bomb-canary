@@ -15,7 +15,7 @@ func (v votes) voteBy(name string, approved bool) (votes, error) {
 		v = make(votes)
 	}
 
-	if a, exists := v[name]; exists && a == approved {
+	if _, exists := v[name]; exists {
 		return v, errPlayerHasAlreadyVoted
 	}
 
