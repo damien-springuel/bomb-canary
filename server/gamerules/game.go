@@ -166,20 +166,28 @@ func (g game) leaderConfirmsTeamSelection() (game, error) {
 	return g, nil
 }
 
-func (g game) approveTeamBy(name string) (game, error) {
+func (g game) voteBy(name string, voter func(name string) (votes, error)) (game, error) {
 	if g.state != votingOnTeam {
-		return g, fmt.Errorf("%w: can only approve team during %s state, state was %s", errInvalidStateForAction, votingOnTeam, g.state)
+		return g, fmt.Errorf("%w: can only vote on team during %s state, state was %s", errInvalidStateForAction, votingOnTeam, g.state)
 	}
 
 	if !g.players.exists(name) {
 		return g, errPlayerNotFound
 	}
 
-	newVotes, err := g.teamVotes.approveBy(name)
+	newVotes, err := voter(name)
 	if err != nil {
 		return g, err
 	}
 
 	g.teamVotes = newVotes
 	return g, nil
+}
+
+func (g game) approveTeamBy(name string) (game, error) {
+	return g.voteBy(name, g.teamVotes.approveBy)
+}
+
+func (g game) rejectTeamBy(name string) (game, error) {
+	return g.voteBy(name, g.teamVotes.rejectBy)
 }

@@ -307,3 +307,37 @@ func Test_ApproveTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
 }
+
+func Test_RejectTeam(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, err := newGame.rejectTeamBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.teamVotes).To(Equal(votes(map[string]bool{"Alice": false})))
+}
+
+func Test_RejectTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, _ = newGame.rejectTeamBy("Alice")
+	newGame, err := newGame.rejectTeamBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
+}
+
+func Test_RejectTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
+	newGame := createNewlyConfirmedTeamGame()
+	newGame, err := newGame.rejectTeamBy("NotThere")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errPlayerNotFound))
+}
+
+func Test_RejectTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
+	newGame := createNewlyStartedGame()
+	newGame, err := newGame.rejectTeamBy("Alice")
+
+	g := NewWithT(t)
+	g.Expect(err).To(MatchError(errInvalidStateForAction))
+}
