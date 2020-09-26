@@ -58,6 +58,7 @@ type game struct {
 	leader         string
 	currentTeam    players
 	currentMission mission
+	teamVotes      votes
 }
 
 func newGame() game {
@@ -160,6 +161,25 @@ func (g game) leaderConfirmsTeamSelection() (game, error) {
 	if g.currentTeam.count() < g.numberPeopleThatHaveToGoOnNextMission() {
 		return g, fmt.Errorf("%w: need %d people, currently have %d", errTeamIsIncomplete, g.numberPeopleThatHaveToGoOnNextMission(), g.currentTeam.count())
 	}
+
 	g.state = votingOnTeam
+	return g, nil
+}
+
+func (g game) approveTeamBy(name string) (game, error) {
+	if g.state != votingOnTeam {
+		return g, fmt.Errorf("%w: can only approve team during %s state, state was %s", errInvalidStateForAction, votingOnTeam, g.state)
+	}
+
+	if !g.players.exists(name) {
+		return g, errPlayerNotFound
+	}
+
+	newVotes, err := g.teamVotes.approveBy(name)
+	if err != nil {
+		return g, err
+	}
+
+	g.teamVotes = newVotes
 	return g, nil
 }
