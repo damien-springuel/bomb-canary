@@ -39,6 +39,13 @@ const (
 	fifth  mission = 5
 )
 
+type allegiance string
+
+const (
+	resistance allegiance = "resistance"
+	spy        allegiance = "spy"
+)
+
 type missionRequirement struct {
 	nbOfPeopleToGo                  int
 	nbFailuresRequiredToFailMission int
@@ -89,18 +96,28 @@ var (
 			fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
 		},
 	}
+
+	nbOfSpiesByNumberOfPlayers = map[int]int{
+		5:  2,
+		6:  2,
+		7:  3,
+		8:  3,
+		9:  3,
+		10: 4,
+	}
 )
 
 type game struct {
-	state           state
-	players         players
-	leader          string
-	currentTeam     players
-	currentMission  mission
-	teamVotes       votes
-	voteFailures    int
-	missionOutcomes votes
-	missionResults  missionResults
+	state            state
+	players          players
+	playerAllegiance map[string]allegiance
+	leader           string
+	currentTeam      players
+	currentMission   mission
+	teamVotes        votes
+	voteFailures     int
+	missionOutcomes  votes
+	missionResults   missionResults
 }
 
 func newGame() game {
@@ -139,13 +156,19 @@ func (g game) removePlayer(name string) (game, error) {
 	return g, nil
 }
 
-func (g game) start() (game, error) {
+func (g game) start(generateAllegiances func(nbPlayers, nbSpies int) []allegiance) (game, error) {
 	if g.state != notStarted {
 		return g, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
 	}
 
 	if g.players.count() < minNumberOfPlayers {
 		return g, errNotEnoughPlayers
+	}
+
+	allegiances := generateAllegiances(g.players.count(), nbOfSpiesByNumberOfPlayers[g.players.count()])
+	g.playerAllegiance = map[string]allegiance{}
+	for i, a := range allegiances {
+		g.playerAllegiance[g.players[i]] = a
 	}
 
 	g.state = selectingTeam

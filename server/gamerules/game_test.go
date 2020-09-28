@@ -6,6 +6,18 @@ import (
 	. "github.com/onsi/gomega"
 )
 
+var spiesFirstGenerator = func(nbPlayers, nbSpies int) []allegiance {
+	allegiances := make([]allegiance, nbPlayers)
+	for i := range allegiances {
+		if i < nbSpies {
+			allegiances[i] = spy
+		} else {
+			allegiances[i] = resistance
+		}
+	}
+	return allegiances
+}
+
 func createNewlyStartedGame() game {
 	newGame := newGame()
 	newGame, _ = newGame.addPlayer("Alice")
@@ -13,7 +25,7 @@ func createNewlyStartedGame() game {
 	newGame, _ = newGame.addPlayer("Charlie")
 	newGame, _ = newGame.addPlayer("Dan")
 	newGame, _ = newGame.addPlayer("Edith")
-	newGame, _ = newGame.start()
+	newGame, _ = newGame.start(spiesFirstGenerator)
 	return newGame
 }
 
@@ -57,7 +69,7 @@ func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.addPlayer("Dan")
 	newGame, _ = newGame.addPlayer("Edith")
 
-	newGame, _ = newGame.start()
+	newGame, _ = newGame.start(spiesFirstGenerator)
 
 	newGame, err := newGame.addPlayer("Frank")
 
@@ -120,7 +132,7 @@ func Test_RemovePlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.addPlayer("Dan")
 	newGame, _ = newGame.addPlayer("Edith")
 
-	newGame, _ = newGame.start()
+	newGame, _ = newGame.start(spiesFirstGenerator)
 
 	newGame, err := newGame.removePlayer("Bob")
 
@@ -135,10 +147,10 @@ func Test_StartGame_WhenFewerThan5Players_ShouldError(t *testing.T) {
 	newGame, _ = newGame.addPlayer("Charlie")
 	newGame, _ = newGame.addPlayer("Dan")
 
-	newGame, err := newGame.start()
+	newGame, err := newGame.start(spiesFirstGenerator)
 
 	g := NewWithT(t)
-	g.Expect(err).To(Equal(errNotEnoughPlayers))
+	g.Expect(err).To(MatchError(errNotEnoughPlayers))
 }
 
 func Test_StartGame(t *testing.T) {
@@ -149,7 +161,13 @@ func Test_StartGame(t *testing.T) {
 	newGame, _ = newGame.addPlayer("Dan")
 	newGame, _ = newGame.addPlayer("Edith")
 
-	newGame, err := newGame.start()
+	var nbPlayersGiven, nbSpiesGiven int
+	spyGenerator := func(nbPlayers, nbSpies int) []allegiance {
+		nbPlayersGiven = nbPlayers
+		nbSpiesGiven = nbSpies
+		return []allegiance{spy, resistance, spy, resistance, resistance}
+	}
+	newGame, err := newGame.start(spyGenerator)
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -157,6 +175,15 @@ func Test_StartGame(t *testing.T) {
 	g.Expect(newGame.leader).To(Equal("Alice"))
 	g.Expect(newGame.currentTeam).To(BeEmpty())
 	g.Expect(newGame.currentMission).To(Equal(first))
+	g.Expect(newGame.playerAllegiance).To(Equal(map[string]allegiance{
+		"Alice":   spy,
+		"Bob":     resistance,
+		"Charlie": spy,
+		"Dan":     resistance,
+		"Edith":   resistance,
+	}))
+	g.Expect(nbPlayersGiven).To(Equal(5))
+	g.Expect(nbSpiesGiven).To(Equal(2))
 }
 
 func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
@@ -167,8 +194,8 @@ func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.addPlayer("Dan")
 	newGame, _ = newGame.addPlayer("Edith")
 
-	newGame, _ = newGame.start()
-	newGame, err := newGame.start()
+	newGame, _ = newGame.start(spiesFirstGenerator)
+	newGame, err := newGame.start(spiesFirstGenerator)
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -609,7 +636,7 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.addPlayer("Edith")
 	newGame, _ = newGame.addPlayer("Fred")
 	newGame, _ = newGame.addPlayer("Gordon")
-	newGame, _ = newGame.start()
+	newGame, _ = newGame.start(spiesFirstGenerator)
 
 	// First turn
 	newGame, _ = newGame.leaderSelectsMember("Alice")
