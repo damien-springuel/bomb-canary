@@ -44,3 +44,9 @@ func (p players) exists(name string) bool {
 func (p players) count() int {
 	return len(p)
 }
+
+func (p players) after(name string) string {
+	i, _ := p.index(name)
+	next := (i + 1) % len(p)
+	return p[next]
+}

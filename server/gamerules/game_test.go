@@ -385,7 +385,7 @@ func Test_ApproveRejectTeam_ShouldMoveToConductingMissionIfVoteHasMajority(t *te
 	g.Expect(newGame.state).To(Equal(conductingMission))
 }
 
-func Test_ApproveRejectTeam_ShouldMoveToSelectingTeamIfVoteDoesntHaveMajority(t *testing.T) {
+func Test_ApproveRejectTeam_ShouldMoveToSelectingTeamIfVoteDoesntHaveMajority_AndSwitchLeader(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -397,9 +397,11 @@ func Test_ApproveRejectTeam_ShouldMoveToSelectingTeamIfVoteDoesntHaveMajority(t 
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.state).To(Equal(selectingTeam))
 	g.Expect(newGame.voteFailures).To(Equal(1))
+	g.Expect(newGame.leader).To(Equal("Bob"))
 }
 
 func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *testing.T) {
+	g := NewWithT(t)
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -407,6 +409,7 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Dan")
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
+	g.Expect(newGame.leader).To(Equal("Bob"))
 	newGame, _ = newGame.leaderSelectsMember("Alice")
 	newGame, _ = newGame.leaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
@@ -416,6 +419,7 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Dan")
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
+	g.Expect(newGame.leader).To(Equal("Charlie"))
 	newGame, _ = newGame.leaderSelectsMember("Alice")
 	newGame, _ = newGame.leaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
@@ -425,6 +429,7 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Dan")
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
+	g.Expect(newGame.leader).To(Equal("Dan"))
 	newGame, _ = newGame.leaderSelectsMember("Alice")
 	newGame, _ = newGame.leaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
@@ -434,6 +439,7 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Dan")
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
+	g.Expect(newGame.leader).To(Equal("Edith"))
 	newGame, _ = newGame.leaderSelectsMember("Alice")
 	newGame, _ = newGame.leaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
@@ -443,10 +449,10 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Dan")
 	newGame, err := newGame.rejectTeamBy("Edith")
 
-	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.state).To(Equal(gameOver))
 	g.Expect(newGame.voteFailures).To(Equal(5))
+	g.Expect(newGame.leader).To(Equal("Edith"))
 }
 
 func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testing.T) {
@@ -551,6 +557,7 @@ func Test_SucceedFailMission_ShouldMoveToSelectingTeamWhenEveryoneWorkedOnTheMis
 	g.Expect(newGame.currentMission).To(Equal(second))
 	g.Expect(newGame.missionOutcomes).To(BeNil())
 	g.Expect(newGame.missionResults).To(Equal(missionResults(map[mission]bool{first: false})))
+	g.Expect(newGame.leader).To(Equal("Bob"))
 }
 
 func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
@@ -590,6 +597,7 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	g.Expect(newGame.currentMission).To(Equal(third))
 	g.Expect(newGame.missionOutcomes).To(BeNil())
 	g.Expect(newGame.missionResults).To(Equal(missionResults(map[mission]bool{first: true, second: true, third: true})))
+	g.Expect(newGame.leader).To(Equal("Charlie"))
 }
 
 func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *testing.T) {

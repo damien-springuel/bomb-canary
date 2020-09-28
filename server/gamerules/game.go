@@ -236,6 +236,8 @@ func (g game) voteBy(name string, voter func(name string) (votes, error)) (game,
 
 			if g.voteFailures == maxVoteFailures {
 				g.state = gameOver
+			} else {
+				g.leader = g.players.after(g.leader)
 			}
 		}
 		newVotes = nil
@@ -279,6 +281,7 @@ func (g game) workOnMissionBy(name string, worker func(name string) (votes, erro
 		} else {
 			g.state = selectingTeam
 			g.currentMission += 1
+			g.leader = g.players.after(g.leader)
 		}
 		newOutcomes = nil
 	}
