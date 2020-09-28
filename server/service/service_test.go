@@ -49,11 +49,7 @@ func Test_HandleJoinPartyCommand(t *testing.T) {
 	messageDispatcher := &testMessageDispatcher{}
 	s := newService(testGenerator{returnCode: "testCode"}, messageDispatcher)
 	code := s.createParty()
-	joinParty := joinParty{
-		partyCode: "testCode",
-		user:      "Alice",
-	}
-	err := s.handleMessage(joinParty)
+	err := s.handleMessage(joinParty{partyCode: "testCode", user: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
