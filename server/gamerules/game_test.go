@@ -518,7 +518,7 @@ func Test_FailMission(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
-	g.Expect(newGame.missionOutcomes).To(Equal(votes(map[string]bool{"Alice": true})))
+	g.Expect(newGame.missionOutcomes).To(Equal(votes(map[string]bool{"Alice": false})))
 }
 
 func Test_FailMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {

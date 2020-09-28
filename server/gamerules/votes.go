@@ -60,7 +60,3 @@ func (v votes) nbRejections() int {
 
 	return nbRejections
 }
-
-func (v votes) count() int {
-	return len(v)
-}
