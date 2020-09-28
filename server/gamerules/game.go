@@ -53,12 +53,40 @@ var (
 			fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
 			fifth:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
 		},
+		6: {
+			first:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
+			second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+		},
 		7: {
 			first:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
 			second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
 			third:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
 			fourth: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 2},
 			fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+		},
+		8: {
+			first:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
+			fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
+		},
+		9: {
+			first:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
+			fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
+		},
+		10: {
+			first:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
+			fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
 		},
 	}
 )
