@@ -107,7 +107,7 @@ var (
 	}
 )
 
-type game struct {
+type Game struct {
 	state            state
 	players          players
 	playerAllegiance map[string]allegiance
@@ -120,11 +120,11 @@ type game struct {
 	missionResults   missionResults
 }
 
-func newGame() game {
-	return game{state: notStarted}
+func NewGame() Game {
+	return Game{state: notStarted}
 }
 
-func (g game) addPlayer(name string) (game, error) {
+func (g Game) AddPlayer(name string) (Game, error) {
 	if g.state != notStarted {
 		return g, fmt.Errorf("%w: can only add player during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
 	}
@@ -142,7 +142,7 @@ func (g game) addPlayer(name string) (game, error) {
 	return g, nil
 }
 
-func (g game) removePlayer(name string) (game, error) {
+func (g Game) removePlayer(name string) (Game, error) {
 	if g.state != notStarted {
 		return g, fmt.Errorf("%w: can only remove player during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
 	}
@@ -156,7 +156,7 @@ func (g game) removePlayer(name string) (game, error) {
 	return g, nil
 }
 
-func (g game) start(generateAllegiances func(nbPlayers, nbSpies int) []allegiance) (game, error) {
+func (g Game) start(generateAllegiances func(nbPlayers, nbSpies int) []allegiance) (Game, error) {
 	if g.state != notStarted {
 		return g, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
 	}
@@ -177,15 +177,15 @@ func (g game) start(generateAllegiances func(nbPlayers, nbSpies int) []allegianc
 	return g, nil
 }
 
-func (g game) nbPeopleThatHaveToGoOnMission() int {
+func (g Game) nbPeopleThatHaveToGoOnMission() int {
 	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbOfPeopleToGo
 }
 
-func (g game) nbFailuresRequiredToFailMission() int {
+func (g Game) nbFailuresRequiredToFailMission() int {
 	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbFailuresRequiredToFailMission
 }
 
-func (g game) leaderSelectsMember(name string) (game, error) {
+func (g Game) leaderSelectsMember(name string) (Game, error) {
 	if g.state != selectingTeam {
 		return g, fmt.Errorf("%w: can only select team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
 	}
@@ -207,7 +207,7 @@ func (g game) leaderSelectsMember(name string) (game, error) {
 	return g, nil
 }
 
-func (g game) leaderDeselectsMember(name string) (game, error) {
+func (g Game) leaderDeselectsMember(name string) (Game, error) {
 	if g.state != selectingTeam {
 		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
 	}
@@ -222,7 +222,7 @@ func (g game) leaderDeselectsMember(name string) (game, error) {
 	return g, nil
 }
 
-func (g game) leaderConfirmsTeamSelection() (game, error) {
+func (g Game) leaderConfirmsTeamSelection() (Game, error) {
 	if g.state != selectingTeam {
 		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
 	}
@@ -235,7 +235,7 @@ func (g game) leaderConfirmsTeamSelection() (game, error) {
 	return g, nil
 }
 
-func (g game) voteBy(name string, voter func(name string) (votes, error)) (game, error) {
+func (g Game) voteBy(name string, voter func(name string) (votes, error)) (Game, error) {
 	if g.state != votingOnTeam {
 		return g, fmt.Errorf("%w: can only vote on team during %s state, state was %s", errInvalidStateForAction, votingOnTeam, g.state)
 	}
@@ -270,15 +270,15 @@ func (g game) voteBy(name string, voter func(name string) (votes, error)) (game,
 	return g, nil
 }
 
-func (g game) approveTeamBy(name string) (game, error) {
+func (g Game) approveTeamBy(name string) (Game, error) {
 	return g.voteBy(name, g.teamVotes.approveBy)
 }
 
-func (g game) rejectTeamBy(name string) (game, error) {
+func (g Game) rejectTeamBy(name string) (Game, error) {
 	return g.voteBy(name, g.teamVotes.rejectBy)
 }
 
-func (g game) workOnMissionBy(name string, worker func(name string) (votes, error)) (game, error) {
+func (g Game) workOnMissionBy(name string, worker func(name string) (votes, error)) (Game, error) {
 	if g.state != conductingMission {
 		return g, fmt.Errorf("%w: can only work on mission during %s state, state was %s", errInvalidStateForAction, conductingMission, g.state)
 	}
@@ -313,10 +313,10 @@ func (g game) workOnMissionBy(name string, worker func(name string) (votes, erro
 	return g, nil
 }
 
-func (g game) succeedMissionBy(name string) (game, error) {
+func (g Game) succeedMissionBy(name string) (Game, error) {
 	return g.workOnMissionBy(name, g.missionOutcomes.approveBy)
 }
 
-func (g game) failMissionBy(name string) (game, error) {
+func (g Game) failMissionBy(name string) (Game, error) {
 	return g.workOnMissionBy(name, g.missionOutcomes.rejectBy)
 }

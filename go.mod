@@ -1,4 +1,4 @@
-module bomb-canary
+module github.com/damien-springuel/bomb-canary
 
 go 1.15
 

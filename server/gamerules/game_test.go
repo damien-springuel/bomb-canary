@@ -18,18 +18,18 @@ var spiesFirstGenerator = func(nbPlayers, nbSpies int) []allegiance {
 	return allegiances
 }
 
-func createNewlyStartedGame() game {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
-	newGame, _ = newGame.addPlayer("Bob")
-	newGame, _ = newGame.addPlayer("Charlie")
-	newGame, _ = newGame.addPlayer("Dan")
-	newGame, _ = newGame.addPlayer("Edith")
+func createNewlyStartedGame() Game {
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
+	newGame, _ = newGame.AddPlayer("Bob")
+	newGame, _ = newGame.AddPlayer("Charlie")
+	newGame, _ = newGame.AddPlayer("Dan")
+	newGame, _ = newGame.AddPlayer("Edith")
 	newGame, _ = newGame.start(spiesFirstGenerator)
 	return newGame
 }
 
-func createNewlyVotingOnTeamGame() game {
+func createNewlyVotingOnTeamGame() Game {
 	newGame := createNewlyStartedGame()
 	newGame, _ = newGame.leaderSelectsMember("Alice")
 	newGame, _ = newGame.leaderSelectsMember("Bob")
@@ -37,7 +37,7 @@ func createNewlyVotingOnTeamGame() game {
 	return newGame
 }
 
-func createNewlyConductingMissionGame() game {
+func createNewlyConductingMissionGame() Game {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -48,65 +48,65 @@ func createNewlyConductingMissionGame() game {
 }
 
 func Test_CreateGame(t *testing.T) {
-	newGame := newGame()
+	newGame := NewGame()
 	g := NewWithT(t)
-	g.Expect(newGame).To(Equal(game{state: notStarted}))
+	g.Expect(newGame).To(Equal(Game{state: notStarted}))
 }
 
 func Test_AddPlayer(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
 
 	g := NewWithT(t)
 	g.Expect(newGame.players).To(Equal(players([]string{"Alice"})))
 }
 
 func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
-	newGame, _ = newGame.addPlayer("Bob")
-	newGame, _ = newGame.addPlayer("Charlie")
-	newGame, _ = newGame.addPlayer("Dan")
-	newGame, _ = newGame.addPlayer("Edith")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
+	newGame, _ = newGame.AddPlayer("Bob")
+	newGame, _ = newGame.AddPlayer("Charlie")
+	newGame, _ = newGame.AddPlayer("Dan")
+	newGame, _ = newGame.AddPlayer("Edith")
 
 	newGame, _ = newGame.start(spiesFirstGenerator)
 
-	newGame, err := newGame.addPlayer("Frank")
+	newGame, err := newGame.AddPlayer("Frank")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
 }
 
 func Test_AddPlayer_ShouldErrorIfPlayerAlreadyThere(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
-	newGame, err := newGame.addPlayer("Alice")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
+	newGame, err := newGame.AddPlayer("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerAlreadyInGroup))
 }
 
 func Test_AddPlayer_ShouldErrorIfAlready10Players(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("1")
-	newGame, _ = newGame.addPlayer("2")
-	newGame, _ = newGame.addPlayer("3")
-	newGame, _ = newGame.addPlayer("4")
-	newGame, _ = newGame.addPlayer("5")
-	newGame, _ = newGame.addPlayer("6")
-	newGame, _ = newGame.addPlayer("7")
-	newGame, _ = newGame.addPlayer("8")
-	newGame, _ = newGame.addPlayer("9")
-	newGame, _ = newGame.addPlayer("10")
-	newGame, err := newGame.addPlayer("11")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("1")
+	newGame, _ = newGame.AddPlayer("2")
+	newGame, _ = newGame.AddPlayer("3")
+	newGame, _ = newGame.AddPlayer("4")
+	newGame, _ = newGame.AddPlayer("5")
+	newGame, _ = newGame.AddPlayer("6")
+	newGame, _ = newGame.AddPlayer("7")
+	newGame, _ = newGame.AddPlayer("8")
+	newGame, _ = newGame.AddPlayer("9")
+	newGame, _ = newGame.AddPlayer("10")
+	newGame, err := newGame.AddPlayer("11")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errAlreadyMaxNumberOfPlayers))
 }
 
 func Test_RemovePlayer(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
 	newGame, err := newGame.removePlayer("Alice")
 
 	g := NewWithT(t)
@@ -115,8 +115,8 @@ func Test_RemovePlayer(t *testing.T) {
 }
 
 func Test_RemovePlayer_ShouldErrorIfPlayerNotFound(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
 	newGame, err := newGame.removePlayer("Bob")
 
 	g := NewWithT(t)
@@ -125,12 +125,12 @@ func Test_RemovePlayer_ShouldErrorIfPlayerNotFound(t *testing.T) {
 }
 
 func Test_RemovePlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
-	newGame, _ = newGame.addPlayer("Bob")
-	newGame, _ = newGame.addPlayer("Charlie")
-	newGame, _ = newGame.addPlayer("Dan")
-	newGame, _ = newGame.addPlayer("Edith")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
+	newGame, _ = newGame.AddPlayer("Bob")
+	newGame, _ = newGame.AddPlayer("Charlie")
+	newGame, _ = newGame.AddPlayer("Dan")
+	newGame, _ = newGame.AddPlayer("Edith")
 
 	newGame, _ = newGame.start(spiesFirstGenerator)
 
@@ -141,11 +141,11 @@ func Test_RemovePlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 }
 
 func Test_StartGame_WhenFewerThan5Players_ShouldError(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
-	newGame, _ = newGame.addPlayer("Bob")
-	newGame, _ = newGame.addPlayer("Charlie")
-	newGame, _ = newGame.addPlayer("Dan")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
+	newGame, _ = newGame.AddPlayer("Bob")
+	newGame, _ = newGame.AddPlayer("Charlie")
+	newGame, _ = newGame.AddPlayer("Dan")
 
 	newGame, err := newGame.start(spiesFirstGenerator)
 
@@ -154,12 +154,12 @@ func Test_StartGame_WhenFewerThan5Players_ShouldError(t *testing.T) {
 }
 
 func Test_StartGame(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
-	newGame, _ = newGame.addPlayer("Bob")
-	newGame, _ = newGame.addPlayer("Charlie")
-	newGame, _ = newGame.addPlayer("Dan")
-	newGame, _ = newGame.addPlayer("Edith")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
+	newGame, _ = newGame.AddPlayer("Bob")
+	newGame, _ = newGame.AddPlayer("Charlie")
+	newGame, _ = newGame.AddPlayer("Dan")
+	newGame, _ = newGame.AddPlayer("Edith")
 
 	var nbPlayersGiven, nbSpiesGiven int
 	spyGenerator := func(nbPlayers, nbSpies int) []allegiance {
@@ -187,12 +187,12 @@ func Test_StartGame(t *testing.T) {
 }
 
 func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
-	newGame, _ = newGame.addPlayer("Bob")
-	newGame, _ = newGame.addPlayer("Charlie")
-	newGame, _ = newGame.addPlayer("Dan")
-	newGame, _ = newGame.addPlayer("Edith")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
+	newGame, _ = newGame.AddPlayer("Bob")
+	newGame, _ = newGame.AddPlayer("Charlie")
+	newGame, _ = newGame.AddPlayer("Dan")
+	newGame, _ = newGame.AddPlayer("Edith")
 
 	newGame, _ = newGame.start(spiesFirstGenerator)
 	newGame, err := newGame.start(spiesFirstGenerator)
@@ -242,7 +242,7 @@ func Test_LeaderSelectsAMember_ShouldErrorIfTeamIsComplete(t *testing.T) {
 }
 
 func Test_LeaderSelectsAMember_ShouldErrorIfNotSelectingTeam(t *testing.T) {
-	newGame := newGame()
+	newGame := NewGame()
 
 	newGame, err := newGame.leaderSelectsMember("Alice")
 
@@ -272,7 +272,7 @@ func Test_LeaderDeselectsAMember_ShouldErrorIfPlayerNotInTeam(t *testing.T) {
 }
 
 func Test_LeaderDeselectsAMember_ShouldErrorIfNotSelectingTeam(t *testing.T) {
-	newGame := newGame()
+	newGame := NewGame()
 
 	newGame, err := newGame.leaderDeselectsMember("Alice")
 
@@ -303,7 +303,7 @@ func Test_LeaderConfirmsSelection_ShouldErrorIfTeamIsIncomplete(t *testing.T) {
 }
 
 func Test_LeaderConfirmsSelection_ShouldErrorIfNotSelectingTeam(t *testing.T) {
-	newGame := newGame()
+	newGame := NewGame()
 
 	newGame, err := newGame.leaderConfirmsTeamSelection()
 
@@ -628,14 +628,14 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 }
 
 func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *testing.T) {
-	newGame := newGame()
-	newGame, _ = newGame.addPlayer("Alice")
-	newGame, _ = newGame.addPlayer("Bob")
-	newGame, _ = newGame.addPlayer("Charlie")
-	newGame, _ = newGame.addPlayer("Dan")
-	newGame, _ = newGame.addPlayer("Edith")
-	newGame, _ = newGame.addPlayer("Fred")
-	newGame, _ = newGame.addPlayer("Gordon")
+	newGame := NewGame()
+	newGame, _ = newGame.AddPlayer("Alice")
+	newGame, _ = newGame.AddPlayer("Bob")
+	newGame, _ = newGame.AddPlayer("Charlie")
+	newGame, _ = newGame.AddPlayer("Dan")
+	newGame, _ = newGame.AddPlayer("Edith")
+	newGame, _ = newGame.AddPlayer("Fred")
+	newGame, _ = newGame.AddPlayer("Gordon")
 	newGame, _ = newGame.start(spiesFirstGenerator)
 
 	// First turn
