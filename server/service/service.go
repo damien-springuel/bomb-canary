@@ -1,19 +1,16 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
+	"github.com/damien-springuel/bomb-canary/server/messagebus"
 )
 
 type codeGenerator interface {
 	generateCode() string
 }
 
-type message interface{}
-
 type messageDispatcher interface {
-	dispatchMessage(m message)
+	dispatchMessage(m messagebus.Message)
 }
 
 type service struct {
@@ -36,18 +33,16 @@ func (s service) createParty() string {
 	return newCode
 }
 
-func (s service) handleMessage(m message) error {
+func (s service) handleMessage(m messagebus.Message) {
 	switch v := m.(type) {
 	case joinParty:
 		updatedGame, err := s.games[v.partyCode].AddPlayer(v.user)
 		if err != nil {
-			return fmt.Errorf("can't join party: %w", err)
+			return
 		}
 		s.games[v.partyCode] = updatedGame
 		s.messageDispatcher.dispatchMessage(playerJoined{partyCode: v.partyCode, user: v.user})
 	}
-
-	return nil
 }
 
 func (s service) getGameForPartyCode(code string) gamerules.Game {

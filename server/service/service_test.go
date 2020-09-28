@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
+	"github.com/damien-springuel/bomb-canary/server/messagebus"
 	. "github.com/onsi/gomega"
 )
 
@@ -16,10 +17,10 @@ func (t testGenerator) generateCode() string {
 }
 
 type testMessageDispatcher struct {
-	receivedMessage message
+	receivedMessage messagebus.Message
 }
 
-func (t *testMessageDispatcher) dispatchMessage(m message) {
+func (t *testMessageDispatcher) dispatchMessage(m messagebus.Message) {
 	t.receivedMessage = m
 }
 
@@ -49,10 +50,9 @@ func Test_HandleJoinPartyCommand(t *testing.T) {
 	messageDispatcher := &testMessageDispatcher{}
 	s := newService(testGenerator{returnCode: "testCode"}, messageDispatcher)
 	code := s.createParty()
-	err := s.handleMessage(joinParty{partyCode: "testCode", user: "Alice"})
+	s.handleMessage(joinParty{partyCode: "testCode", user: "Alice"})
 
 	g := NewWithT(t)
-	g.Expect(err).To(BeNil())
 	g.Expect(messageDispatcher.receivedMessage).To(Equal(playerJoined{partyCode: "testCode", user: "Alice"}))
 
 	expectedGame := gamerules.NewGame()
