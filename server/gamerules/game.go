@@ -40,18 +40,25 @@ const (
 )
 
 type missionRequirement struct {
-	nbOfPeopleToGo                 int
-	nbFailureRequiredToFailMission int
+	nbOfPeopleToGo                  int
+	nbFailuresRequiredToFailMission int
 }
 
 var (
 	missionRequirementsByNumberOfPlayer = map[int]map[mission]missionRequirement{
 		5: {
-			first:  {nbOfPeopleToGo: 2, nbFailureRequiredToFailMission: 1},
-			second: {nbOfPeopleToGo: 3, nbFailureRequiredToFailMission: 1},
-			third:  {nbOfPeopleToGo: 2, nbFailureRequiredToFailMission: 1},
-			fourth: {nbOfPeopleToGo: 3, nbFailureRequiredToFailMission: 1},
-			fifth:  {nbOfPeopleToGo: 3, nbFailureRequiredToFailMission: 1},
+			first:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
+			second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			third:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
+			fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			fifth:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+		},
+		7: {
+			first:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
+			second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			third:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			fourth: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 2},
+			fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
 		},
 	}
 )
@@ -124,7 +131,7 @@ func (g game) nbPeopleThatHaveToGoOnMission() int {
 }
 
 func (g game) nbFailuresRequiredToFailMission() int {
-	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbFailureRequiredToFailMission
+	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbFailuresRequiredToFailMission
 }
 
 func (g game) leaderSelectsMember(name string) (game, error) {

@@ -591,3 +591,100 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	g.Expect(newGame.missionOutcomes).To(BeNil())
 	g.Expect(newGame.missionResults).To(Equal(missionResults(map[mission]bool{first: true, second: true, third: true})))
 }
+
+func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *testing.T) {
+	newGame := newGame()
+	newGame, _ = newGame.addPlayer("Alice")
+	newGame, _ = newGame.addPlayer("Bob")
+	newGame, _ = newGame.addPlayer("Charlie")
+	newGame, _ = newGame.addPlayer("Dan")
+	newGame, _ = newGame.addPlayer("Edith")
+	newGame, _ = newGame.addPlayer("Fred")
+	newGame, _ = newGame.addPlayer("Gordon")
+	newGame, _ = newGame.start()
+
+	// First turn
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.approveTeamBy("Dan")
+	newGame, _ = newGame.approveTeamBy("Edith")
+	newGame, _ = newGame.approveTeamBy("Fred")
+	newGame, _ = newGame.approveTeamBy("Gordon")
+	newGame, _ = newGame.succeedMissionBy("Alice")
+	newGame, _ = newGame.succeedMissionBy("Bob")
+
+	// Second turn
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderSelectsMember("Charlie")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.approveTeamBy("Dan")
+	newGame, _ = newGame.approveTeamBy("Edith")
+	newGame, _ = newGame.approveTeamBy("Fred")
+	newGame, _ = newGame.approveTeamBy("Gordon")
+	newGame, _ = newGame.succeedMissionBy("Alice")
+	newGame, _ = newGame.succeedMissionBy("Bob")
+	newGame, _ = newGame.failMissionBy("Charlie")
+
+	// Third turn
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderSelectsMember("Charlie")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.approveTeamBy("Dan")
+	newGame, _ = newGame.approveTeamBy("Edith")
+	newGame, _ = newGame.approveTeamBy("Fred")
+	newGame, _ = newGame.approveTeamBy("Gordon")
+	newGame, _ = newGame.succeedMissionBy("Alice")
+	newGame, _ = newGame.succeedMissionBy("Bob")
+	newGame, _ = newGame.failMissionBy("Charlie")
+
+	// Fourth turn
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderSelectsMember("Charlie")
+	newGame, _ = newGame.leaderSelectsMember("Dan")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.approveTeamBy("Dan")
+	newGame, _ = newGame.approveTeamBy("Edith")
+	newGame, _ = newGame.approveTeamBy("Fred")
+	conductingFourthMission, _ := newGame.approveTeamBy("Gordon")
+	newGame, _ = conductingFourthMission.succeedMissionBy("Alice")
+	newGame, _ = newGame.succeedMissionBy("Bob")
+	newGame, _ = newGame.succeedMissionBy("Charlie")
+	newGame, _ = newGame.failMissionBy("Dan")
+
+	g := NewWithT(t)
+	g.Expect(newGame.missionResults).To(Equal(
+		missionResults(map[mission]bool{
+			first:  true,
+			second: false,
+			third:  false,
+			fourth: true,
+		})))
+
+	newGame, _ = conductingFourthMission.succeedMissionBy("Alice")
+	newGame, _ = newGame.succeedMissionBy("Bob")
+	newGame, _ = newGame.failMissionBy("Charlie")
+	newGame, _ = newGame.failMissionBy("Dan")
+	g.Expect(newGame.missionResults).To(Equal(
+		missionResults(map[mission]bool{
+			first:  true,
+			second: false,
+			third:  false,
+			fourth: false,
+		})))
+}
