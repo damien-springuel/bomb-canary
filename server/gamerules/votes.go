@@ -49,6 +49,18 @@ func (v votes) hasMajority() bool {
 	return nbApproved >= majority
 }
 
+func (v votes) nbRejections() int {
+	nbRejections := 0
+
+	for _, approved := range v {
+		if !approved {
+			nbRejections += 1
+		}
+	}
+
+	return nbRejections
+}
+
 func (v votes) count() int {
 	return len(v)
 }

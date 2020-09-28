@@ -40,17 +40,18 @@ const (
 )
 
 type missionRequirement struct {
-	numberOfPeopleToGo int
+	nbOfPeopleToGo                 int
+	nbFailureRequiredToFailMission int
 }
 
 var (
 	missionRequirementsByNumberOfPlayer = map[int]map[mission]missionRequirement{
 		5: {
-			first:  {numberOfPeopleToGo: 2},
-			second: {numberOfPeopleToGo: 3},
-			third:  {numberOfPeopleToGo: 2},
-			fourth: {numberOfPeopleToGo: 3},
-			fifth:  {numberOfPeopleToGo: 3},
+			first:  {nbOfPeopleToGo: 2, nbFailureRequiredToFailMission: 1},
+			second: {nbOfPeopleToGo: 3, nbFailureRequiredToFailMission: 1},
+			third:  {nbOfPeopleToGo: 2, nbFailureRequiredToFailMission: 1},
+			fourth: {nbOfPeopleToGo: 3, nbFailureRequiredToFailMission: 1},
+			fifth:  {nbOfPeopleToGo: 3, nbFailureRequiredToFailMission: 1},
 		},
 	}
 )
@@ -64,6 +65,7 @@ type game struct {
 	teamVotes       votes
 	voteFailures    int
 	missionOutcomes votes
+	missionResults  missionResults
 }
 
 func newGame() game {
@@ -117,8 +119,12 @@ func (g game) start() (game, error) {
 	return g, nil
 }
 
-func (g game) numberPeopleThatHaveToGoOnNextMission() int {
-	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].numberOfPeopleToGo
+func (g game) nbPeopleThatHaveToGoOnMission() int {
+	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbOfPeopleToGo
+}
+
+func (g game) nbFailuresRequiredToFailMission() int {
+	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbFailureRequiredToFailMission
 }
 
 func (g game) leaderSelectsMember(name string) (game, error) {
@@ -130,8 +136,8 @@ func (g game) leaderSelectsMember(name string) (game, error) {
 		return g, errPlayerNotFound
 	}
 
-	if len(g.currentTeam) == g.numberPeopleThatHaveToGoOnNextMission() {
-		return g, fmt.Errorf("%w: can't have more than %d", errTeamIsFull, g.numberPeopleThatHaveToGoOnNextMission())
+	if len(g.currentTeam) == g.nbPeopleThatHaveToGoOnMission() {
+		return g, fmt.Errorf("%w: can't have more than %d", errTeamIsFull, g.nbPeopleThatHaveToGoOnMission())
 	}
 
 	newTeam, err := g.currentTeam.add(name)
@@ -163,8 +169,8 @@ func (g game) leaderConfirmsTeamSelection() (game, error) {
 		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
 	}
 
-	if g.currentTeam.count() < g.numberPeopleThatHaveToGoOnNextMission() {
-		return g, fmt.Errorf("%w: need %d people, currently have %d", errTeamIsIncomplete, g.numberPeopleThatHaveToGoOnNextMission(), g.currentTeam.count())
+	if g.currentTeam.count() < g.nbPeopleThatHaveToGoOnMission() {
+		return g, fmt.Errorf("%w: need %d people, currently have %d", errTeamIsIncomplete, g.nbPeopleThatHaveToGoOnMission(), g.currentTeam.count())
 	}
 
 	g.state = votingOnTeam
@@ -224,6 +230,22 @@ func (g game) workOnMissionBy(name string, worker func(name string) (votes, erro
 	newOutcomes, err := worker(name)
 	if err != nil {
 		return g, err
+	}
+
+	if newOutcomes.hasEveryoneVoted(g.nbPeopleThatHaveToGoOnMission()) {
+		if newOutcomes.nbRejections() >= g.nbFailuresRequiredToFailMission() {
+			g.missionResults = g.missionResults.failMission(g.currentMission)
+		} else {
+			g.missionResults = g.missionResults.succeedMission(g.currentMission)
+		}
+
+		if g.missionResults.hasThreeSuccessesOrFailures() {
+			g.state = gameOver
+		} else {
+			g.state = selectingTeam
+			g.currentMission += 1
+		}
+		newOutcomes = nil
 	}
 
 	g.missionOutcomes = newOutcomes

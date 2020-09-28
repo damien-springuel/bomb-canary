@@ -539,3 +539,55 @@ func Test_FailMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
 }
+
+func Test_SucceedFailMission_ShouldMoveToSelectingTeamWhenEveryoneWorkedOnTheMission(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, _ = newGame.failMissionBy("Alice")
+	newGame, err := newGame.failMissionBy("Bob")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.state).To(Equal(selectingTeam))
+	g.Expect(newGame.currentMission).To(Equal(second))
+	g.Expect(newGame.missionOutcomes).To(BeNil())
+	g.Expect(newGame.missionResults).To(Equal(missionResults(map[mission]bool{first: false})))
+}
+
+func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, _ = newGame.succeedMissionBy("Alice")
+	newGame, _ = newGame.succeedMissionBy("Bob")
+
+	// Second turn
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderSelectsMember("Charlie")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.approveTeamBy("Dan")
+	newGame, _ = newGame.approveTeamBy("Edith")
+	newGame, _ = newGame.succeedMissionBy("Alice")
+	newGame, _ = newGame.succeedMissionBy("Bob")
+	newGame, _ = newGame.succeedMissionBy("Charlie")
+
+	// Third turn
+	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.leaderConfirmsTeamSelection()
+	newGame, _ = newGame.approveTeamBy("Alice")
+	newGame, _ = newGame.approveTeamBy("Bob")
+	newGame, _ = newGame.approveTeamBy("Charlie")
+	newGame, _ = newGame.approveTeamBy("Dan")
+	newGame, _ = newGame.approveTeamBy("Edith")
+	newGame, _ = newGame.succeedMissionBy("Alice")
+	newGame, err := newGame.succeedMissionBy("Bob")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.state).To(Equal(gameOver))
+	g.Expect(newGame.currentMission).To(Equal(third))
+	g.Expect(newGame.missionOutcomes).To(BeNil())
+	g.Expect(newGame.missionResults).To(Equal(missionResults(map[mission]bool{first: true, second: true, third: true})))
+}
