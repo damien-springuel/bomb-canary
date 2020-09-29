@@ -5,6 +5,8 @@ import (
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
 )
 
+type handler func(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message)
+
 type codeGenerator interface {
 	generateCode() string
 }
@@ -36,18 +38,31 @@ func (s service) createParty() string {
 }
 
 func (s service) handleMessage(m messagebus.Message) {
-	switch v := m.(type) {
+	var handler handler
+	switch m.(type) {
 	case joinParty:
-		updatedGame, _ := s.gamesByPartyCode[m.GetPartyCode()].AddPlayer(v.user)
-		s.gamesByPartyCode[m.GetPartyCode()] = updatedGame
-		s.messageDispatcher.dispatchMessage(playerJoined{party: party{code: m.GetPartyCode()}, user: v.user})
+		handler = s.handleJoinPartyCommand
 	case startGame:
-		updatedGame, _ := s.gamesByPartyCode[m.GetPartyCode()].Start(s.allegianceGenerator)
-		s.gamesByPartyCode[m.GetPartyCode()] = updatedGame
-		s.messageDispatcher.dispatchMessage(gameStarted{party: party{code: m.GetPartyCode()}})
+		handler = s.handleStartGameCommand
 	}
+	updatedGame, messageToDispatch := handler(s.gamesByPartyCode[m.GetPartyCode()], m)
+	s.gamesByPartyCode[m.GetPartyCode()] = updatedGame
+	s.messageDispatcher.dispatchMessage(messageToDispatch)
 }
 
 func (s service) getGameForPartyCode(code string) gamerules.Game {
 	return s.gamesByPartyCode[code]
+}
+
+func (s service) handleJoinPartyCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	joinPartyCommand := message.(joinParty)
+	updatedGame, _ = currentGame.AddPlayer(joinPartyCommand.user)
+	messageToDispatch = playerJoined{party: party{code: message.GetPartyCode()}, user: joinPartyCommand.user}
+	return
+}
+
+func (s service) handleStartGameCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	updatedGame, _ = currentGame.Start(s.allegianceGenerator)
+	messageToDispatch = gameStarted{party: party{code: message.GetPartyCode()}}
+	return
 }
