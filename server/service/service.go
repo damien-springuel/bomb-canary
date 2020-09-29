@@ -46,6 +46,8 @@ func (s service) handleMessage(m messagebus.Message) {
 		handler = s.handleStartGameCommand
 	case leaderSelectsMember:
 		handler = s.handleLeaderSelectsMember
+	case leaderDeselectsMember:
+		handler = s.handleLeaderDeselectsMember
 	default:
 		return
 	}
@@ -73,20 +75,36 @@ func (s service) handleJoinPartyCommand(currentGame gamerules.Game, message mess
 }
 
 func (s service) handleStartGameCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
-	updatedGame, _ = currentGame.Start(s.allegianceGenerator)
-	messageToDispatch = gameStarted{
-		party:  party{code: message.GetPartyCode()},
-		leader: updatedGame.Leader(),
+	updatedGame, err := currentGame.Start(s.allegianceGenerator)
+	if err == nil {
+		messageToDispatch = gameStarted{
+			party:  party{code: message.GetPartyCode()},
+			leader: updatedGame.Leader(),
+		}
 	}
 	return
 }
 
 func (s service) handleLeaderSelectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
 	leaderSelectsMemberCommand := message.(leaderSelectsMember)
-	updatedGame, _ = currentGame.LeaderSelectsMember(leaderSelectsMemberCommand.leader)
-	messageToDispatch = leaderSelectedMember{
-		party:          party{code: message.GetPartyCode()},
-		selectedMember: leaderSelectsMemberCommand.memberToSelect,
+	updatedGame, err := currentGame.LeaderSelectsMember(leaderSelectsMemberCommand.memberToSelect)
+	if err == nil {
+		messageToDispatch = leaderSelectedMember{
+			party:          party{code: message.GetPartyCode()},
+			selectedMember: leaderSelectsMemberCommand.memberToSelect,
+		}
+	}
+	return
+}
+
+func (s service) handleLeaderDeselectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	leaderDeselectsMemberCommand := message.(leaderDeselectsMember)
+	updatedGame, err := currentGame.LeaderDeselectsMember(leaderDeselectsMemberCommand.memberToDeselect)
+	if err == nil {
+		messageToDispatch = leaderDeselectedMember{
+			party:            party{code: message.GetPartyCode()},
+			deselectedMember: leaderDeselectsMemberCommand.memberToDeselect,
+		}
 	}
 	return
 }

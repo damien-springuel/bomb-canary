@@ -211,7 +211,7 @@ func (g Game) LeaderSelectsMember(name string) (Game, error) {
 	return g, nil
 }
 
-func (g Game) leaderDeselectsMember(name string) (Game, error) {
+func (g Game) LeaderDeselectsMember(name string) (Game, error) {
 	if g.state != selectingTeam {
 		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
 	}
@@ -222,7 +222,6 @@ func (g Game) leaderDeselectsMember(name string) (Game, error) {
 	}
 
 	g.currentTeam = newTeam
-
 	return g, nil
 }
 

@@ -14,3 +14,8 @@ type leaderSelectedMember struct {
 	party
 	selectedMember string
 }
+
+type leaderDeselectedMember struct {
+	party
+	deselectedMember string
+}

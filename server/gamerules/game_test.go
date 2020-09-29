@@ -262,7 +262,7 @@ func Test_LeaderDeselectsAMember(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
-	newGame, err := newGame.leaderDeselectsMember("Alice")
+	newGame, err := newGame.LeaderDeselectsMember("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -273,7 +273,7 @@ func Test_LeaderDeselectsAMember_ShouldErrorIfPlayerNotInTeam(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
-	newGame, err := newGame.leaderDeselectsMember("Bob")
+	newGame, err := newGame.LeaderDeselectsMember("Bob")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
@@ -282,7 +282,7 @@ func Test_LeaderDeselectsAMember_ShouldErrorIfPlayerNotInTeam(t *testing.T) {
 func Test_LeaderDeselectsAMember_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 	newGame := NewGame()
 
-	newGame, err := newGame.leaderDeselectsMember("Alice")
+	newGame, err := newGame.LeaderDeselectsMember("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))

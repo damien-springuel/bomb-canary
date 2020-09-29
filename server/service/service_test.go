@@ -117,7 +117,7 @@ func Test_HandleJoinPartyCommand_ShouldIgnoreIfGameAlreadyStarted(t *testing.T) 
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleDoesNothingForUnknownMessage(t *testing.T) {
+func Test_HandleShouldIgnoreUnknownMessage(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 
@@ -139,14 +139,70 @@ func Test_HandleStartGameCommand(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
+func Test_HandleStartGameCommand_ShouldIgnoreIfGameAlreadyStarted(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(startGame{party: party{code: code}})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
 func Test_HandleLeaderSelectsAMember(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
-	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.lastMessage()).To(Equal(leaderSelectedMember{party: party{code: code}, selectedMember: "Alice"}))
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(leaderSelectedMember{party: party{code: code}, selectedMember: "Charlie"}))
 
-	expectedGame, _ = expectedGame.LeaderSelectsMember("Alice")
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Charlie")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleLeaderSelectsAMember_ShouldIgnoreIfMemberAlreadySelected(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
+
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
+
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Charlie")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleLeaderDeselectsAMember(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
+	service.handleMessage(leaderDeselectsMember{party: party{code: code}, leader: "Alice", memberToDeselect: "Charlie"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(leaderDeselectedMember{party: party{code: code}, deselectedMember: "Charlie"}))
+
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Charlie")
+	expectedGame, _ = expectedGame.LeaderDeselectsMember("Charlie")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleLeaderDeselectsAMember_ShouldIgnoreIfMemberNotSelected(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
+
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(leaderDeselectsMember{party: party{code: code}, leader: "Alice", memberToDeselect: "Bob"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
+
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Charlie")
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }

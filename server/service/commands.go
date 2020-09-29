@@ -22,3 +22,9 @@ type leaderSelectsMember struct {
 	leader         string
 	memberToSelect string
 }
+
+type leaderDeselectsMember struct {
+	party
+	leader           string
+	memberToDeselect string
+}
