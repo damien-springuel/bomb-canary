@@ -19,3 +19,7 @@ type leaderDeselectedMember struct {
 	party
 	deselectedMember string
 }
+
+type leaderConfirmedSelection struct {
+	party
+}

@@ -233,3 +233,51 @@ func Test_HandleLeaderDeselectsAMember_ShouldIgnoreIfWrongLeader(t *testing.T) {
 	expectedGame, _ = expectedGame.LeaderSelectsMember("Charlie")
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
+
+func Test_HandleLeaderConfirmsSelection(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Dan"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(leaderConfirmedSelection{party: party{code: code}}))
+
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Charlie")
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Dan")
+	expectedGame, _ = expectedGame.LeaderConfirmsTeamSelection()
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleLeaderConfirmsSelection_IgnoreIfNotEnoughMemberInTeam(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
+
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
+
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Charlie")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleLeaderConfirmsSelection_IgnoreWrongLeader(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Dan"})
+
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Bob"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
+
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Charlie")
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Dan")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}

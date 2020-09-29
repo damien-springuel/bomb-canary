@@ -48,6 +48,8 @@ func (s service) handleMessage(m messagebus.Message) {
 		handler = s.handleLeaderSelectsMember
 	case leaderDeselectsMember:
 		handler = s.handleLeaderDeselectsMember
+	case leaderConfirmsTeamSelection:
+		handler = s.handleLeaderConfirmsTeamSelection
 	default:
 		return
 	}
@@ -116,6 +118,23 @@ func (s service) handleLeaderDeselectsMember(currentGame gamerules.Game, message
 		messageToDispatch = leaderDeselectedMember{
 			party:            party{code: message.GetPartyCode()},
 			deselectedMember: leaderDeselectsMemberCommand.memberToDeselect,
+		}
+	}
+	return
+}
+
+func (s service) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	leaderConfirmsTeamSelectionCommand := message.(leaderConfirmsTeamSelection)
+
+	if leaderConfirmsTeamSelectionCommand.leader != currentGame.Leader() {
+		updatedGame = currentGame
+		return
+	}
+
+	updatedGame, err := currentGame.LeaderConfirmsTeamSelection()
+	if err == nil {
+		messageToDispatch = leaderConfirmedSelection{
+			party: party{code: message.GetPartyCode()},
 		}
 	}
 	return

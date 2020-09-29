@@ -28,3 +28,8 @@ type leaderDeselectsMember struct {
 	leader           string
 	memberToDeselect string
 }
+
+type leaderConfirmsTeamSelection struct {
+	party
+	leader string
+}
