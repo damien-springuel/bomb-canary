@@ -54,6 +54,10 @@ func (s service) handleMessage(m messagebus.Message) {
 		handler = s.handleApproveTeam
 	case rejectTeam:
 		handler = s.handleRejectTeam
+	case succeedMission:
+		handler = s.handleSucceedMission
+	case failMission:
+		handler = s.handleFailMission
 	default:
 		return
 	}
@@ -173,6 +177,34 @@ func (s service) handleRejectTeam(currentGame gamerules.Game, message messagebus
 			party:    party{code: message.GetPartyCode()},
 			player:   rejectTeamCommand.player,
 			approved: false,
+		}
+	}
+	return
+}
+
+func (s service) handleSucceedMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	succeedMissionCommand := message.(succeedMission)
+	updatedGame, err := currentGame.SucceedMissionBy(succeedMissionCommand.player)
+
+	if err == nil {
+		messageToDispatch = playerWorkedOnMission{
+			party:   party{code: message.GetPartyCode()},
+			player:  succeedMissionCommand.player,
+			success: true,
+		}
+	}
+	return
+}
+
+func (s service) handleFailMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	failMissionCommand := message.(failMission)
+	updatedGame, err := currentGame.FailMissionBy(failMissionCommand.player)
+
+	if err == nil {
+		messageToDispatch = playerWorkedOnMission{
+			party:   party{code: message.GetPartyCode()},
+			player:  failMissionCommand.player,
+			success: false,
 		}
 	}
 	return

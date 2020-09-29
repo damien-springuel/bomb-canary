@@ -29,3 +29,9 @@ type playerVotedOnTeam struct {
 	player   string
 	approved bool
 }
+
+type playerWorkedOnMission struct {
+	party
+	player  string
+	success bool
+}

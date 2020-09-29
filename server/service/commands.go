@@ -43,3 +43,13 @@ type rejectTeam struct {
 	party
 	player string
 }
+
+type succeedMission struct {
+	party
+	player string
+}
+
+type failMission struct {
+	party
+	player string
+}

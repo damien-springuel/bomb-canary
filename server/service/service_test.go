@@ -99,6 +99,40 @@ func newlyConfirmedTeam(service service, code string) gamerules.Game {
 	return game
 }
 
+func newlyConductingMission(service service, code string) gamerules.Game {
+	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Charlie"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Dan"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Edith"})
+	service.handleMessage(startGame{party: party{code: code}})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+
+	game := gamerules.NewGame()
+	game, _ = game.AddPlayer("Alice")
+	game, _ = game.AddPlayer("Bob")
+	game, _ = game.AddPlayer("Charlie")
+	game, _ = game.AddPlayer("Dan")
+	game, _ = game.AddPlayer("Edith")
+	game, _ = game.Start(spiesFirstGenerator{})
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.ApproveTeamBy("Alice")
+	game, _ = game.ApproveTeamBy("Bob")
+	game, _ = game.ApproveTeamBy("Charlie")
+	game, _ = game.ApproveTeamBy("Dan")
+	game, _ = game.ApproveTeamBy("Edith")
+	return game
+}
+
 func Test_CreateParty(t *testing.T) {
 	s := newService(testGenerator{returnCode: "testCode"}, nil, nil)
 	code := s.createParty()
@@ -129,7 +163,7 @@ func Test_HandleJoinPartyCommand(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleJoinPartyCommand_ShouldIgnoreIfGameAlreadyStarted(t *testing.T) {
+func Test_HandleJoinPartyCommand_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 
@@ -163,7 +197,7 @@ func Test_HandleStartGameCommand(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleStartGameCommand_ShouldIgnoreIfGameAlreadyStarted(t *testing.T) {
+func Test_HandleStartGameCommand_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 
@@ -175,7 +209,7 @@ func Test_HandleStartGameCommand_ShouldIgnoreIfGameAlreadyStarted(t *testing.T) 
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleLeaderSelectsAMember(t *testing.T) {
+func Test_HandleLeaderSelectsMember(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
@@ -187,7 +221,7 @@ func Test_HandleLeaderSelectsAMember(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleLeaderSelectsAMember_ShouldIgnoreIfMemberAlreadySelected(t *testing.T) {
+func Test_HandleLeaderSelectsMember_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
@@ -202,7 +236,7 @@ func Test_HandleLeaderSelectsAMember_ShouldIgnoreIfMemberAlreadySelected(t *test
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleLeaderSelectsAMember_ShouldIgnoreIfWrongLeader(t *testing.T) {
+func Test_HandleLeaderSelectsMember_IgnoreIfWrongLeader(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 
@@ -214,7 +248,7 @@ func Test_HandleLeaderSelectsAMember_ShouldIgnoreIfWrongLeader(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleLeaderDeselectsAMember(t *testing.T) {
+func Test_HandleLeaderDeselectsMember(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
@@ -228,7 +262,7 @@ func Test_HandleLeaderDeselectsAMember(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleLeaderDeselectsAMember_ShouldIgnoreIfMemberNotSelected(t *testing.T) {
+func Test_HandleLeaderDeselectsMember_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
@@ -243,7 +277,7 @@ func Test_HandleLeaderDeselectsAMember_ShouldIgnoreIfMemberNotSelected(t *testin
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleLeaderDeselectsAMember_ShouldIgnoreIfWrongLeader(t *testing.T) {
+func Test_HandleLeaderDeselectsMember_IgnoreIfWrongLeader(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
@@ -274,7 +308,7 @@ func Test_HandleLeaderConfirmsSelection(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleLeaderConfirmsSelection_IgnoreIfNotEnoughMemberInTeam(t *testing.T) {
+func Test_HandleLeaderConfirmsSelection_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Charlie"})
@@ -319,7 +353,7 @@ func Test_HandleApproveTeam(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleApproveTeam_IgnoreIfNotVoting(t *testing.T) {
+func Test_HandleApproveTeam_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 
@@ -344,12 +378,62 @@ func Test_HandleRejectTeam(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleRejectTeam_IgnoreIfNotVoting(t *testing.T) {
+func Test_HandleRejectTeam_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyStartedGame(service, code)
 
 	messageDispatcher.clearReceivedMessages()
 	service.handleMessage(rejectTeam{party: party{code: code}, player: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleSucceedMission(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConductingMission(service, code)
+
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(playerWorkedOnMission{party: party{code: code}, player: "Alice", success: true}))
+
+	expectedGame, _ = expectedGame.SucceedMissionBy("Alice")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleSucceedMission_IgnoreIfInvalid(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConfirmedTeam(service, code)
+
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleFailMission(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConductingMission(service, code)
+
+	service.handleMessage(failMission{party: party{code: code}, player: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(playerWorkedOnMission{party: party{code: code}, player: "Alice", success: false}))
+
+	expectedGame, _ = expectedGame.FailMissionBy("Alice")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleFailMission_IgnoreIfInvalid(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConfirmedTeam(service, code)
+
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())

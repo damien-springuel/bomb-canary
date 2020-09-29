@@ -316,11 +316,11 @@ func (g Game) workOnMissionBy(name string, worker func(name string) (votes, erro
 	return g, nil
 }
 
-func (g Game) succeedMissionBy(name string) (Game, error) {
+func (g Game) SucceedMissionBy(name string) (Game, error) {
 	return g.workOnMissionBy(name, g.missionOutcomes.approveBy)
 }
 
-func (g Game) failMissionBy(name string) (Game, error) {
+func (g Game) FailMissionBy(name string) (Game, error) {
 	return g.workOnMissionBy(name, g.missionOutcomes.rejectBy)
 }
 

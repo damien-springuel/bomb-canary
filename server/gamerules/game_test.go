@@ -515,7 +515,7 @@ func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testin
 
 func Test_SucceedMission(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, err := newGame.succeedMissionBy("Alice")
+	newGame, err := newGame.SucceedMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -524,7 +524,7 @@ func Test_SucceedMission(t *testing.T) {
 
 func Test_SucceedMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, err := newGame.succeedMissionBy("Charlie")
+	newGame, err := newGame.SucceedMissionBy("Charlie")
 
 	g := NewWithT(t)
 	g.Expect(err).To(Equal(errPlayerNotFound))
@@ -532,8 +532,8 @@ func Test_SucceedMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
 
 func Test_SucceedMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, _ = newGame.succeedMissionBy("Alice")
-	newGame, err := newGame.succeedMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, err := newGame.SucceedMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(Equal(errPlayerHasAlreadyVoted))
@@ -541,7 +541,7 @@ func Test_SucceedMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) 
 
 func Test_SucceedMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, err := newGame.succeedMissionBy("Alice")
+	newGame, err := newGame.SucceedMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -549,7 +549,7 @@ func Test_SucceedMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
 
 func Test_FailMission(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, err := newGame.failMissionBy("Alice")
+	newGame, err := newGame.FailMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -558,7 +558,7 @@ func Test_FailMission(t *testing.T) {
 
 func Test_FailMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, err := newGame.failMissionBy("Charlie")
+	newGame, err := newGame.FailMissionBy("Charlie")
 
 	g := NewWithT(t)
 	g.Expect(err).To(Equal(errPlayerNotFound))
@@ -566,8 +566,8 @@ func Test_FailMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
 
 func Test_FailMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, _ = newGame.failMissionBy("Alice")
-	newGame, err := newGame.failMissionBy("Alice")
+	newGame, _ = newGame.FailMissionBy("Alice")
+	newGame, err := newGame.FailMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(Equal(errPlayerHasAlreadyVoted))
@@ -575,7 +575,7 @@ func Test_FailMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) {
 
 func Test_FailMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, err := newGame.failMissionBy("Alice")
+	newGame, err := newGame.FailMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -583,8 +583,8 @@ func Test_FailMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
 
 func Test_SucceedFailMission_ShouldMoveToSelectingTeamWhenEveryoneWorkedOnTheMission(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, _ = newGame.failMissionBy("Alice")
-	newGame, err := newGame.failMissionBy("Bob")
+	newGame, _ = newGame.FailMissionBy("Alice")
+	newGame, err := newGame.FailMissionBy("Bob")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -597,8 +597,8 @@ func Test_SucceedFailMission_ShouldMoveToSelectingTeamWhenEveryoneWorkedOnTheMis
 
 func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, _ = newGame.succeedMissionBy("Alice")
-	newGame, _ = newGame.succeedMissionBy("Bob")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Bob")
 
 	// Second turn
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
@@ -610,9 +610,9 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	newGame, _ = newGame.ApproveTeamBy("Charlie")
 	newGame, _ = newGame.ApproveTeamBy("Dan")
 	newGame, _ = newGame.ApproveTeamBy("Edith")
-	newGame, _ = newGame.succeedMissionBy("Alice")
-	newGame, _ = newGame.succeedMissionBy("Bob")
-	newGame, _ = newGame.succeedMissionBy("Charlie")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Bob")
+	newGame, _ = newGame.SucceedMissionBy("Charlie")
 
 	// Third turn
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
@@ -623,8 +623,8 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	newGame, _ = newGame.ApproveTeamBy("Charlie")
 	newGame, _ = newGame.ApproveTeamBy("Dan")
 	newGame, _ = newGame.ApproveTeamBy("Edith")
-	newGame, _ = newGame.succeedMissionBy("Alice")
-	newGame, err := newGame.succeedMissionBy("Bob")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, err := newGame.SucceedMissionBy("Bob")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -657,8 +657,8 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.ApproveTeamBy("Edith")
 	newGame, _ = newGame.ApproveTeamBy("Fred")
 	newGame, _ = newGame.ApproveTeamBy("Gordon")
-	newGame, _ = newGame.succeedMissionBy("Alice")
-	newGame, _ = newGame.succeedMissionBy("Bob")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Bob")
 
 	// Second turn
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
@@ -672,9 +672,9 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.ApproveTeamBy("Edith")
 	newGame, _ = newGame.ApproveTeamBy("Fred")
 	newGame, _ = newGame.ApproveTeamBy("Gordon")
-	newGame, _ = newGame.succeedMissionBy("Alice")
-	newGame, _ = newGame.succeedMissionBy("Bob")
-	newGame, _ = newGame.failMissionBy("Charlie")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Bob")
+	newGame, _ = newGame.FailMissionBy("Charlie")
 
 	// Third turn
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
@@ -688,9 +688,9 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.ApproveTeamBy("Edith")
 	newGame, _ = newGame.ApproveTeamBy("Fred")
 	newGame, _ = newGame.ApproveTeamBy("Gordon")
-	newGame, _ = newGame.succeedMissionBy("Alice")
-	newGame, _ = newGame.succeedMissionBy("Bob")
-	newGame, _ = newGame.failMissionBy("Charlie")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Bob")
+	newGame, _ = newGame.FailMissionBy("Charlie")
 
 	// Fourth turn
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
@@ -705,10 +705,10 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.ApproveTeamBy("Edith")
 	newGame, _ = newGame.ApproveTeamBy("Fred")
 	conductingFourthMission, _ := newGame.ApproveTeamBy("Gordon")
-	newGame, _ = conductingFourthMission.succeedMissionBy("Alice")
-	newGame, _ = newGame.succeedMissionBy("Bob")
-	newGame, _ = newGame.succeedMissionBy("Charlie")
-	newGame, _ = newGame.failMissionBy("Dan")
+	newGame, _ = conductingFourthMission.SucceedMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Bob")
+	newGame, _ = newGame.SucceedMissionBy("Charlie")
+	newGame, _ = newGame.FailMissionBy("Dan")
 
 	g := NewWithT(t)
 	g.Expect(newGame.missionResults).To(Equal(
@@ -719,10 +719,10 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 			fourth: true,
 		})))
 
-	newGame, _ = conductingFourthMission.succeedMissionBy("Alice")
-	newGame, _ = newGame.succeedMissionBy("Bob")
-	newGame, _ = newGame.failMissionBy("Charlie")
-	newGame, _ = newGame.failMissionBy("Dan")
+	newGame, _ = conductingFourthMission.SucceedMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Bob")
+	newGame, _ = newGame.FailMissionBy("Charlie")
+	newGame, _ = newGame.FailMissionBy("Dan")
 	g.Expect(newGame.missionResults).To(Equal(
 		missionResults(map[mission]bool{
 			first:  true,
