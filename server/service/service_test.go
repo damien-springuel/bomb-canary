@@ -344,14 +344,14 @@ func Test_HandleRejectTeam(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-// func Test_HandleApproveTeam_IgnoreIfNotVoting(t *testing.T) {
-// 	messageDispatcher, service, code := setupService()
-// 	expectedGame := newlyStartedGame(service, code)
+func Test_HandleRejectTeam_IgnoreIfNotVoting(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
 
-// 	messageDispatcher.clearReceivedMessages()
-// 	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Alice"})
 
-// 	g := NewWithT(t)
-// 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
-// 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
-// }
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
