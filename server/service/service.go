@@ -189,6 +189,12 @@ func (s service) handleApproveTeam(currentGame gamerules.Game, message messagebu
 				voteFailures: updatedGame.VoteFailures(),
 			},
 		)
+		messagesToDispatch = append(messagesToDispatch,
+			leaderStartedToSelectMembers{
+				party:  party{code: message.GetPartyCode()},
+				leader: updatedGame.Leader(),
+			},
+		)
 	} else if updatedGame.State() == gamerules.ConductingMission {
 		messagesToDispatch = append(messagesToDispatch,
 			allPlayerVotedOnTeam{
@@ -205,12 +211,38 @@ func (s service) handleRejectTeam(currentGame gamerules.Game, message messagebus
 	rejectTeamCommand := message.(rejectTeam)
 	updatedGame, err := currentGame.RejectTeamBy(rejectTeamCommand.player)
 
-	if err == nil {
+	if err != nil {
+		updatedGame = currentGame
+		return
+	}
+
+	messagesToDispatch = append(messagesToDispatch,
+		playerVotedOnTeam{
+			party:    party{code: message.GetPartyCode()},
+			player:   rejectTeamCommand.player,
+			approved: false,
+		},
+	)
+
+	if updatedGame.State() == gamerules.SelectingTeam {
 		messagesToDispatch = append(messagesToDispatch,
-			playerVotedOnTeam{
+			allPlayerVotedOnTeam{
+				party:        party{code: message.GetPartyCode()},
+				approved:     false,
+				voteFailures: updatedGame.VoteFailures(),
+			},
+		)
+		messagesToDispatch = append(messagesToDispatch,
+			leaderStartedToSelectMembers{
+				party:  party{code: message.GetPartyCode()},
+				leader: updatedGame.Leader(),
+			},
+		)
+	} else if updatedGame.State() == gamerules.ConductingMission {
+		messagesToDispatch = append(messagesToDispatch,
+			allPlayerVotedOnTeam{
 				party:    party{code: message.GetPartyCode()},
-				player:   rejectTeamCommand.player,
-				approved: false,
+				approved: true,
 			},
 		)
 	}
