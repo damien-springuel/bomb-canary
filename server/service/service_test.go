@@ -75,6 +75,30 @@ func newlyStartedGame(service service, code string) gamerules.Game {
 	return game
 }
 
+func newlyConfirmedTeam(service service, code string) gamerules.Game {
+	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Charlie"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Dan"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Edith"})
+	service.handleMessage(startGame{party: party{code: code}})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Alice"})
+
+	game := gamerules.NewGame()
+	game, _ = game.AddPlayer("Alice")
+	game, _ = game.AddPlayer("Bob")
+	game, _ = game.AddPlayer("Charlie")
+	game, _ = game.AddPlayer("Dan")
+	game, _ = game.AddPlayer("Edith")
+	game, _ = game.Start(spiesFirstGenerator{})
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	return game
+}
+
 func Test_CreateParty(t *testing.T) {
 	s := newService(testGenerator{returnCode: "testCode"}, nil, nil)
 	code := s.createParty()
@@ -281,3 +305,53 @@ func Test_HandleLeaderConfirmsSelection_IgnoreWrongLeader(t *testing.T) {
 	expectedGame, _ = expectedGame.LeaderSelectsMember("Dan")
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
+
+func Test_HandleApproveTeam(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConfirmedTeam(service, code)
+
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Alice", approved: true}))
+
+	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleApproveTeam_IgnoreIfNotVoting(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+
+	messageDispatcher.clearReceivedMessages()
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleRejectTeam(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConfirmedTeam(service, code)
+
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Alice", approved: false}))
+
+	expectedGame, _ = expectedGame.RejectTeamBy("Alice")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+// func Test_HandleApproveTeam_IgnoreIfNotVoting(t *testing.T) {
+// 	messageDispatcher, service, code := setupService()
+// 	expectedGame := newlyStartedGame(service, code)
+
+// 	messageDispatcher.clearReceivedMessages()
+// 	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+
+// 	g := NewWithT(t)
+// 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
+// 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+// }

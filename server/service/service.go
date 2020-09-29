@@ -50,10 +50,15 @@ func (s service) handleMessage(m messagebus.Message) {
 		handler = s.handleLeaderDeselectsMember
 	case leaderConfirmsTeamSelection:
 		handler = s.handleLeaderConfirmsTeamSelection
+	case approveTeam:
+		handler = s.handleApproveTeam
+	case rejectTeam:
+		handler = s.handleRejectTeam
 	default:
 		return
 	}
 	updatedGame, messageToDispatch := handler(s.gamesByPartyCode[m.GetPartyCode()], m)
+
 	s.gamesByPartyCode[m.GetPartyCode()] = updatedGame
 	if messageToDispatch != nil {
 		s.messageDispatcher.dispatchMessage(messageToDispatch)
@@ -67,6 +72,7 @@ func (s service) getGameForPartyCode(code string) gamerules.Game {
 func (s service) handleJoinPartyCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
 	joinPartyCommand := message.(joinParty)
 	updatedGame, err := currentGame.AddPlayer(joinPartyCommand.user)
+
 	if err == nil {
 		messageToDispatch = playerJoined{
 			party: party{code: message.GetPartyCode()},
@@ -78,6 +84,7 @@ func (s service) handleJoinPartyCommand(currentGame gamerules.Game, message mess
 
 func (s service) handleStartGameCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
 	updatedGame, err := currentGame.Start(s.allegianceGenerator)
+
 	if err == nil {
 		messageToDispatch = leaderStartedToSelectMembers{
 			party:  party{code: message.GetPartyCode()},
@@ -96,6 +103,7 @@ func (s service) handleLeaderSelectsMember(currentGame gamerules.Game, message m
 	}
 
 	updatedGame, err := currentGame.LeaderSelectsMember(leaderSelectsMemberCommand.memberToSelect)
+
 	if err == nil {
 		messageToDispatch = leaderSelectedMember{
 			party:          party{code: message.GetPartyCode()},
@@ -114,6 +122,7 @@ func (s service) handleLeaderDeselectsMember(currentGame gamerules.Game, message
 	}
 
 	updatedGame, err := currentGame.LeaderDeselectsMember(leaderDeselectsMemberCommand.memberToDeselect)
+
 	if err == nil {
 		messageToDispatch = leaderDeselectedMember{
 			party:            party{code: message.GetPartyCode()},
@@ -132,9 +141,38 @@ func (s service) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, m
 	}
 
 	updatedGame, err := currentGame.LeaderConfirmsTeamSelection()
+
 	if err == nil {
 		messageToDispatch = leaderConfirmedSelection{
 			party: party{code: message.GetPartyCode()},
+		}
+	}
+	return
+}
+
+func (s service) handleApproveTeam(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	approveTeamCommand := message.(approveTeam)
+	updatedGame, err := currentGame.ApproveTeamBy(approveTeamCommand.player)
+
+	if err == nil {
+		messageToDispatch = playerVotedOnTeam{
+			party:    party{code: message.GetPartyCode()},
+			player:   approveTeamCommand.player,
+			approved: true,
+		}
+	}
+	return
+}
+
+func (s service) handleRejectTeam(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	rejectTeamCommand := message.(rejectTeam)
+	updatedGame, err := currentGame.RejectTeamBy(rejectTeamCommand.player)
+
+	if err == nil {
+		messageToDispatch = playerVotedOnTeam{
+			party:    party{code: message.GetPartyCode()},
+			player:   rejectTeamCommand.player,
+			approved: false,
 		}
 	}
 	return

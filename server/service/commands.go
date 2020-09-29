@@ -33,3 +33,13 @@ type leaderConfirmsTeamSelection struct {
 	party
 	leader string
 }
+
+type approveTeam struct {
+	party
+	player string
+}
+
+type rejectTeam struct {
+	party
+	player string
+}

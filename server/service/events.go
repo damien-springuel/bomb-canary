@@ -23,3 +23,9 @@ type leaderDeselectedMember struct {
 type leaderConfirmedSelection struct {
 	party
 }
+
+type playerVotedOnTeam struct {
+	party
+	player   string
+	approved bool
+}

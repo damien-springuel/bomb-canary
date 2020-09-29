@@ -273,11 +273,11 @@ func (g Game) voteBy(name string, voter func(name string) (votes, error)) (Game,
 	return g, nil
 }
 
-func (g Game) approveTeamBy(name string) (Game, error) {
+func (g Game) ApproveTeamBy(name string) (Game, error) {
 	return g.voteBy(name, g.teamVotes.approveBy)
 }
 
-func (g Game) rejectTeamBy(name string) (Game, error) {
+func (g Game) RejectTeamBy(name string) (Game, error) {
 	return g.voteBy(name, g.teamVotes.rejectBy)
 }
 
