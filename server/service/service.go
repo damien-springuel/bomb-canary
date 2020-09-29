@@ -87,6 +87,12 @@ func (s service) handleStartGameCommand(currentGame gamerules.Game, message mess
 
 func (s service) handleLeaderSelectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
 	leaderSelectsMemberCommand := message.(leaderSelectsMember)
+
+	if leaderSelectsMemberCommand.leader != currentGame.Leader() {
+		updatedGame = currentGame
+		return
+	}
+
 	updatedGame, err := currentGame.LeaderSelectsMember(leaderSelectsMemberCommand.memberToSelect)
 	if err == nil {
 		messageToDispatch = leaderSelectedMember{
@@ -99,6 +105,12 @@ func (s service) handleLeaderSelectsMember(currentGame gamerules.Game, message m
 
 func (s service) handleLeaderDeselectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
 	leaderDeselectsMemberCommand := message.(leaderDeselectsMember)
+
+	if leaderDeselectsMemberCommand.leader != currentGame.Leader() {
+		updatedGame = currentGame
+		return
+	}
+
 	updatedGame, err := currentGame.LeaderDeselectsMember(leaderDeselectsMemberCommand.memberToDeselect)
 	if err == nil {
 		messageToDispatch = leaderDeselectedMember{
