@@ -64,7 +64,7 @@ func (mb *messageBus) dispatchMessage(m Message) {
 	mb.in <- m
 }
 
-func (m *messageBus) SubscribeConsumer(consumer consumer) {
+func (m *messageBus) subscribeConsumer(consumer consumer) {
 	m.consumers = append(m.consumers, newBufferedConsumer(consumer))
 }
 
