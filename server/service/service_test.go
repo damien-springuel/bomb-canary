@@ -20,7 +20,7 @@ type testMessageDispatcher struct {
 	receivedMessages []messagebus.Message
 }
 
-func (t *testMessageDispatcher) dispatchMessage(m messagebus.Message) {
+func (t *testMessageDispatcher) dispatch(m messagebus.Message) {
 	t.receivedMessages = append(t.receivedMessages, m)
 }
 

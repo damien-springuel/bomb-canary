@@ -12,7 +12,7 @@ type codeGenerator interface {
 }
 
 type messageDispatcher interface {
-	dispatchMessage(m messagebus.Message)
+	dispatch(m messagebus.Message)
 }
 
 type service struct {
@@ -65,7 +65,7 @@ func (s service) handleMessage(m messagebus.Message) {
 
 	s.gamesByPartyCode[m.GetPartyCode()] = updatedGame
 	for _, messageToDispatch := range messagesToDispatch {
-		s.messageDispatcher.dispatchMessage(messageToDispatch)
+		s.messageDispatcher.dispatch(messageToDispatch)
 	}
 }
 
