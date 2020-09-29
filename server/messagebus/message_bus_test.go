@@ -8,7 +8,6 @@ import (
 
 type testConsumer struct {
 	receivedMessage string
-	name            string
 }
 
 func (t *testConsumer) consume(m Message) {
@@ -18,9 +17,9 @@ func (t *testConsumer) consume(m Message) {
 func Test_DispatchMessage(t *testing.T) {
 	mb := NewMessageBus()
 
-	testConsumer1 := &testConsumer{name: "1"}
-	testConsumer2 := &testConsumer{name: "2"}
-	testConsumer3 := &testConsumer{name: "3"}
+	testConsumer1 := &testConsumer{}
+	testConsumer2 := &testConsumer{}
+	testConsumer3 := &testConsumer{}
 	mb.SubscribeConsumer(testConsumer1)
 	mb.SubscribeConsumer(testConsumer2)
 	mb.SubscribeConsumer(testConsumer3)
