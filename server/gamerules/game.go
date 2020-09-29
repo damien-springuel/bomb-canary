@@ -19,14 +19,14 @@ var (
 	errTeamIsIncomplete          = errors.New("team is imcomplete")
 )
 
-type state string
+type State string
 
 const (
-	notStarted        state = "notStarted"
-	selectingTeam     state = "selectingTeam"
-	votingOnTeam      state = "votingOnTeam"
-	conductingMission state = "conductingMission"
-	gameOver          state = "gameOver"
+	NotStarted        State = "notStarted"
+	SelectingTeam     State = "selectingTeam"
+	VotingOnTeam      State = "votingOnTeam"
+	ConductingMission State = "conductingMission"
+	GameOver          State = "gameOver"
 )
 
 type mission int
@@ -112,7 +112,7 @@ var (
 )
 
 type Game struct {
-	state            state
+	state            State
 	players          players
 	playerAllegiance map[string]Allegiance
 	leader           string
@@ -125,12 +125,12 @@ type Game struct {
 }
 
 func NewGame() Game {
-	return Game{state: notStarted}
+	return Game{state: NotStarted}
 }
 
 func (g Game) AddPlayer(name string) (Game, error) {
-	if g.state != notStarted {
-		return g, fmt.Errorf("%w: can only add player during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
+	if g.state != NotStarted {
+		return g, fmt.Errorf("%w: can only add player during %s state, state was %s", errInvalidStateForAction, NotStarted, g.state)
 	}
 
 	if g.players.count() == maxNumberOfPlayers {
@@ -147,8 +147,8 @@ func (g Game) AddPlayer(name string) (Game, error) {
 }
 
 func (g Game) removePlayer(name string) (Game, error) {
-	if g.state != notStarted {
-		return g, fmt.Errorf("%w: can only remove player during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
+	if g.state != NotStarted {
+		return g, fmt.Errorf("%w: can only remove player during %s state, state was %s", errInvalidStateForAction, NotStarted, g.state)
 	}
 
 	p, err := g.players.remove(name)
@@ -161,8 +161,8 @@ func (g Game) removePlayer(name string) (Game, error) {
 }
 
 func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, error) {
-	if g.state != notStarted {
-		return g, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
+	if g.state != NotStarted {
+		return g, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, NotStarted, g.state)
 	}
 
 	if g.players.count() < minNumberOfPlayers {
@@ -175,7 +175,7 @@ func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, error) {
 		g.playerAllegiance[g.players[i]] = a
 	}
 
-	g.state = selectingTeam
+	g.state = SelectingTeam
 	g.leader = g.players[0]
 	g.currentMission = first
 	return g, nil
@@ -190,8 +190,8 @@ func (g Game) nbFailuresRequiredToFailMission() int {
 }
 
 func (g Game) LeaderSelectsMember(name string) (Game, error) {
-	if g.state != selectingTeam {
-		return g, fmt.Errorf("%w: can only select team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
+	if g.state != SelectingTeam {
+		return g, fmt.Errorf("%w: can only select team members during %s state, state was %s", errInvalidStateForAction, SelectingTeam, g.state)
 	}
 
 	if !g.players.exists(name) {
@@ -212,8 +212,8 @@ func (g Game) LeaderSelectsMember(name string) (Game, error) {
 }
 
 func (g Game) LeaderDeselectsMember(name string) (Game, error) {
-	if g.state != selectingTeam {
-		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
+	if g.state != SelectingTeam {
+		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, SelectingTeam, g.state)
 	}
 
 	newTeam, err := g.currentTeam.remove(name)
@@ -226,21 +226,21 @@ func (g Game) LeaderDeselectsMember(name string) (Game, error) {
 }
 
 func (g Game) LeaderConfirmsTeamSelection() (Game, error) {
-	if g.state != selectingTeam {
-		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
+	if g.state != SelectingTeam {
+		return g, fmt.Errorf("%w: can only deselect team members during %s state, state was %s", errInvalidStateForAction, SelectingTeam, g.state)
 	}
 
 	if g.currentTeam.count() < g.nbPeopleThatHaveToGoOnMission() {
 		return g, fmt.Errorf("%w: need %d people, currently have %d", errTeamIsIncomplete, g.nbPeopleThatHaveToGoOnMission(), g.currentTeam.count())
 	}
 
-	g.state = votingOnTeam
+	g.state = VotingOnTeam
 	return g, nil
 }
 
 func (g Game) voteBy(name string, voter func(name string) (votes, error)) (Game, error) {
-	if g.state != votingOnTeam {
-		return g, fmt.Errorf("%w: can only vote on team during %s state, state was %s", errInvalidStateForAction, votingOnTeam, g.state)
+	if g.state != VotingOnTeam {
+		return g, fmt.Errorf("%w: can only vote on team during %s state, state was %s", errInvalidStateForAction, VotingOnTeam, g.state)
 	}
 
 	if !g.players.exists(name) {
@@ -254,14 +254,14 @@ func (g Game) voteBy(name string, voter func(name string) (votes, error)) (Game,
 
 	if newVotes.hasEveryoneVoted(g.players.count()) {
 		if newVotes.hasMajority() {
-			g.state = conductingMission
+			g.state = ConductingMission
 			g.voteFailures = 0
 		} else {
-			g.state = selectingTeam
+			g.state = SelectingTeam
 			g.voteFailures += 1
 
 			if g.voteFailures == maxVoteFailures {
-				g.state = gameOver
+				g.state = GameOver
 			} else {
 				g.leader = g.players.after(g.leader)
 			}
@@ -282,8 +282,8 @@ func (g Game) RejectTeamBy(name string) (Game, error) {
 }
 
 func (g Game) workOnMissionBy(name string, worker func(name string) (votes, error)) (Game, error) {
-	if g.state != conductingMission {
-		return g, fmt.Errorf("%w: can only work on mission during %s state, state was %s", errInvalidStateForAction, conductingMission, g.state)
+	if g.state != ConductingMission {
+		return g, fmt.Errorf("%w: can only work on mission during %s state, state was %s", errInvalidStateForAction, ConductingMission, g.state)
 	}
 
 	if !g.currentTeam.exists(name) {
@@ -303,9 +303,9 @@ func (g Game) workOnMissionBy(name string, worker func(name string) (votes, erro
 		}
 
 		if g.missionResults.hasThreeSuccessesOrFailures() {
-			g.state = gameOver
+			g.state = GameOver
 		} else {
-			g.state = selectingTeam
+			g.state = SelectingTeam
 			g.currentMission += 1
 			g.leader = g.players.after(g.leader)
 		}
@@ -326,4 +326,12 @@ func (g Game) FailMissionBy(name string) (Game, error) {
 
 func (g Game) Leader() string {
 	return g.leader
+}
+
+func (g Game) State() State {
+	return g.state
+}
+
+func (g Game) VoteFailures() int {
+	return g.voteFailures
 }
