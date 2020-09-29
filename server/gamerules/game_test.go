@@ -33,8 +33,8 @@ func createNewlyStartedGame() Game {
 
 func createNewlyVotingOnTeamGame() Game {
 	newGame := createNewlyStartedGame()
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	return newGame
 }
@@ -212,7 +212,7 @@ func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
 func Test_LeaderSelectsAMember(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, err := newGame.leaderSelectsMember("Alice")
+	newGame, err := newGame.LeaderSelectsMember("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -222,7 +222,7 @@ func Test_LeaderSelectsAMember(t *testing.T) {
 func Test_LeaderSelectsAMember_ShouldErrorIfPlayerNotExists(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, err := newGame.leaderSelectsMember("NotThere")
+	newGame, err := newGame.LeaderSelectsMember("NotThere")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
@@ -231,8 +231,8 @@ func Test_LeaderSelectsAMember_ShouldErrorIfPlayerNotExists(t *testing.T) {
 func Test_LeaderSelectsAMember_ShouldErrorIfAlreadyInTeam(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, err := newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, err := newGame.LeaderSelectsMember("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerAlreadyInGroup))
@@ -241,9 +241,9 @@ func Test_LeaderSelectsAMember_ShouldErrorIfAlreadyInTeam(t *testing.T) {
 func Test_LeaderSelectsAMember_ShouldErrorIfTeamIsComplete(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
-	newGame, err := newGame.leaderSelectsMember("Charlie")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
+	newGame, err := newGame.LeaderSelectsMember("Charlie")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errTeamIsFull))
@@ -252,7 +252,7 @@ func Test_LeaderSelectsAMember_ShouldErrorIfTeamIsComplete(t *testing.T) {
 func Test_LeaderSelectsAMember_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 	newGame := NewGame()
 
-	newGame, err := newGame.leaderSelectsMember("Alice")
+	newGame, err := newGame.LeaderSelectsMember("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -261,7 +261,7 @@ func Test_LeaderSelectsAMember_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 func Test_LeaderDeselectsAMember(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
 	newGame, err := newGame.leaderDeselectsMember("Alice")
 
 	g := NewWithT(t)
@@ -272,7 +272,7 @@ func Test_LeaderDeselectsAMember(t *testing.T) {
 func Test_LeaderDeselectsAMember_ShouldErrorIfPlayerNotInTeam(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
 	newGame, err := newGame.leaderDeselectsMember("Bob")
 
 	g := NewWithT(t)
@@ -291,8 +291,8 @@ func Test_LeaderDeselectsAMember_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 func Test_LeaderConfirmsSelection(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, err := newGame.leaderConfirmsTeamSelection()
 
 	g := NewWithT(t)
@@ -303,7 +303,7 @@ func Test_LeaderConfirmsSelection(t *testing.T) {
 func Test_LeaderConfirmsSelection_ShouldErrorIfTeamIsIncomplete(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, _ = newGame.leaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
 	newGame, err := newGame.leaderConfirmsTeamSelection()
 
 	g := NewWithT(t)
@@ -445,8 +445,8 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
 	g.Expect(newGame.leader).To(Equal("Bob"))
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -455,8 +455,8 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
 	g.Expect(newGame.leader).To(Equal("Charlie"))
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -465,8 +465,8 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
 	g.Expect(newGame.leader).To(Equal("Dan"))
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -475,8 +475,8 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
 	g.Expect(newGame.leader).To(Equal("Edith"))
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -498,8 +498,8 @@ func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testin
 	newGame, _ = newGame.rejectTeamBy("Dan")
 	newGame, _ = newGame.rejectTeamBy("Edith")
 
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -601,9 +601,9 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	newGame, _ = newGame.succeedMissionBy("Bob")
 
 	// Second turn
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
-	newGame, _ = newGame.leaderSelectsMember("Charlie")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Charlie")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -615,8 +615,8 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	newGame, _ = newGame.succeedMissionBy("Charlie")
 
 	// Third turn
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -647,8 +647,8 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.Start(spiesFirstGenerator{})
 
 	// First turn
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -661,9 +661,9 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.succeedMissionBy("Bob")
 
 	// Second turn
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
-	newGame, _ = newGame.leaderSelectsMember("Charlie")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Charlie")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -677,9 +677,9 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.failMissionBy("Charlie")
 
 	// Third turn
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
-	newGame, _ = newGame.leaderSelectsMember("Charlie")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Charlie")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")
@@ -693,10 +693,10 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.failMissionBy("Charlie")
 
 	// Fourth turn
-	newGame, _ = newGame.leaderSelectsMember("Alice")
-	newGame, _ = newGame.leaderSelectsMember("Bob")
-	newGame, _ = newGame.leaderSelectsMember("Charlie")
-	newGame, _ = newGame.leaderSelectsMember("Dan")
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Charlie")
+	newGame, _ = newGame.LeaderSelectsMember("Dan")
 	newGame, _ = newGame.leaderConfirmsTeamSelection()
 	newGame, _ = newGame.approveTeamBy("Alice")
 	newGame, _ = newGame.approveTeamBy("Bob")

@@ -189,7 +189,7 @@ func (g Game) nbFailuresRequiredToFailMission() int {
 	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbFailuresRequiredToFailMission
 }
 
-func (g Game) leaderSelectsMember(name string) (Game, error) {
+func (g Game) LeaderSelectsMember(name string) (Game, error) {
 	if g.state != selectingTeam {
 		return g, fmt.Errorf("%w: can only select team members during %s state, state was %s", errInvalidStateForAction, selectingTeam, g.state)
 	}
@@ -323,4 +323,8 @@ func (g Game) succeedMissionBy(name string) (Game, error) {
 
 func (g Game) failMissionBy(name string) (Game, error) {
 	return g.workOnMissionBy(name, g.missionOutcomes.rejectBy)
+}
+
+func (g Game) Leader() string {
+	return g.leader
 }

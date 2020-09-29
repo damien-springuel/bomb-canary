@@ -16,3 +16,9 @@ type joinParty struct {
 type startGame struct {
 	party
 }
+
+type leaderSelectsMember struct {
+	party
+	leader         string
+	memberToSelect string
+}

@@ -75,17 +75,13 @@ func Test_HandleJoinPartyCommand(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleStartGameCommand(t *testing.T) {
+func Test_HandleJoinPartyCommand_ShouldIgnoreIfGameAlreadyStarted(t *testing.T) {
 	messageDispatcher, service, code := setupService()
-	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
-	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
-	service.handleMessage(joinParty{party: party{code: code}, user: "Charlie"})
-	service.handleMessage(joinParty{party: party{code: code}, user: "Dan"})
-	service.handleMessage(joinParty{party: party{code: code}, user: "Edith"})
-	service.handleMessage(startGame{party: party{code: code}})
+	newlyStartedGame(service, code)
+	service.handleMessage(joinParty{party: party{code: code}, user: "Fred"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.lastReceivedMessage).To(Equal(gameStarted{party: party{code: code}}))
+	g.Expect(messageDispatcher.lastReceivedMessage).To(Not(Equal(playerJoined{party: party{code: code}, user: "Fred"})))
 
 	expectedGame := gamerules.NewGame()
 	expectedGame, _ = expectedGame.AddPlayer("Alice")
@@ -94,5 +90,45 @@ func Test_HandleStartGameCommand(t *testing.T) {
 	expectedGame, _ = expectedGame.AddPlayer("Dan")
 	expectedGame, _ = expectedGame.AddPlayer("Edith")
 	expectedGame, _ = expectedGame.Start(spiesFirstGenerator{})
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func newlyStartedGame(service service, code string) gamerules.Game {
+	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Charlie"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Dan"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Edith"})
+	service.handleMessage(startGame{party: party{code: code}})
+
+	game := gamerules.NewGame()
+	game, _ = game.AddPlayer("Alice")
+	game, _ = game.AddPlayer("Bob")
+	game, _ = game.AddPlayer("Charlie")
+	game, _ = game.AddPlayer("Dan")
+	game, _ = game.AddPlayer("Edith")
+	game, _ = game.Start(spiesFirstGenerator{})
+	return game
+}
+
+func Test_HandleStartGameCommand(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastReceivedMessage).To(Equal(gameStarted{party: party{code: code}, leader: "Alice"}))
+
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleLeaderSelectsAMember(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyStartedGame(service, code)
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Alice"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastReceivedMessage).To(Equal(leaderSelectedMember{party: party{code: code}, selectedMember: "Alice"}))
+
+	expectedGame, _ = expectedGame.LeaderSelectsMember("Alice")
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }

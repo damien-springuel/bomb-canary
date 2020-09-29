@@ -44,6 +44,10 @@ func (s service) handleMessage(m messagebus.Message) {
 		handler = s.handleJoinPartyCommand
 	case startGame:
 		handler = s.handleStartGameCommand
+	case leaderSelectsMember:
+		handler = s.handleLeaderSelectsMember
+	default:
+		return
 	}
 	updatedGame, messageToDispatch := handler(s.gamesByPartyCode[m.GetPartyCode()], m)
 	s.gamesByPartyCode[m.GetPartyCode()] = updatedGame
@@ -56,13 +60,31 @@ func (s service) getGameForPartyCode(code string) gamerules.Game {
 
 func (s service) handleJoinPartyCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
 	joinPartyCommand := message.(joinParty)
-	updatedGame, _ = currentGame.AddPlayer(joinPartyCommand.user)
-	messageToDispatch = playerJoined{party: party{code: message.GetPartyCode()}, user: joinPartyCommand.user}
+	updatedGame, err := currentGame.AddPlayer(joinPartyCommand.user)
+	if err == nil {
+		messageToDispatch = playerJoined{
+			party: party{code: message.GetPartyCode()},
+			user:  joinPartyCommand.user,
+		}
+	}
 	return
 }
 
 func (s service) handleStartGameCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
 	updatedGame, _ = currentGame.Start(s.allegianceGenerator)
-	messageToDispatch = gameStarted{party: party{code: message.GetPartyCode()}}
+	messageToDispatch = gameStarted{
+		party:  party{code: message.GetPartyCode()},
+		leader: updatedGame.Leader(),
+	}
+	return
+}
+
+func (s service) handleLeaderSelectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
+	leaderSelectsMemberCommand := message.(leaderSelectsMember)
+	updatedGame, _ = currentGame.LeaderSelectsMember(leaderSelectsMemberCommand.leader)
+	messageToDispatch = leaderSelectedMember{
+		party:          party{code: message.GetPartyCode()},
+		selectedMember: leaderSelectsMemberCommand.memberToSelect,
+	}
 	return
 }
