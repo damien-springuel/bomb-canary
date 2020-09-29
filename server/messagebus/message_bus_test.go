@@ -27,7 +27,7 @@ func Test_DispatchMessage(t *testing.T) {
 	mb.dispatchMessage("m1")
 	mb.dispatchMessage("m2")
 	mb.dispatchMessage("m3")
-	mb.stop()
+	mb.close()
 
 	g := NewWithT(t)
 	g.Expect(testConsumer1.receivedMessage).To(Equal("m1m2m3"))
