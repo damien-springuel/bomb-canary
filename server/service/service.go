@@ -77,7 +77,7 @@ func (s service) handleJoinPartyCommand(currentGame gamerules.Game, message mess
 func (s service) handleStartGameCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messageToDispatch messagebus.Message) {
 	updatedGame, err := currentGame.Start(s.allegianceGenerator)
 	if err == nil {
-		messageToDispatch = gameStarted{
+		messageToDispatch = leaderStartedToSelectMembers{
 			party:  party{code: message.GetPartyCode()},
 			leader: updatedGame.Leader(),
 		}

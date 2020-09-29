@@ -135,7 +135,7 @@ func Test_HandleStartGameCommand(t *testing.T) {
 	expectedGame := newlyStartedGame(service, code)
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.lastMessage()).To(Equal(gameStarted{party: party{code: code}, leader: "Alice"}))
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(leaderStartedToSelectMembers{party: party{code: code}, leader: "Alice"}))
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 

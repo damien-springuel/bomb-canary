@@ -5,7 +5,7 @@ type playerJoined struct {
 	user string
 }
 
-type gameStarted struct {
+type leaderStartedToSelectMembers struct {
 	party
 	leader string
 }
