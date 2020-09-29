@@ -11,7 +11,15 @@ type testConsumer struct {
 }
 
 func (t *testConsumer) consume(m Message) {
-	t.receivedMessage += m.(string)
+	t.receivedMessage += m.(testMessage).message
+}
+
+type testMessage struct {
+	message string
+}
+
+func (t testMessage) GetPartyCode() string {
+	return ""
 }
 
 func Test_DispatchMessage(t *testing.T) {
@@ -24,9 +32,9 @@ func Test_DispatchMessage(t *testing.T) {
 	mb.SubscribeConsumer(testConsumer2)
 	mb.SubscribeConsumer(testConsumer3)
 
-	mb.dispatchMessage("m1")
-	mb.dispatchMessage("m2")
-	mb.dispatchMessage("m3")
+	mb.dispatchMessage(testMessage{"m1"})
+	mb.dispatchMessage(testMessage{"m2"})
+	mb.dispatchMessage(testMessage{"m3"})
 	mb.close()
 
 	g := NewWithT(t)

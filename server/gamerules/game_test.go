@@ -6,13 +6,15 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var spiesFirstGenerator = func(nbPlayers, nbSpies int) []allegiance {
-	allegiances := make([]allegiance, nbPlayers)
+type spiesFirstGenerator struct{}
+
+func (s spiesFirstGenerator) Generate(nbPlayers, nbSpies int) []Allegiance {
+	allegiances := make([]Allegiance, nbPlayers)
 	for i := range allegiances {
 		if i < nbSpies {
-			allegiances[i] = spy
+			allegiances[i] = Spy
 		} else {
-			allegiances[i] = resistance
+			allegiances[i] = Resistance
 		}
 	}
 	return allegiances
@@ -25,7 +27,7 @@ func createNewlyStartedGame() Game {
 	newGame, _ = newGame.AddPlayer("Charlie")
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
-	newGame, _ = newGame.start(spiesFirstGenerator)
+	newGame, _ = newGame.Start(spiesFirstGenerator{})
 	return newGame
 }
 
@@ -69,7 +71,7 @@ func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
 
-	newGame, _ = newGame.start(spiesFirstGenerator)
+	newGame, _ = newGame.Start(spiesFirstGenerator{})
 
 	newGame, err := newGame.AddPlayer("Frank")
 
@@ -132,7 +134,7 @@ func Test_RemovePlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
 
-	newGame, _ = newGame.start(spiesFirstGenerator)
+	newGame, _ = newGame.Start(spiesFirstGenerator{})
 
 	newGame, err := newGame.removePlayer("Bob")
 
@@ -147,10 +149,21 @@ func Test_StartGame_WhenFewerThan5Players_ShouldError(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Charlie")
 	newGame, _ = newGame.AddPlayer("Dan")
 
-	newGame, err := newGame.start(spiesFirstGenerator)
+	newGame, err := newGame.Start(spiesFirstGenerator{})
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errNotEnoughPlayers))
+}
+
+type spyGenerator struct {
+	nbPlayersGiven, nbSpiesGiven int
+}
+
+func (s *spyGenerator) Generate(nbPlayers, nbSpies int) []Allegiance {
+	s.nbPlayersGiven = nbPlayers
+	s.nbSpiesGiven = nbSpies
+	return []Allegiance{Spy, Resistance, Spy, Resistance, Resistance}
+
 }
 
 func Test_StartGame(t *testing.T) {
@@ -161,13 +174,8 @@ func Test_StartGame(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
 
-	var nbPlayersGiven, nbSpiesGiven int
-	spyGenerator := func(nbPlayers, nbSpies int) []allegiance {
-		nbPlayersGiven = nbPlayers
-		nbSpiesGiven = nbSpies
-		return []allegiance{spy, resistance, spy, resistance, resistance}
-	}
-	newGame, err := newGame.start(spyGenerator)
+	spyGenerator := &spyGenerator{}
+	newGame, err := newGame.Start(spyGenerator)
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -175,15 +183,15 @@ func Test_StartGame(t *testing.T) {
 	g.Expect(newGame.leader).To(Equal("Alice"))
 	g.Expect(newGame.currentTeam).To(BeEmpty())
 	g.Expect(newGame.currentMission).To(Equal(first))
-	g.Expect(newGame.playerAllegiance).To(Equal(map[string]allegiance{
-		"Alice":   spy,
-		"Bob":     resistance,
-		"Charlie": spy,
-		"Dan":     resistance,
-		"Edith":   resistance,
+	g.Expect(newGame.playerAllegiance).To(Equal(map[string]Allegiance{
+		"Alice":   Spy,
+		"Bob":     Resistance,
+		"Charlie": Spy,
+		"Dan":     Resistance,
+		"Edith":   Resistance,
 	}))
-	g.Expect(nbPlayersGiven).To(Equal(5))
-	g.Expect(nbSpiesGiven).To(Equal(2))
+	g.Expect(spyGenerator.nbPlayersGiven).To(Equal(5))
+	g.Expect(spyGenerator.nbSpiesGiven).To(Equal(2))
 }
 
 func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
@@ -194,8 +202,8 @@ func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
 
-	newGame, _ = newGame.start(spiesFirstGenerator)
-	newGame, err := newGame.start(spiesFirstGenerator)
+	newGame, _ = newGame.Start(spiesFirstGenerator{})
+	newGame, err := newGame.Start(spiesFirstGenerator{})
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -636,7 +644,7 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.AddPlayer("Edith")
 	newGame, _ = newGame.AddPlayer("Fred")
 	newGame, _ = newGame.AddPlayer("Gordon")
-	newGame, _ = newGame.start(spiesFirstGenerator)
+	newGame, _ = newGame.Start(spiesFirstGenerator{})
 
 	// First turn
 	newGame, _ = newGame.leaderSelectsMember("Alice")

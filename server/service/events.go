@@ -1,6 +1,10 @@
 package service
 
 type playerJoined struct {
-	partyCode string
-	user      string
+	party
+	user string
+}
+
+type gameStarted struct {
+	party
 }

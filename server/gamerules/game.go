@@ -39,12 +39,16 @@ const (
 	fifth  mission = 5
 )
 
-type allegiance string
+type Allegiance string
 
 const (
-	resistance allegiance = "resistance"
-	spy        allegiance = "spy"
+	Resistance Allegiance = "resistance"
+	Spy        Allegiance = "spy"
 )
+
+type AllegianceGenerator interface {
+	Generate(nbPlayers, nbSpies int) []Allegiance
+}
 
 type missionRequirement struct {
 	nbOfPeopleToGo                  int
@@ -110,7 +114,7 @@ var (
 type Game struct {
 	state            state
 	players          players
-	playerAllegiance map[string]allegiance
+	playerAllegiance map[string]Allegiance
 	leader           string
 	currentTeam      players
 	currentMission   mission
@@ -156,7 +160,7 @@ func (g Game) removePlayer(name string) (Game, error) {
 	return g, nil
 }
 
-func (g Game) start(generateAllegiances func(nbPlayers, nbSpies int) []allegiance) (Game, error) {
+func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, error) {
 	if g.state != notStarted {
 		return g, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, notStarted, g.state)
 	}
@@ -165,8 +169,8 @@ func (g Game) start(generateAllegiances func(nbPlayers, nbSpies int) []allegianc
 		return g, errNotEnoughPlayers
 	}
 
-	allegiances := generateAllegiances(g.players.count(), nbOfSpiesByNumberOfPlayers[g.players.count()])
-	g.playerAllegiance = map[string]allegiance{}
+	allegiances := allegianceGenerator.Generate(g.players.count(), nbOfSpiesByNumberOfPlayers[g.players.count()])
+	g.playerAllegiance = map[string]Allegiance{}
 	for i, a := range allegiances {
 		g.playerAllegiance[g.players[i]] = a
 	}

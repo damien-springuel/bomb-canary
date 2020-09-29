@@ -1,6 +1,8 @@
 package messagebus
 
-type Message interface{}
+type Message interface {
+	GetPartyCode() string
+}
 
 type consumer interface {
 	consume(m Message)

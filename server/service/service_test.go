@@ -17,17 +17,36 @@ func (t testGenerator) generateCode() string {
 }
 
 type testMessageDispatcher struct {
-	receivedMessage messagebus.Message
+	lastReceivedMessage messagebus.Message
 }
 
 func (t *testMessageDispatcher) dispatchMessage(m messagebus.Message) {
-	t.receivedMessage = m
+	t.lastReceivedMessage = m
+}
+
+type spiesFirstGenerator struct{}
+
+func (s spiesFirstGenerator) Generate(nbPlayers, nbSpies int) []gamerules.Allegiance {
+	allegiances := make([]gamerules.Allegiance, nbPlayers)
+	for i := range allegiances {
+		if i < nbSpies {
+			allegiances[i] = gamerules.Spy
+		} else {
+			allegiances[i] = gamerules.Resistance
+		}
+	}
+	return allegiances
+}
+
+func setupService() (*testMessageDispatcher, service, string) {
+	messageDispatcher := &testMessageDispatcher{}
+	s := newService(testGenerator{returnCode: "testCode"}, messageDispatcher, spiesFirstGenerator{})
+	code := s.createParty()
+	return messageDispatcher, s, code
 }
 
 func Test_CreateParty(t *testing.T) {
-
-	s := newService(testGenerator{returnCode: "testCode"}, &testMessageDispatcher{})
-
+	s := newService(testGenerator{returnCode: "testCode"}, nil, nil)
 	code := s.createParty()
 
 	g := NewWithT(t)
@@ -35,8 +54,7 @@ func Test_CreateParty(t *testing.T) {
 }
 
 func Test_GetGameForPartyCode(t *testing.T) {
-	s := newService(testGenerator{returnCode: "testCode"}, &testMessageDispatcher{})
-
+	s := newService(testGenerator{returnCode: "testCode"}, nil, nil)
 	code := s.createParty()
 	game := s.getGameForPartyCode(code)
 
@@ -46,16 +64,35 @@ func Test_GetGameForPartyCode(t *testing.T) {
 }
 
 func Test_HandleJoinPartyCommand(t *testing.T) {
-
-	messageDispatcher := &testMessageDispatcher{}
-	s := newService(testGenerator{returnCode: "testCode"}, messageDispatcher)
-	code := s.createParty()
-	s.handleMessage(joinParty{partyCode: "testCode", user: "Alice"})
+	messageDispatcher, service, code := setupService()
+	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.receivedMessage).To(Equal(playerJoined{partyCode: "testCode", user: "Alice"}))
+	g.Expect(messageDispatcher.lastReceivedMessage).To(Equal(playerJoined{party: party{code: code}, user: "Alice"}))
 
 	expectedGame := gamerules.NewGame()
 	expectedGame, _ = expectedGame.AddPlayer("Alice")
-	g.Expect(s.getGameForPartyCode(code)).To(Equal(expectedGame))
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleStartGameCommand(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Charlie"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Dan"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Edith"})
+	service.handleMessage(startGame{party: party{code: code}})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.lastReceivedMessage).To(Equal(gameStarted{party: party{code: code}}))
+
+	expectedGame := gamerules.NewGame()
+	expectedGame, _ = expectedGame.AddPlayer("Alice")
+	expectedGame, _ = expectedGame.AddPlayer("Bob")
+	expectedGame, _ = expectedGame.AddPlayer("Charlie")
+	expectedGame, _ = expectedGame.AddPlayer("Dan")
+	expectedGame, _ = expectedGame.AddPlayer("Edith")
+	expectedGame, _ = expectedGame.Start(spiesFirstGenerator{})
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
