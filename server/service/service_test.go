@@ -365,7 +365,7 @@ func Test_HandleApproveTeam_IgnoreIfInvalid(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
-func Test_HandleApproveTeam_AllPlayerVoted_Approved(t *testing.T) {
+func Test_HandleApproveRejectTeam_AllPlayerVoted_Approved(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyConfirmedTeam(service, code)
 
@@ -383,28 +383,6 @@ func Test_HandleApproveTeam_AllPlayerVoted_Approved(t *testing.T) {
 	expectedGame, _ = expectedGame.ApproveTeamBy("Bob")
 	expectedGame, _ = expectedGame.ApproveTeamBy("Charlie")
 	expectedGame, _ = expectedGame.ApproveTeamBy("Dan")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Edith")
-	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
-}
-
-func Test_HandleApproveTeam_AllPlayerVoted_Rejected(t *testing.T) {
-	messageDispatcher, service, code := setupService()
-	expectedGame := newlyConfirmedTeam(service, code)
-
-	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
-	service.handleMessage(rejectTeam{party: party{code: code}, player: "Bob"})
-	service.handleMessage(rejectTeam{party: party{code: code}, player: "Charlie"})
-	service.handleMessage(rejectTeam{party: party{code: code}, player: "Dan"})
-	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
-
-	g := NewWithT(t)
-	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(allPlayerVotedOnTeam{party: party{code: code}, approved: false, voteFailures: 1}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Edith", approved: true}))
-
-	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
-	expectedGame, _ = expectedGame.RejectTeamBy("Bob")
-	expectedGame, _ = expectedGame.RejectTeamBy("Charlie")
-	expectedGame, _ = expectedGame.RejectTeamBy("Dan")
 	expectedGame, _ = expectedGame.ApproveTeamBy("Edith")
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
@@ -431,6 +409,28 @@ func Test_HandleRejectTeam_IgnoreIfInvalid(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleApproveRejectTeam_AllPlayerVoted_Rejected(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConfirmedTeam(service, code)
+
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(allPlayerVotedOnTeam{party: party{code: code}, approved: false, voteFailures: 1}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Edith", approved: true}))
+
+	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
+	expectedGame, _ = expectedGame.RejectTeamBy("Bob")
+	expectedGame, _ = expectedGame.RejectTeamBy("Charlie")
+	expectedGame, _ = expectedGame.RejectTeamBy("Dan")
+	expectedGame, _ = expectedGame.ApproveTeamBy("Edith")
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
