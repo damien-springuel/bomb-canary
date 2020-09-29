@@ -51,7 +51,9 @@ func (s service) handleMessage(m messagebus.Message) {
 	}
 	updatedGame, messageToDispatch := handler(s.gamesByPartyCode[m.GetPartyCode()], m)
 	s.gamesByPartyCode[m.GetPartyCode()] = updatedGame
-	s.messageDispatcher.dispatchMessage(messageToDispatch)
+	if messageToDispatch != nil {
+		s.messageDispatcher.dispatchMessage(messageToDispatch)
+	}
 }
 
 func (s service) getGameForPartyCode(code string) gamerules.Game {
