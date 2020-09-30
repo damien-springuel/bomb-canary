@@ -231,6 +231,11 @@ func commonVoteOutgoingMessage(updatedGame gamerules.Game, code string) []messag
 				approved: true,
 			},
 		)
+		commonVoteMessages = append(commonVoteMessages,
+			missionStarted{
+				party: party{code: code},
+			},
+		)
 	} else if updatedGame.State() == gamerules.GameOver {
 		commonVoteMessages = append(commonVoteMessages,
 			allPlayerVotedOnTeam{

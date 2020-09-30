@@ -36,6 +36,10 @@ type allPlayerVotedOnTeam struct {
 	voteFailures int
 }
 
+type missionStarted struct {
+	party
+}
+
 type playerWorkedOnMission struct {
 	party
 	player  string

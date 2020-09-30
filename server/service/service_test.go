@@ -492,8 +492,9 @@ func Test_HandleApproveTeam_AllPlayerVoted_Approved(t *testing.T) {
 	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(allPlayerVotedOnTeam{party: party{code: code}, approved: true, voteFailures: 0}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Edith", approved: true}))
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(missionStarted{party: party{code: code}}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(allPlayerVotedOnTeam{party: party{code: code}, approved: true, voteFailures: 0}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Edith", approved: true}))
 
 	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
 	expectedGame, _ = expectedGame.ApproveTeamBy("Bob")
@@ -577,8 +578,9 @@ func Test_HandleRejectTeam_AllPlayerVoted_Approved(t *testing.T) {
 	service.handleMessage(rejectTeam{party: party{code: code}, player: "Edith"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(allPlayerVotedOnTeam{party: party{code: code}, approved: true, voteFailures: 0}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Edith", approved: false}))
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(missionStarted{party: party{code: code}}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(allPlayerVotedOnTeam{party: party{code: code}, approved: true, voteFailures: 0}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Edith", approved: false}))
 
 	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
 	expectedGame, _ = expectedGame.ApproveTeamBy("Bob")
