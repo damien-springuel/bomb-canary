@@ -1,6 +1,6 @@
 package gamerules
 
-type missionResults map[mission]bool
+type missionResults map[Mission]bool
 
 func (m missionResults) copy() missionResults {
 	c := make(missionResults)
@@ -10,13 +10,13 @@ func (m missionResults) copy() missionResults {
 	return c
 }
 
-func (m missionResults) succeedMission(mission mission) missionResults {
+func (m missionResults) succeedMission(mission Mission) missionResults {
 	newResults := m.copy()
 	newResults[mission] = true
 	return newResults
 }
 
-func (m missionResults) failMission(mission mission) missionResults {
+func (m missionResults) failMission(mission Mission) missionResults {
 	newResults := m.copy()
 	newResults[mission] = false
 	return newResults

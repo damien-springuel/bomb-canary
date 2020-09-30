@@ -29,14 +29,14 @@ const (
 	GameOver          State = "gameOver"
 )
 
-type mission int
+type Mission int
 
 const (
-	first  mission = 1
-	second mission = 2
-	third  mission = 3
-	fourth mission = 4
-	fifth  mission = 5
+	First  Mission = 1
+	Second Mission = 2
+	Third  Mission = 3
+	Fourth Mission = 4
+	Fifth  Mission = 5
 )
 
 type Allegiance string
@@ -56,48 +56,48 @@ type missionRequirement struct {
 }
 
 var (
-	missionRequirementsByNumberOfPlayer = map[int]map[mission]missionRequirement{
+	missionRequirementsByNumberOfPlayer = map[int]map[Mission]missionRequirement{
 		5: {
-			first:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
-			second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			third:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
-			fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			fifth:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			First:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
+			Second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Third:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
+			Fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Fifth:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
 		},
 		6: {
-			first:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
-			second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			First:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
+			Second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			Fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
 		},
 		7: {
-			first:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
-			second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			third:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			fourth: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 2},
-			fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			First:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
+			Second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Third:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Fourth: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 2},
+			Fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
 		},
 		8: {
-			first:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
-			fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
+			First:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			Third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			Fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
+			Fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
 		},
 		9: {
-			first:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
-			fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
+			First:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			Third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			Fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
+			Fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
 		},
 		10: {
-			first:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
-			fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
+			First:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			Second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			Third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			Fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
+			Fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
 		},
 	}
 
@@ -117,7 +117,7 @@ type Game struct {
 	playerAllegiance map[string]Allegiance
 	leader           string
 	currentTeam      players
-	currentMission   mission
+	currentMission   Mission
 	teamVotes        votes
 	voteFailures     int
 	missionOutcomes  votes
@@ -177,7 +177,7 @@ func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, error) {
 
 	g.state = SelectingTeam
 	g.leader = g.players[0]
-	g.currentMission = first
+	g.currentMission = First
 	return g, nil
 }
 
@@ -308,6 +308,7 @@ func (g Game) workOnMissionBy(name string, worker func(name string) (votes, erro
 			g.state = SelectingTeam
 			g.currentMission += 1
 			g.leader = g.players.after(g.leader)
+			g.currentTeam = nil
 		}
 		newOutcomes = nil
 	}
@@ -334,4 +335,30 @@ func (g Game) State() State {
 
 func (g Game) VoteFailures() int {
 	return g.voteFailures
+}
+
+func (g Game) GetMissionResults() map[Mission]bool {
+	return g.missionResults.copy()
+}
+
+func (g Game) CurrentMission() Mission {
+	return g.currentMission
+}
+
+func (g Game) Winner() Allegiance {
+	if g.state != GameOver {
+		return ""
+	}
+
+	successes := 0
+	for _, success := range g.missionResults {
+		if success {
+			successes += 1
+		}
+	}
+
+	if successes == 3 {
+		return Resistance
+	}
+	return Spy
 }

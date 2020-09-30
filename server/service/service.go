@@ -181,7 +181,7 @@ func (s service) handleApproveTeam(currentGame gamerules.Game, message messagebu
 		},
 	)
 
-	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessage(updatedGame, message.GetPartyCode())...)
+	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessages(updatedGame, message.GetPartyCode())...)
 
 	return
 }
@@ -203,12 +203,12 @@ func (s service) handleRejectTeam(currentGame gamerules.Game, message messagebus
 		},
 	)
 
-	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessage(updatedGame, message.GetPartyCode())...)
+	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessages(updatedGame, message.GetPartyCode())...)
 
 	return
 }
 
-func commonVoteOutgoingMessage(updatedGame gamerules.Game, code string) []messagebus.Message {
+func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []messagebus.Message {
 	commonVoteMessages := []messagebus.Message{}
 	if updatedGame.State() == gamerules.SelectingTeam {
 		commonVoteMessages = append(commonVoteMessages,
@@ -259,15 +259,21 @@ func (s service) handleSucceedMission(currentGame gamerules.Game, message messag
 	succeedMissionCommand := message.(succeedMission)
 	updatedGame, err := currentGame.SucceedMissionBy(succeedMissionCommand.player)
 
-	if err == nil {
-		messagesToDispatch = append(messagesToDispatch,
-			playerWorkedOnMission{
-				party:   party{code: message.GetPartyCode()},
-				player:  succeedMissionCommand.player,
-				success: true,
-			},
-		)
+	if err != nil {
+		updatedGame = currentGame
+		return
 	}
+
+	messagesToDispatch = append(messagesToDispatch,
+		playerWorkedOnMission{
+			party:   party{code: message.GetPartyCode()},
+			player:  succeedMissionCommand.player,
+			success: true,
+		},
+	)
+
+	messagesToDispatch = append(messagesToDispatch, commonMissionOutgoingMessages(updatedGame, message.GetPartyCode())...)
+
 	return
 }
 
@@ -275,14 +281,64 @@ func (s service) handleFailMission(currentGame gamerules.Game, message messagebu
 	failMissionCommand := message.(failMission)
 	updatedGame, err := currentGame.FailMissionBy(failMissionCommand.player)
 
-	if err == nil {
-		messagesToDispatch = append(messagesToDispatch,
-			playerWorkedOnMission{
-				party:   party{code: message.GetPartyCode()},
-				player:  failMissionCommand.player,
-				success: false,
+	if err != nil {
+		updatedGame = currentGame
+		return
+	}
+
+	messagesToDispatch = append(messagesToDispatch,
+		playerWorkedOnMission{
+			party:   party{code: message.GetPartyCode()},
+			player:  failMissionCommand.player,
+			success: false,
+		},
+	)
+
+	messagesToDispatch = append(messagesToDispatch, commonMissionOutgoingMessages(updatedGame, message.GetPartyCode())...)
+
+	return
+}
+
+func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []messagebus.Message {
+	commonMissionMessages := []messagebus.Message{}
+
+	if updatedGame.State() == gamerules.SelectingTeam {
+		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
+		commonMissionMessages = append(commonMissionMessages,
+			missionCompleted{
+				party:   party{code: code},
+				success: lastGameSuccess,
+			},
+		)
+		commonMissionMessages = append(commonMissionMessages,
+			leaderStartedToSelectMembers{
+				party:  party{code: code},
+				leader: updatedGame.Leader(),
+			},
+		)
+	} else if updatedGame.State() == gamerules.GameOver {
+		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
+		commonMissionMessages = append(commonMissionMessages,
+			missionCompleted{
+				party:   party{code: code},
+				success: lastGameSuccess,
+			},
+		)
+
+		winner := updatedGame.Winner()
+		var messageWinner allegiance
+		if winner == gamerules.Resistance {
+			messageWinner = Resistance
+		} else if winner == gamerules.Spy {
+			messageWinner = Spy
+		}
+		commonMissionMessages = append(commonMissionMessages,
+			gameEnded{
+				party:  party{code: code},
+				winner: messageWinner,
 			},
 		)
 	}
-	return
+
+	return commonMissionMessages
 }

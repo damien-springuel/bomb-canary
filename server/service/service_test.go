@@ -249,6 +249,186 @@ func newlyConductingMission(service service, code string) gamerules.Game {
 	return game
 }
 
+func almostThreeSuccessfulMissions(service service, code string) gamerules.Game {
+	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Charlie"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Dan"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Edith"})
+	service.handleMessage(startGame{party: party{code: code}})
+
+	// #1
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Bob"})
+
+	// #2
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Bob", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Bob", memberToSelect: "Bob"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Bob", memberToSelect: "Charlie"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Bob"})
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Charlie"})
+
+	// #3 minus last two succeed
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Charlie", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Charlie", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+
+	game := gamerules.NewGame()
+	game, _ = game.AddPlayer("Alice")
+	game, _ = game.AddPlayer("Bob")
+	game, _ = game.AddPlayer("Charlie")
+	game, _ = game.AddPlayer("Dan")
+	game, _ = game.AddPlayer("Edith")
+	game, _ = game.Start(spiesFirstGenerator{})
+
+	// #1
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.ApproveTeamBy("Alice")
+	game, _ = game.ApproveTeamBy("Bob")
+	game, _ = game.ApproveTeamBy("Charlie")
+	game, _ = game.ApproveTeamBy("Dan")
+	game, _ = game.ApproveTeamBy("Edith")
+	game, _ = game.SucceedMissionBy("Alice")
+	game, _ = game.SucceedMissionBy("Bob")
+
+	// #2
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderSelectsMember("Charlie")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.ApproveTeamBy("Alice")
+	game, _ = game.ApproveTeamBy("Bob")
+	game, _ = game.ApproveTeamBy("Charlie")
+	game, _ = game.ApproveTeamBy("Dan")
+	game, _ = game.ApproveTeamBy("Edith")
+	game, _ = game.SucceedMissionBy("Alice")
+	game, _ = game.SucceedMissionBy("Bob")
+	game, _ = game.SucceedMissionBy("Charlie")
+
+	// #3
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.ApproveTeamBy("Alice")
+	game, _ = game.ApproveTeamBy("Bob")
+	game, _ = game.ApproveTeamBy("Charlie")
+	game, _ = game.ApproveTeamBy("Dan")
+	game, _ = game.ApproveTeamBy("Edith")
+	return game
+}
+
+func almostThreeFailedMissions(service service, code string) gamerules.Game {
+	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Charlie"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Dan"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Edith"})
+	service.handleMessage(startGame{party: party{code: code}})
+
+	// #1
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+	service.handleMessage(failMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(failMission{party: party{code: code}, player: "Bob"})
+
+	// #2
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Bob", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Bob", memberToSelect: "Bob"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Bob", memberToSelect: "Charlie"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+	service.handleMessage(failMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(failMission{party: party{code: code}, player: "Bob"})
+	service.handleMessage(failMission{party: party{code: code}, player: "Charlie"})
+
+	// #3 minus last two succeed
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Charlie", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Charlie", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+
+	game := gamerules.NewGame()
+	game, _ = game.AddPlayer("Alice")
+	game, _ = game.AddPlayer("Bob")
+	game, _ = game.AddPlayer("Charlie")
+	game, _ = game.AddPlayer("Dan")
+	game, _ = game.AddPlayer("Edith")
+	game, _ = game.Start(spiesFirstGenerator{})
+
+	// #1
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.ApproveTeamBy("Alice")
+	game, _ = game.ApproveTeamBy("Bob")
+	game, _ = game.ApproveTeamBy("Charlie")
+	game, _ = game.ApproveTeamBy("Dan")
+	game, _ = game.ApproveTeamBy("Edith")
+	game, _ = game.FailMissionBy("Alice")
+	game, _ = game.FailMissionBy("Bob")
+
+	// #2
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderSelectsMember("Charlie")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.ApproveTeamBy("Alice")
+	game, _ = game.ApproveTeamBy("Bob")
+	game, _ = game.ApproveTeamBy("Charlie")
+	game, _ = game.ApproveTeamBy("Dan")
+	game, _ = game.ApproveTeamBy("Edith")
+	game, _ = game.FailMissionBy("Alice")
+	game, _ = game.FailMissionBy("Bob")
+	game, _ = game.FailMissionBy("Charlie")
+
+	// #3
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.ApproveTeamBy("Alice")
+	game, _ = game.ApproveTeamBy("Bob")
+	game, _ = game.ApproveTeamBy("Charlie")
+	game, _ = game.ApproveTeamBy("Dan")
+	game, _ = game.ApproveTeamBy("Edith")
+	return game
+}
+
 func Test_CreateParty(t *testing.T) {
 	s := newService(testGenerator{returnCode: "testCode"}, nil, nil)
 	code := s.createParty()
@@ -653,6 +833,57 @@ func Test_HandleSucceedMission_IgnoreIfInvalid(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
+func Test_HandleSucceedMission_MissionCompleted_Successful(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConductingMission(service, code)
+
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Bob"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(leaderStartedToSelectMembers{party: party{code: code}, leader: "Bob"}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(missionCompleted{party: party{code: code}, success: true}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerWorkedOnMission{party: party{code: code}, player: "Bob", success: true}))
+
+	expectedGame, _ = expectedGame.SucceedMissionBy("Alice")
+	expectedGame, _ = expectedGame.SucceedMissionBy("Bob")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleSucceedMission_MissionCompleted_Failure(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConductingMission(service, code)
+
+	service.handleMessage(failMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Bob"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(leaderStartedToSelectMembers{party: party{code: code}, leader: "Bob"}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(missionCompleted{party: party{code: code}, success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerWorkedOnMission{party: party{code: code}, player: "Bob", success: true}))
+
+	expectedGame, _ = expectedGame.FailMissionBy("Alice")
+	expectedGame, _ = expectedGame.SucceedMissionBy("Bob")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleSucceedMission_MissionCompleted_ThirdSuccess(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := almostThreeSuccessfulMissions(service, code)
+
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(succeedMission{party: party{code: code}, player: "Bob"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(gameEnded{party: party{code: code}, winner: Resistance}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(missionCompleted{party: party{code: code}, success: true}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerWorkedOnMission{party: party{code: code}, player: "Bob", success: true}))
+
+	expectedGame, _ = expectedGame.SucceedMissionBy("Alice")
+	expectedGame, _ = expectedGame.SucceedMissionBy("Bob")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
 func Test_HandleFailMission(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyConductingMission(service, code)
@@ -671,9 +902,43 @@ func Test_HandleFailMission_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyConfirmedTeam(service, code)
 
 	messageDispatcher.clearReceivedMessages()
-	service.handleMessage(succeedMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(failMission{party: party{code: code}, player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleFailMission_MissionCompleted_Failure(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := newlyConductingMission(service, code)
+
+	service.handleMessage(failMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(failMission{party: party{code: code}, player: "Bob"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(leaderStartedToSelectMembers{party: party{code: code}, leader: "Bob"}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(missionCompleted{party: party{code: code}, success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerWorkedOnMission{party: party{code: code}, player: "Bob", success: false}))
+
+	expectedGame, _ = expectedGame.FailMissionBy("Alice")
+	expectedGame, _ = expectedGame.FailMissionBy("Bob")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleFailMission_MissionCompleted_ThirdFailure(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := almostThreeFailedMissions(service, code)
+
+	service.handleMessage(failMission{party: party{code: code}, player: "Alice"})
+	service.handleMessage(failMission{party: party{code: code}, player: "Bob"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(gameEnded{party: party{code: code}, winner: Spy}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(missionCompleted{party: party{code: code}, success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerWorkedOnMission{party: party{code: code}, player: "Bob", success: false}))
+
+	expectedGame, _ = expectedGame.FailMissionBy("Alice")
+	expectedGame, _ = expectedGame.FailMissionBy("Bob")
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }

@@ -40,6 +40,11 @@ type missionStarted struct {
 	party
 }
 
+type missionCompleted struct {
+	party
+	success bool
+}
+
 type playerWorkedOnMission struct {
 	party
 	player  string

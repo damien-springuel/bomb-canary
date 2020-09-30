@@ -182,7 +182,7 @@ func Test_StartGame(t *testing.T) {
 	g.Expect(newGame.state).To(Equal(SelectingTeam))
 	g.Expect(newGame.leader).To(Equal("Alice"))
 	g.Expect(newGame.currentTeam).To(BeEmpty())
-	g.Expect(newGame.currentMission).To(Equal(first))
+	g.Expect(newGame.currentMission).To(Equal(First))
 	g.Expect(newGame.playerAllegiance).To(Equal(map[string]Allegiance{
 		"Alice":   Spy,
 		"Bob":     Resistance,
@@ -589,10 +589,11 @@ func Test_SucceedFailMission_ShouldMoveToSelectingTeamWhenEveryoneWorkedOnTheMis
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.state).To(Equal(SelectingTeam))
-	g.Expect(newGame.currentMission).To(Equal(second))
+	g.Expect(newGame.currentMission).To(Equal(Second))
 	g.Expect(newGame.missionOutcomes).To(BeNil())
-	g.Expect(newGame.missionResults).To(Equal(missionResults(map[mission]bool{first: false})))
+	g.Expect(newGame.missionResults).To(Equal(missionResults(map[Mission]bool{First: false})))
 	g.Expect(newGame.leader).To(Equal("Bob"))
+	g.Expect(newGame.currentTeam).To(BeNil())
 }
 
 func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
@@ -629,9 +630,9 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.state).To(Equal(GameOver))
-	g.Expect(newGame.currentMission).To(Equal(third))
+	g.Expect(newGame.currentMission).To(Equal(Third))
 	g.Expect(newGame.missionOutcomes).To(BeNil())
-	g.Expect(newGame.missionResults).To(Equal(missionResults(map[mission]bool{first: true, second: true, third: true})))
+	g.Expect(newGame.missionResults).To(Equal(missionResults(map[Mission]bool{First: true, Second: true, Third: true})))
 	g.Expect(newGame.leader).To(Equal("Charlie"))
 }
 
@@ -712,11 +713,11 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 
 	g := NewWithT(t)
 	g.Expect(newGame.missionResults).To(Equal(
-		missionResults(map[mission]bool{
-			first:  true,
-			second: false,
-			third:  false,
-			fourth: true,
+		missionResults(map[Mission]bool{
+			First:  true,
+			Second: false,
+			Third:  false,
+			Fourth: true,
 		})))
 
 	newGame, _ = conductingFourthMission.SucceedMissionBy("Alice")
@@ -724,10 +725,10 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.FailMissionBy("Charlie")
 	newGame, _ = newGame.FailMissionBy("Dan")
 	g.Expect(newGame.missionResults).To(Equal(
-		missionResults(map[mission]bool{
-			first:  true,
-			second: false,
-			third:  false,
-			fourth: false,
+		missionResults(map[Mission]bool{
+			First:  true,
+			Second: false,
+			Third:  false,
+			Fourth: false,
 		})))
 }
