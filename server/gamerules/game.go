@@ -350,6 +350,10 @@ func (g Game) Winner() Allegiance {
 		return ""
 	}
 
+	if g.voteFailures > 0 {
+		return Spy
+	}
+
 	successes := 0
 	for _, success := range g.missionResults {
 		if success {

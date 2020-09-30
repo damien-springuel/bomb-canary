@@ -488,6 +488,7 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	g.Expect(newGame.state).To(Equal(GameOver))
 	g.Expect(newGame.voteFailures).To(Equal(5))
 	g.Expect(newGame.leader).To(Equal("Edith"))
+	g.Expect(newGame.Winner()).To(Equal(Spy))
 }
 
 func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testing.T) {
@@ -634,6 +635,48 @@ func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdSuccess(t *testing.T) {
 	g.Expect(newGame.missionOutcomes).To(BeNil())
 	g.Expect(newGame.missionResults).To(Equal(missionResults(map[Mission]bool{First: true, Second: true, Third: true})))
 	g.Expect(newGame.leader).To(Equal("Charlie"))
+	g.Expect(newGame.Winner()).To(Equal(Resistance))
+}
+
+func Test_SucceedFailMission_ShouldMoveToGameOverIfThirdFailure(t *testing.T) {
+	newGame := createNewlyConductingMissionGame()
+	newGame, _ = newGame.FailMissionBy("Alice")
+	newGame, _ = newGame.SucceedMissionBy("Bob")
+
+	// Second turn
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderSelectsMember("Charlie")
+	newGame, _ = newGame.LeaderConfirmsTeamSelection()
+	newGame, _ = newGame.ApproveTeamBy("Alice")
+	newGame, _ = newGame.ApproveTeamBy("Bob")
+	newGame, _ = newGame.ApproveTeamBy("Charlie")
+	newGame, _ = newGame.ApproveTeamBy("Dan")
+	newGame, _ = newGame.ApproveTeamBy("Edith")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, _ = newGame.FailMissionBy("Bob")
+	newGame, _ = newGame.SucceedMissionBy("Charlie")
+
+	// Third turn
+	newGame, _ = newGame.LeaderSelectsMember("Alice")
+	newGame, _ = newGame.LeaderSelectsMember("Bob")
+	newGame, _ = newGame.LeaderConfirmsTeamSelection()
+	newGame, _ = newGame.ApproveTeamBy("Alice")
+	newGame, _ = newGame.ApproveTeamBy("Bob")
+	newGame, _ = newGame.ApproveTeamBy("Charlie")
+	newGame, _ = newGame.ApproveTeamBy("Dan")
+	newGame, _ = newGame.ApproveTeamBy("Edith")
+	newGame, _ = newGame.SucceedMissionBy("Alice")
+	newGame, err := newGame.FailMissionBy("Bob")
+
+	g := NewWithT(t)
+	g.Expect(err).To(BeNil())
+	g.Expect(newGame.state).To(Equal(GameOver))
+	g.Expect(newGame.currentMission).To(Equal(Third))
+	g.Expect(newGame.missionOutcomes).To(BeNil())
+	g.Expect(newGame.missionResults).To(Equal(missionResults(map[Mission]bool{First: false, Second: false, Third: false})))
+	g.Expect(newGame.leader).To(Equal("Charlie"))
+	g.Expect(newGame.Winner()).To(Equal(Spy))
 }
 
 func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *testing.T) {
@@ -731,4 +774,10 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 			Third:  false,
 			Fourth: false,
 		})))
+}
+
+func Test_Winner_ReturnsEmptyStringIfNotGameOver(t *testing.T) {
+	newGame := createNewlyStartedGame()
+	g := NewWithT(t)
+	g.Expect(newGame.Winner()).To(Equal(Allegiance("")))
 }
