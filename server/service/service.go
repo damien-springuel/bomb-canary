@@ -181,28 +181,7 @@ func (s service) handleApproveTeam(currentGame gamerules.Game, message messagebu
 		},
 	)
 
-	if updatedGame.State() == gamerules.SelectingTeam {
-		messagesToDispatch = append(messagesToDispatch,
-			allPlayerVotedOnTeam{
-				party:        party{code: message.GetPartyCode()},
-				approved:     false,
-				voteFailures: updatedGame.VoteFailures(),
-			},
-		)
-		messagesToDispatch = append(messagesToDispatch,
-			leaderStartedToSelectMembers{
-				party:  party{code: message.GetPartyCode()},
-				leader: updatedGame.Leader(),
-			},
-		)
-	} else if updatedGame.State() == gamerules.ConductingMission {
-		messagesToDispatch = append(messagesToDispatch,
-			allPlayerVotedOnTeam{
-				party:    party{code: message.GetPartyCode()},
-				approved: true,
-			},
-		)
-	}
+	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessage(updatedGame, message.GetPartyCode())...)
 
 	return
 }
@@ -224,29 +203,37 @@ func (s service) handleRejectTeam(currentGame gamerules.Game, message messagebus
 		},
 	)
 
+	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessage(updatedGame, message.GetPartyCode())...)
+
+	return
+}
+
+func commonVoteOutgoingMessage(updatedGame gamerules.Game, code string) []messagebus.Message {
+	commonVoteMessages := []messagebus.Message{}
 	if updatedGame.State() == gamerules.SelectingTeam {
-		messagesToDispatch = append(messagesToDispatch,
+		commonVoteMessages = append(commonVoteMessages,
 			allPlayerVotedOnTeam{
-				party:        party{code: message.GetPartyCode()},
+				party:        party{code: code},
 				approved:     false,
 				voteFailures: updatedGame.VoteFailures(),
 			},
 		)
-		messagesToDispatch = append(messagesToDispatch,
+		commonVoteMessages = append(commonVoteMessages,
 			leaderStartedToSelectMembers{
-				party:  party{code: message.GetPartyCode()},
+				party:  party{code: code},
 				leader: updatedGame.Leader(),
 			},
 		)
 	} else if updatedGame.State() == gamerules.ConductingMission {
-		messagesToDispatch = append(messagesToDispatch,
+		commonVoteMessages = append(commonVoteMessages,
 			allPlayerVotedOnTeam{
-				party:    party{code: message.GetPartyCode()},
+				party:    party{code: code},
 				approved: true,
 			},
 		)
 	}
-	return
+
+	return commonVoteMessages
 }
 
 func (s service) handleSucceedMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
