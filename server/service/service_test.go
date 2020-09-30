@@ -99,6 +99,122 @@ func newlyConfirmedTeam(service service, code string) gamerules.Game {
 	return game
 }
 
+func fiveFailedVoteInARow(service service, code string) gamerules.Game {
+	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Charlie"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Dan"})
+	service.handleMessage(joinParty{party: party{code: code}, user: "Edith"})
+	service.handleMessage(startGame{party: party{code: code}})
+
+	// #1
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Alice", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Alice"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Edith"})
+
+	// #2
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Bob", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Bob", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Bob"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Edith"})
+
+	// #3
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Charlie", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Charlie", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Charlie"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Edith"})
+
+	// #4
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Dan", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Dan", memberToSelect: "Bob"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Dan"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Dan"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Edith"})
+
+	// #5 minus Edith's vote
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Edith", memberToSelect: "Alice"})
+	service.handleMessage(leaderSelectsMember{party: party{code: code}, leader: "Edith", memberToSelect: "Edith"})
+	service.handleMessage(leaderConfirmsTeamSelection{party: party{code: code}, leader: "Edith"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Alice"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Bob"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Charlie"})
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Dan"})
+
+	game := gamerules.NewGame()
+	game, _ = game.AddPlayer("Alice")
+	game, _ = game.AddPlayer("Bob")
+	game, _ = game.AddPlayer("Charlie")
+	game, _ = game.AddPlayer("Dan")
+	game, _ = game.AddPlayer("Edith")
+	game, _ = game.Start(spiesFirstGenerator{})
+
+	// #1
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.RejectTeamBy("Alice")
+	game, _ = game.RejectTeamBy("Bob")
+	game, _ = game.RejectTeamBy("Charlie")
+	game, _ = game.RejectTeamBy("Dan")
+	game, _ = game.RejectTeamBy("Edith")
+
+	// #2
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.RejectTeamBy("Alice")
+	game, _ = game.RejectTeamBy("Bob")
+	game, _ = game.RejectTeamBy("Charlie")
+	game, _ = game.RejectTeamBy("Dan")
+	game, _ = game.RejectTeamBy("Edith")
+
+	// #3
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.RejectTeamBy("Alice")
+	game, _ = game.RejectTeamBy("Bob")
+	game, _ = game.RejectTeamBy("Charlie")
+	game, _ = game.RejectTeamBy("Dan")
+	game, _ = game.RejectTeamBy("Edith")
+
+	// #4
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.RejectTeamBy("Alice")
+	game, _ = game.RejectTeamBy("Bob")
+	game, _ = game.RejectTeamBy("Charlie")
+	game, _ = game.RejectTeamBy("Dan")
+	game, _ = game.RejectTeamBy("Edith")
+
+	// #5 minus Edith's vote
+	game, _ = game.LeaderSelectsMember("Alice")
+	game, _ = game.LeaderSelectsMember("Bob")
+	game, _ = game.LeaderConfirmsTeamSelection()
+	game, _ = game.RejectTeamBy("Alice")
+	game, _ = game.RejectTeamBy("Bob")
+	game, _ = game.RejectTeamBy("Charlie")
+	game, _ = game.RejectTeamBy("Dan")
+	return game
+}
+
 func newlyConductingMission(service service, code string) gamerules.Game {
 	service.handleMessage(joinParty{party: party{code: code}, user: "Alice"})
 	service.handleMessage(joinParty{party: party{code: code}, user: "Bob"})
@@ -410,6 +526,21 @@ func Test_HandleApproveTeam_AllPlayerVoted_Rejected(t *testing.T) {
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
+func Test_HandleApproveTeam_RejectedFiveTimeInARow(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := fiveFailedVoteInARow(service, code)
+
+	service.handleMessage(approveTeam{party: party{code: code}, player: "Edith"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(gameEnded{party: party{code: code}, winner: Spy}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(allPlayerVotedOnTeam{party: party{code: code}, approved: false, voteFailures: 5}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Edith", approved: true}))
+
+	expectedGame, _ = expectedGame.ApproveTeamBy("Edith")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
 func Test_HandleRejectTeam(t *testing.T) {
 	messageDispatcher, service, code := setupService()
 	expectedGame := newlyConfirmedTeam(service, code)
@@ -476,6 +607,21 @@ func Test_HandleRejectTeam_AllPlayerVoted_Rejected(t *testing.T) {
 	expectedGame, _ = expectedGame.RejectTeamBy("Bob")
 	expectedGame, _ = expectedGame.RejectTeamBy("Charlie")
 	expectedGame, _ = expectedGame.RejectTeamBy("Dan")
+	expectedGame, _ = expectedGame.RejectTeamBy("Edith")
+	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
+func Test_HandleRejectTeam_RejectedFiveTimeInARow(t *testing.T) {
+	messageDispatcher, service, code := setupService()
+	expectedGame := fiveFailedVoteInARow(service, code)
+
+	service.handleMessage(rejectTeam{party: party{code: code}, player: "Edith"})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(gameEnded{party: party{code: code}, winner: Spy}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(allPlayerVotedOnTeam{party: party{code: code}, approved: false, voteFailures: 5}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(playerVotedOnTeam{party: party{code: code}, player: "Edith", approved: false}))
+
 	expectedGame, _ = expectedGame.RejectTeamBy("Edith")
 	g.Expect(service.getGameForPartyCode(code)).To(Equal(expectedGame))
 }

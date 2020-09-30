@@ -41,3 +41,15 @@ type playerWorkedOnMission struct {
 	player  string
 	success bool
 }
+
+type allegiance string
+
+const (
+	Spy        allegiance = "Spy"
+	Resistance allegiance = "Resistance"
+)
+
+type gameEnded struct {
+	party
+	winner allegiance
+}
