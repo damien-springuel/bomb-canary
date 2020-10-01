@@ -55,7 +55,7 @@ func (l lobbyServer) createParty(c *gin.Context) {
 	l.partyService.JoinParty(newCode, req.Name)
 
 	session := l.session.Create(newCode, req.Name)
-	c.SetCookie("session", session, int((time.Minute * 60).Seconds()), "/", "", false, true)
+	c.SetCookie("session", session, int((time.Hour * 3).Seconds()), "/", "", false, true)
 
 	c.JSON(200, createPartyResponse{Code: newCode})
 }
