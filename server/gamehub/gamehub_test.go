@@ -50,20 +50,20 @@ func (s spiesFirstGenerator) Generate(nbPlayers, nbSpies int) []gamerules.Allegi
 	return allegiances
 }
 
-func setupHub() (*testMessageDispatcher, GameHub, string) {
+func setupHub() (*testMessageDispatcher, gameHub, string) {
 	messageDispatcher := &testMessageDispatcher{}
 	hub := New(testGenerator{returnCode: "testCode"}, messageDispatcher, spiesFirstGenerator{})
 	code := hub.CreateParty()
 	return messageDispatcher, hub, code
 }
 
-func newlyStartedGame(hub GameHub, code string) gamerules.Game {
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Alice"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Bob"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Charlie"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Dan"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Edith"})
-	hub.HandleMessage(StartGame{Party: Party{Code: code}})
+func newlyStartedGame(hub gameHub, code string) gamerules.Game {
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Alice"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Bob"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Charlie"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Dan"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Edith"})
+	hub.Consume(StartGame{Party: Party{Code: code}})
 
 	game := gamerules.NewGame()
 	game, _ = game.AddPlayer("Alice")
@@ -75,16 +75,16 @@ func newlyStartedGame(hub GameHub, code string) gamerules.Game {
 	return game
 }
 
-func newlyConfirmedTeam(hub GameHub, code string) gamerules.Game {
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Alice"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Bob"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Charlie"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Dan"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Edith"})
-	hub.HandleMessage(StartGame{Party: Party{Code: code}})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
+func newlyConfirmedTeam(hub gameHub, code string) gamerules.Game {
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Alice"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Bob"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Charlie"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Dan"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Edith"})
+	hub.Consume(StartGame{Party: Party{Code: code}})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
 
 	game := gamerules.NewGame()
 	game, _ = game.AddPlayer("Alice")
@@ -99,62 +99,62 @@ func newlyConfirmedTeam(hub GameHub, code string) gamerules.Game {
 	return game
 }
 
-func fiveFailedVoteInARow(hub GameHub, code string) gamerules.Game {
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Alice"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Bob"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Charlie"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Dan"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Edith"})
-	hub.HandleMessage(StartGame{Party: Party{Code: code}})
+func fiveFailedVoteInARow(hub gameHub, code string) gamerules.Game {
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Alice"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Bob"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Charlie"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Dan"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Edith"})
+	hub.Consume(StartGame{Party: Party{Code: code}})
 
 	// #1
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	// #2
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Bob"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Bob"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	// #3
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Charlie"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Charlie"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	// #4
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Dan", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Dan", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Dan"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Dan", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Dan", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Dan"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	// #5 minus Edith's vote
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Edith", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Edith", MemberToSelect: "Edith"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Edith"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Edith", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Edith", MemberToSelect: "Edith"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Edith"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
 
 	game := gamerules.NewGame()
 	game, _ = game.AddPlayer("Alice")
@@ -215,21 +215,21 @@ func fiveFailedVoteInARow(hub GameHub, code string) gamerules.Game {
 	return game
 }
 
-func newlyConductingMission(hub GameHub, code string) gamerules.Game {
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Alice"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Bob"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Charlie"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Dan"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Edith"})
-	hub.HandleMessage(StartGame{Party: Party{Code: code}})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+func newlyConductingMission(hub gameHub, code string) gamerules.Game {
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Alice"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Bob"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Charlie"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Dan"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Edith"})
+	hub.Consume(StartGame{Party: Party{Code: code}})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	game := gamerules.NewGame()
 	game, _ = game.AddPlayer("Alice")
@@ -249,49 +249,49 @@ func newlyConductingMission(hub GameHub, code string) gamerules.Game {
 	return game
 }
 
-func almostThreeSuccessfulMissions(hub GameHub, code string) gamerules.Game {
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Alice"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Bob"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Charlie"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Dan"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Edith"})
-	hub.HandleMessage(StartGame{Party: Party{Code: code}})
+func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Alice"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Bob"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Charlie"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Dan"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Edith"})
+	hub.Consume(StartGame{Party: Party{Code: code}})
 
 	// #1
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
 
 	// #2
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Charlie"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Bob"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Charlie"})
 
 	// #3 minus last two succeed
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	game := gamerules.NewGame()
 	game, _ = game.AddPlayer("Alice")
@@ -339,49 +339,49 @@ func almostThreeSuccessfulMissions(hub GameHub, code string) gamerules.Game {
 	return game
 }
 
-func almostThreeFailedMissions(hub GameHub, code string) gamerules.Game {
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Alice"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Bob"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Charlie"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Dan"})
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Edith"})
-	hub.HandleMessage(StartGame{Party: Party{Code: code}})
+func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Alice"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Bob"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Charlie"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Dan"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Edith"})
+	hub.Consume(StartGame{Party: Party{Code: code}})
 
 	// #1
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Bob"})
 
 	// #2
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Charlie"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Bob"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Charlie"})
 
 	// #3 minus last two succeed
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Alice"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Bob"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	game := gamerules.NewGame()
 	game, _ = game.AddPlayer("Alice")
@@ -449,7 +449,7 @@ func Test_GetGameForPartyCode(t *testing.T) {
 
 func Test_HandleJoinPartyCommand(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Alice"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerJoined{Party: Party{Code: code}, User: "Alice"}))
@@ -464,7 +464,7 @@ func Test_HandleJoinPartyCommand_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyStartedGame(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(JoinParty{Party: Party{Code: code}, User: "Fred"})
+	hub.Consume(JoinParty{Party: Party{Code: code}, User: "Fred"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -477,7 +477,7 @@ func Test_HandleShouldIgnoreUnknownMessage(t *testing.T) {
 
 	type fakeMessage struct{ Party }
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(fakeMessage{Party: Party{Code: code}})
+	hub.Consume(fakeMessage{Party: Party{Code: code}})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -498,7 +498,7 @@ func Test_HandleStartGameCommand_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyStartedGame(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(StartGame{Party: Party{Code: code}})
+	hub.Consume(StartGame{Party: Party{Code: code}})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -508,7 +508,7 @@ func Test_HandleStartGameCommand_IgnoreIfInvalid(t *testing.T) {
 func Test_HandleLeaderSelectsMember(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(LeaderSelectedMember{Party: Party{Code: code}, SelectedMember: "Charlie"}))
@@ -520,10 +520,10 @@ func Test_HandleLeaderSelectsMember(t *testing.T) {
 func Test_HandleLeaderSelectsMember_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -537,7 +537,7 @@ func Test_HandleLeaderSelectsMember_IgnoreIfWrongLeader(t *testing.T) {
 	expectedGame := newlyStartedGame(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Charlie"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -547,8 +547,8 @@ func Test_HandleLeaderSelectsMember_IgnoreIfWrongLeader(t *testing.T) {
 func Test_HandleLeaderDeselectsMember(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
-	hub.HandleMessage(LeaderDeselectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToDeselect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderDeselectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToDeselect: "Charlie"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(LeaderDeselectedMember{Party: Party{Code: code}, DeselectedMember: "Charlie"}))
@@ -561,10 +561,10 @@ func Test_HandleLeaderDeselectsMember(t *testing.T) {
 func Test_HandleLeaderDeselectsMember_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(LeaderDeselectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToDeselect: "Bob"})
+	hub.Consume(LeaderDeselectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToDeselect: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -576,10 +576,10 @@ func Test_HandleLeaderDeselectsMember_IgnoreIfInvalid(t *testing.T) {
 func Test_HandleLeaderDeselectsMember_IgnoreIfWrongLeader(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(LeaderDeselectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToDeselect: "Charlie"})
+	hub.Consume(LeaderDeselectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToDeselect: "Charlie"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -591,9 +591,9 @@ func Test_HandleLeaderDeselectsMember_IgnoreIfWrongLeader(t *testing.T) {
 func Test_HandleLeaderConfirmsSelection(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Dan"})
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Dan"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(LeaderConfirmedSelection{Party: Party{Code: code}}))
@@ -607,10 +607,10 @@ func Test_HandleLeaderConfirmsSelection(t *testing.T) {
 func Test_HandleLeaderConfirmsSelection_IgnoreIfInvalid(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -622,11 +622,11 @@ func Test_HandleLeaderConfirmsSelection_IgnoreIfInvalid(t *testing.T) {
 func Test_HandleLeaderConfirmsSelection_IgnoreWrongLeader(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
-	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Dan"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Charlie"})
+	hub.Consume(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Alice", MemberToSelect: "Dan"})
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Bob"})
+	hub.Consume(LeaderConfirmsTeamSelection{Party: Party{Code: code}, Leader: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
@@ -640,7 +640,7 @@ func Test_HandleApproveTeam(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConfirmedTeam(hub, code)
 
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerVotedOnTeam{Party: Party{Code: code}, Player: "Alice", Approved: true}))
@@ -654,7 +654,7 @@ func Test_HandleApproveTeam_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyStartedGame(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
@@ -665,11 +665,11 @@ func Test_HandleApproveTeam_AllPlayerVoted_Approved(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConfirmedTeam(hub, code)
 
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(MissionStarted{Party: Party{Code: code}}))
@@ -688,11 +688,11 @@ func Test_HandleApproveTeam_AllPlayerVoted_Rejected(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConfirmedTeam(hub, code)
 
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Party: Party{Code: code}, Leader: "Bob"}))
@@ -711,7 +711,7 @@ func Test_HandleApproveTeam_RejectedFiveTimeInARow(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := fiveFailedVoteInARow(hub, code)
 
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Party: Party{Code: code}, Winner: Spy}))
@@ -726,7 +726,7 @@ func Test_HandleRejectTeam(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConfirmedTeam(hub, code)
 
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerVotedOnTeam{Party: Party{Code: code}, Player: "Alice", Approved: false}))
@@ -740,7 +740,7 @@ func Test_HandleRejectTeam_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyStartedGame(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
@@ -751,11 +751,11 @@ func Test_HandleRejectTeam_AllPlayerVoted_Approved(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConfirmedTeam(hub, code)
 
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(MissionStarted{Party: Party{Code: code}}))
@@ -774,11 +774,11 @@ func Test_HandleRejectTeam_AllPlayerVoted_Rejected(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConfirmedTeam(hub, code)
 
-	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(ApproveTeam{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Charlie"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Dan"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Party: Party{Code: code}, Leader: "Bob"}))
@@ -797,7 +797,7 @@ func Test_HandleRejectTeam_RejectedFiveTimeInARow(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := fiveFailedVoteInARow(hub, code)
 
-	hub.HandleMessage(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
+	hub.Consume(RejectTeam{Party: Party{Code: code}, Player: "Edith"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Party: Party{Code: code}, Winner: Spy}))
@@ -812,7 +812,7 @@ func Test_HandleSucceedMission(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConductingMission(hub, code)
 
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerWorkedOnMission{Party: Party{Code: code}, Player: "Alice", Success: true}))
@@ -826,7 +826,7 @@ func Test_HandleSucceedMission_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyConfirmedTeam(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
@@ -837,8 +837,8 @@ func Test_HandleSucceedMission_MissionCompleted_Successful(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConductingMission(hub, code)
 
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Party: Party{Code: code}, Leader: "Bob"}))
@@ -854,8 +854,8 @@ func Test_HandleSucceedMission_MissionCompleted_Failure(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConductingMission(hub, code)
 
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Party: Party{Code: code}, Leader: "Bob"}))
@@ -871,8 +871,8 @@ func Test_HandleSucceedMission_MissionCompleted_ThirdSuccess(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := almostThreeSuccessfulMissions(hub, code)
 
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Party: Party{Code: code}, Winner: Resistance}))
@@ -888,7 +888,7 @@ func Test_HandleFailMission(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConductingMission(hub, code)
 
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerWorkedOnMission{Party: Party{Code: code}, Player: "Alice", Success: false}))
@@ -902,7 +902,7 @@ func Test_HandleFailMission_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyConfirmedTeam(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
@@ -913,8 +913,8 @@ func Test_HandleFailMission_MissionCompleted_Failure(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConductingMission(hub, code)
 
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Party: Party{Code: code}, Leader: "Bob"}))
@@ -930,8 +930,8 @@ func Test_HandleFailMission_MissionCompleted_ThirdFailure(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := almostThreeFailedMissions(hub, code)
 
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.Consume(FailMission{Party: Party{Code: code}, Player: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Party: Party{Code: code}, Winner: Spy}))

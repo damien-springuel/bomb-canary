@@ -41,24 +41,35 @@ func (r randomAllegianceGenerator) Generate(nbPlayers, nbSpies int) []gamerules.
 	return allegiances
 }
 
+type Dispatcher interface {
+	Dispatch(m messagebus.Message)
+}
+
+type PartyCreator interface {
+	CreateParty() string
+}
+
 type PartyService struct {
-	hub gamehub.GameHub
+	creator    PartyCreator
+	dispatcher Dispatcher
 }
 
 func (p PartyService) CreateParty() string {
-	return p.hub.CreateParty()
+	return p.creator.CreateParty()
 }
 
 func (p PartyService) JoinParty(code string, name string) {
-	p.hub.HandleMessage(messagebus.JoinParty{Party: messagebus.Party{Code: code}, User: name})
+	p.dispatcher.Dispatch(messagebus.JoinParty{Party: messagebus.Party{Code: code}, User: name})
 }
 
 func main() {
-	hub := gamehub.New(randomCodeGenerator{}, dummyDispatcher{}, randomAllegianceGenerator{})
+	bus := messagebus.NewMessageBus()
+	hub := gamehub.New(randomCodeGenerator{}, bus, randomAllegianceGenerator{})
+	bus.SubscribeConsumer(hub)
 
 	router := gin.Default()
 
-	lobby.Register(router, PartyService{hub: hub})
+	lobby.Register(router, PartyService{creator: hub, dispatcher: bus})
 
 	port := ":44324"
 	log.Printf("serving %s\n", port)

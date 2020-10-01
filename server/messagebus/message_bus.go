@@ -5,7 +5,7 @@ type Message interface {
 }
 
 type consumer interface {
-	consume(m Message)
+	Consume(m Message)
 }
 
 type bufferedConsumer struct {
@@ -22,7 +22,7 @@ func newBufferedConsumer(consumer consumer) bufferedConsumer {
 	}
 	go func() {
 		for incomingMessage := range bc.in {
-			bc.consumer.consume(incomingMessage)
+			bc.consumer.Consume(incomingMessage)
 		}
 		bc.done <- true
 	}()
@@ -60,11 +60,11 @@ func NewMessageBus() *messageBus {
 	return &mb
 }
 
-func (mb *messageBus) dispatchMessage(m Message) {
+func (mb *messageBus) Dispatch(m Message) {
 	mb.in <- m
 }
 
-func (m *messageBus) subscribeConsumer(consumer consumer) {
+func (m *messageBus) SubscribeConsumer(consumer consumer) {
 	m.consumers = append(m.consumers, newBufferedConsumer(consumer))
 }
 
