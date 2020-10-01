@@ -1,7 +1,15 @@
 package messagebus
 
+type Type string
+
+const (
+	CommandMessage Type = "command"
+	EventMessage   Type = "event"
+)
+
 type Message interface {
 	GetPartyCode() string
+	Type() Type
 }
 
 type consumer interface {

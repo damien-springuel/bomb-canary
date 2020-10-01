@@ -11,11 +11,13 @@ import (
 	"github.com/damien-springuel/bomb-canary/server/gamehub"
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
+	"github.com/damien-springuel/bomb-canary/server/messagelogger"
 	"github.com/damien-springuel/bomb-canary/server/party"
 	"github.com/damien-springuel/bomb-canary/server/playeractions"
 	"github.com/damien-springuel/bomb-canary/server/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/gookit/color"
 )
 
 type randomCodeGenerator struct{}
@@ -64,11 +66,21 @@ func (e *easySession) Create() string {
 	return session
 }
 
+type colorPrinter struct{}
+
+func (c colorPrinter) PrintCommand(m messagebus.Message) {
+	color.Style{color.BgLightGreen, color.FgBlack}.Printf("%s - Command: %#v\n", time.Now().Format("2006/01/02 - 15:04:05"), m)
+}
+func (c colorPrinter) PrintEvent(m messagebus.Message) {
+	color.Style{color.BgLightBlue, color.FgBlack}.Printf("%s - Event: %#v\n", time.Now().Format("2006/01/02 - 15:04:05"), m)
+}
+
 func main() {
 	bus := messagebus.NewMessageBus()
 
 	hub := gamehub.New(randomCodeGenerator{}, bus, randomAllegianceGenerator{})
 	bus.SubscribeConsumer(hub)
+	bus.SubscribeConsumer(messagelogger.New(colorPrinter{}))
 
 	// sessions := sessions.New(uuidV4{})
 	sessions := sessions.New(&easySession{}) // for easy testing purposes

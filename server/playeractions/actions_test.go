@@ -22,5 +22,5 @@ func Test_ServiceStartGame(t *testing.T) {
 	s.StartGame("testCode")
 
 	g := NewWithT(t)
-	g.Expect(dispatcher.receivedMessage).To(Equal(messagebus.StartGame{Party: messagebus.Party{Code: "testCode"}}))
+	g.Expect(dispatcher.receivedMessage).To(Equal(messagebus.StartGame{Command: messagebus.Command{Party: messagebus.Party{Code: "testCode"}}}))
 }

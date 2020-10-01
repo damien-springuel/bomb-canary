@@ -1,55 +1,55 @@
 package messagebus
 
-type Party struct {
-	Code string
+type Command struct {
+	Party
 }
 
-func (p Party) GetPartyCode() string {
-	return p.Code
+func (c Command) Type() Type {
+	return CommandMessage
 }
 
 type JoinParty struct {
-	Party
+	Command
 	User string
 }
 
 type StartGame struct {
-	Party
+	Command
 }
 
 type LeaderSelectsMember struct {
-	Party
+	Command
 	Leader         string
 	MemberToSelect string
 }
 
 type LeaderDeselectsMember struct {
-	Party
+	Command
 	Leader           string
 	MemberToDeselect string
 }
 
 type LeaderConfirmsTeamSelection struct {
-	Party
+	Command
 	Leader string
 }
 
 type ApproveTeam struct {
-	Party
+	Command
 	Player string
 }
 
 type RejectTeam struct {
-	Party
+	Command
 	Player string
 }
 
 type SucceedMission struct {
-	Party
+	Command
 	Player string
 }
 
 type FailMission struct {
-	Party
+	Command
 	Player string
 }

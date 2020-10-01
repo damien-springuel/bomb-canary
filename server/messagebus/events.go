@@ -1,52 +1,60 @@
 package messagebus
 
-type PlayerJoined struct {
+type Event struct {
 	Party
+}
+
+func (e Event) Type() Type {
+	return EventMessage
+}
+
+type PlayerJoined struct {
+	Event
 	User string
 }
 
 type LeaderStartedToSelectMembers struct {
-	Party
+	Event
 	Leader string
 }
 
 type LeaderSelectedMember struct {
-	Party
+	Event
 	SelectedMember string
 }
 
 type LeaderDeselectedMember struct {
-	Party
+	Event
 	DeselectedMember string
 }
 
 type LeaderConfirmedSelection struct {
-	Party
+	Event
 }
 
 type PlayerVotedOnTeam struct {
-	Party
+	Event
 	Player   string
 	Approved bool
 }
 
 type AllPlayerVotedOnTeam struct {
-	Party
+	Event
 	Approved     bool
 	VoteFailures int
 }
 
 type MissionStarted struct {
-	Party
+	Event
 }
 
 type MissionCompleted struct {
-	Party
+	Event
 	Success bool
 }
 
 type PlayerWorkedOnMission struct {
-	Party
+	Event
 	Player  string
 	Success bool
 }
@@ -59,6 +67,6 @@ const (
 )
 
 type GameEnded struct {
-	Party
+	Event
 	Winner Allegiance
 }

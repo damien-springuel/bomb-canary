@@ -39,7 +39,7 @@ func (p partyService) CreateParty() string {
 func (p partyService) JoinParty(code string, name string) error {
 	partyExists := p.checker.DoesPartyExist(code)
 	if partyExists {
-		p.dispatcher.Dispatch(messagebus.JoinParty{Party: messagebus.Party{Code: code}, User: name})
+		p.dispatcher.Dispatch(messagebus.JoinParty{Command: messagebus.Command{Party: messagebus.Party{Code: code}}, User: name})
 		return nil
 	}
 	return fmt.Errorf("can't join party {%s}: %w", code, errPartyDoesntExists)

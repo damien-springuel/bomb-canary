@@ -17,5 +17,5 @@ func NewActionService(messageDispatcher messageDispatcher) actionService {
 }
 
 func (a actionService) StartGame(code string) {
-	a.messageDispatcher.Dispatch(messagebus.StartGame{Party: messagebus.Party{Code: code}})
+	a.messageDispatcher.Dispatch(messagebus.StartGame{Command: messagebus.Command{Party: messagebus.Party{Code: code}}})
 }

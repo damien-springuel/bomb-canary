@@ -92,7 +92,7 @@ func (s gameHub) handleJoinPartyCommand(currentGame gamerules.Game, message Mess
 	if err == nil {
 		messagesToDispatch = append(messagesToDispatch,
 			PlayerJoined{
-				Party: Party{Code: message.GetPartyCode()},
+				Event: Event{Party: Party{Code: message.GetPartyCode()}},
 				User:  joinPartyCommand.User,
 			},
 		)
@@ -106,7 +106,7 @@ func (s gameHub) handleStartGameCommand(currentGame gamerules.Game, message Mess
 	if err == nil {
 		messagesToDispatch = append(messagesToDispatch,
 			LeaderStartedToSelectMembers{
-				Party:  Party{Code: message.GetPartyCode()},
+				Event:  Event{Party: Party{Code: message.GetPartyCode()}},
 				Leader: updatedGame.Leader(),
 			},
 		)
@@ -127,7 +127,7 @@ func (s gameHub) handleLeaderSelectsMember(currentGame gamerules.Game, message M
 	if err == nil {
 		messagesToDispatch = append(messagesToDispatch,
 			LeaderSelectedMember{
-				Party:          Party{Code: message.GetPartyCode()},
+				Event:          Event{Party: Party{Code: message.GetPartyCode()}},
 				SelectedMember: leaderSelectsMemberCommand.MemberToSelect,
 			},
 		)
@@ -148,7 +148,7 @@ func (s gameHub) handleLeaderDeselectsMember(currentGame gamerules.Game, message
 	if err == nil {
 		messagesToDispatch = append(messagesToDispatch,
 			LeaderDeselectedMember{
-				Party:            Party{Code: message.GetPartyCode()},
+				Event:            Event{Party: Party{Code: message.GetPartyCode()}},
 				DeselectedMember: leaderDeselectsMemberCommand.MemberToDeselect,
 			},
 		)
@@ -169,7 +169,7 @@ func (s gameHub) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, m
 	if err == nil {
 		messagesToDispatch = append(messagesToDispatch,
 			LeaderConfirmedSelection{
-				Party: Party{Code: message.GetPartyCode()},
+				Event: Event{Party: Party{Code: message.GetPartyCode()}},
 			},
 		)
 	}
@@ -187,7 +187,7 @@ func (s gameHub) handleApproveTeam(currentGame gamerules.Game, message Message) 
 
 	messagesToDispatch = append(messagesToDispatch,
 		PlayerVotedOnTeam{
-			Party:    Party{Code: message.GetPartyCode()},
+			Event:    Event{Party: Party{Code: message.GetPartyCode()}},
 			Player:   approveTeamCommand.Player,
 			Approved: true,
 		},
@@ -209,7 +209,7 @@ func (s gameHub) handleRejectTeam(currentGame gamerules.Game, message Message) (
 
 	messagesToDispatch = append(messagesToDispatch,
 		PlayerVotedOnTeam{
-			Party:    Party{Code: message.GetPartyCode()},
+			Event:    Event{Party: Party{Code: message.GetPartyCode()}},
 			Player:   rejectTeamCommand.Player,
 			Approved: false,
 		},
@@ -225,40 +225,40 @@ func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []Messa
 	if updatedGame.State() == gamerules.SelectingTeam {
 		commonVoteMessages = append(commonVoteMessages,
 			AllPlayerVotedOnTeam{
-				Party:        Party{Code: code},
+				Event:        Event{Party: Party{Code: code}},
 				Approved:     false,
 				VoteFailures: updatedGame.VoteFailures(),
 			},
 		)
 		commonVoteMessages = append(commonVoteMessages,
 			LeaderStartedToSelectMembers{
-				Party:  Party{Code: code},
+				Event:  Event{Party: Party{Code: code}},
 				Leader: updatedGame.Leader(),
 			},
 		)
 	} else if updatedGame.State() == gamerules.ConductingMission {
 		commonVoteMessages = append(commonVoteMessages,
 			AllPlayerVotedOnTeam{
-				Party:    Party{Code: code},
+				Event:    Event{Party: Party{Code: code}},
 				Approved: true,
 			},
 		)
 		commonVoteMessages = append(commonVoteMessages,
 			MissionStarted{
-				Party: Party{Code: code},
+				Event: Event{Party: Party{Code: code}},
 			},
 		)
 	} else if updatedGame.State() == gamerules.GameOver {
 		commonVoteMessages = append(commonVoteMessages,
 			AllPlayerVotedOnTeam{
-				Party:        Party{Code: code},
+				Event:        Event{Party: Party{Code: code}},
 				Approved:     false,
 				VoteFailures: updatedGame.VoteFailures(),
 			},
 		)
 		commonVoteMessages = append(commonVoteMessages,
 			GameEnded{
-				Party:  Party{Code: code},
+				Event:  Event{Party: Party{Code: code}},
 				Winner: Spy,
 			},
 		)
@@ -278,7 +278,7 @@ func (s gameHub) handleSucceedMission(currentGame gamerules.Game, message Messag
 
 	messagesToDispatch = append(messagesToDispatch,
 		PlayerWorkedOnMission{
-			Party:   Party{Code: message.GetPartyCode()},
+			Event:   Event{Party: Party{Code: message.GetPartyCode()}},
 			Player:  succeedMissionCommand.Player,
 			Success: true,
 		},
@@ -300,7 +300,7 @@ func (s gameHub) handleFailMission(currentGame gamerules.Game, message Message) 
 
 	messagesToDispatch = append(messagesToDispatch,
 		PlayerWorkedOnMission{
-			Party:   Party{Code: message.GetPartyCode()},
+			Event:   Event{Party: Party{Code: message.GetPartyCode()}},
 			Player:  failMissionCommand.Player,
 			Success: false,
 		},
@@ -318,13 +318,13 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []Me
 		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
 		commonMissionMessages = append(commonMissionMessages,
 			MissionCompleted{
-				Party:   Party{Code: code},
+				Event:   Event{Party: Party{Code: code}},
 				Success: lastGameSuccess,
 			},
 		)
 		commonMissionMessages = append(commonMissionMessages,
 			LeaderStartedToSelectMembers{
-				Party:  Party{Code: code},
+				Event:  Event{Party: Party{Code: code}},
 				Leader: updatedGame.Leader(),
 			},
 		)
@@ -332,7 +332,7 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []Me
 		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
 		commonMissionMessages = append(commonMissionMessages,
 			MissionCompleted{
-				Party:   Party{Code: code},
+				Event:   Event{Party: Party{Code: code}},
 				Success: lastGameSuccess,
 			},
 		)
@@ -346,7 +346,7 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []Me
 		}
 		commonMissionMessages = append(commonMissionMessages,
 			GameEnded{
-				Party:  Party{Code: code},
+				Event:  Event{Party: Party{Code: code}},
 				Winner: messageWinner,
 			},
 		)
