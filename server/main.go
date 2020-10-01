@@ -19,10 +19,6 @@ func (r randomCodeGenerator) GenerateCode() string {
 	return "AAA"
 }
 
-type dummyDispatcher struct{}
-
-func (d dummyDispatcher) Dispatch(m messagebus.Message) {}
-
 type randomAllegianceGenerator struct{}
 
 func (r randomAllegianceGenerator) Generate(nbPlayers, nbSpies int) []gamerules.Allegiance {
