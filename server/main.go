@@ -10,8 +10,8 @@ import (
 
 	"github.com/damien-springuel/bomb-canary/server/gamehub"
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
-	"github.com/damien-springuel/bomb-canary/server/lobby"
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
+	"github.com/damien-springuel/bomb-canary/server/party"
 	"github.com/damien-springuel/bomb-canary/server/playeractions"
 	"github.com/damien-springuel/bomb-canary/server/sessions"
 	"github.com/gin-gonic/gin"
@@ -74,7 +74,7 @@ func main() {
 	sessions := sessions.New(&easySession{}) // for easy testing purposes
 
 	router := gin.Default()
-	lobby.Register(router, lobby.NewPartyService(hub, hub, bus), sessions)
+	party.Register(router, party.NewPartyService(hub, hub, bus), sessions)
 	playeractions.Register(router, sessions, playeractions.NewActionService(bus))
 
 	port := ":44324"
