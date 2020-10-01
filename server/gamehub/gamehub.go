@@ -19,7 +19,7 @@ type gameHub struct {
 	codeGenerator       codeGenerator
 	messageDispatcher   messageDispatcher
 	allegianceGenerator gamerules.AllegianceGenerator
-	gamesByPartyCode    map[string]gamerules.Game
+	games               games
 }
 
 func New(codeGenerator codeGenerator, messageDispatcher messageDispatcher, allegianceGenerator gamerules.AllegianceGenerator) gameHub {
@@ -27,13 +27,13 @@ func New(codeGenerator codeGenerator, messageDispatcher messageDispatcher, alleg
 		codeGenerator:       codeGenerator,
 		messageDispatcher:   messageDispatcher,
 		allegianceGenerator: allegianceGenerator,
-		gamesByPartyCode:    make(map[string]gamerules.Game),
+		games:               newGames(),
 	}
 }
 
 func (s gameHub) CreateParty() string {
 	newCode := s.codeGenerator.GenerateCode()
-	s.gamesByPartyCode[newCode] = gamerules.NewGame()
+	s.games.create(newCode)
 	return newCode
 }
 
@@ -61,16 +61,23 @@ func (s gameHub) Consume(m Message) {
 	default:
 		return
 	}
-	updatedGame, messagesToDispatch := handler(s.gamesByPartyCode[m.GetPartyCode()], m)
 
-	s.gamesByPartyCode[m.GetPartyCode()] = updatedGame
+	code := m.GetPartyCode()
+	game, exists := s.games.get(code)
+	if !exists {
+		return
+	}
+	updatedGame, messagesToDispatch := handler(game, m)
+
+	s.games.set(code, updatedGame)
 	for _, messageToDispatch := range messagesToDispatch {
 		s.messageDispatcher.Dispatch(messageToDispatch)
 	}
 }
 
 func (s gameHub) getGameForPartyCode(code string) gamerules.Game {
-	return s.gamesByPartyCode[code]
+	game, _ := s.games.get(code)
+	return game
 }
 
 func (s gameHub) handleJoinPartyCommand(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {

@@ -484,6 +484,19 @@ func Test_HandleShouldIgnoreUnknownMessage(t *testing.T) {
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
+func Test_HandleShouldIgnoreCodeThatDoesntExist(t *testing.T) {
+	messageDispatcher, hub, code := setupHub()
+	expectedGame := newlyStartedGame(hub, code)
+
+	type fakeMessage struct{ Party }
+	messageDispatcher.clearReceivedMessages()
+	hub.Consume(JoinParty{Party: Party{Code: "doesn't exist"}})
+
+	g := NewWithT(t)
+	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())
+	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
+}
+
 func Test_HandleStartGameCommand(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
