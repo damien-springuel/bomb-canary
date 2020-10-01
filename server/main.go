@@ -10,7 +10,9 @@ import (
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
 	"github.com/damien-springuel/bomb-canary/server/lobby"
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
+	"github.com/damien-springuel/bomb-canary/server/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type randomCodeGenerator struct{}
@@ -58,14 +60,22 @@ func (p PartyService) JoinParty(code string, name string) {
 	p.dispatcher.Dispatch(messagebus.JoinParty{Party: messagebus.Party{Code: code}, User: name})
 }
 
+type uuidV4 struct{}
+
+func (u uuidV4) Create() string {
+	return uuid.New().String()
+}
+
 func main() {
 	bus := messagebus.NewMessageBus()
+
 	hub := gamehub.New(randomCodeGenerator{}, bus, randomAllegianceGenerator{})
 	bus.SubscribeConsumer(hub)
 
-	router := gin.Default()
+	sessions := sessions.New(uuidV4{})
 
-	lobby.Register(router, PartyService{creator: hub, dispatcher: bus})
+	router := gin.Default()
+	lobby.Register(router, PartyService{creator: hub, dispatcher: bus}, sessions)
 
 	port := ":44324"
 	log.Printf("serving %s\n", port)
