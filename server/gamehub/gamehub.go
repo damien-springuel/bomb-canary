@@ -2,17 +2,17 @@ package gamehub
 
 import (
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
-	"github.com/damien-springuel/bomb-canary/server/messagebus"
+	. "github.com/damien-springuel/bomb-canary/server/messagebus"
 )
 
-type handler func(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message)
+type handler func(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message)
 
 type codeGenerator interface {
 	GenerateCode() string
 }
 
 type messageDispatcher interface {
-	Dispatch(m messagebus.Message)
+	Dispatch(m Message)
 }
 
 type GameHub struct {
@@ -37,7 +37,7 @@ func (s GameHub) CreateParty() string {
 	return newCode
 }
 
-func (s GameHub) HandleMessage(m messagebus.Message) {
+func (s GameHub) HandleMessage(m Message) {
 	var handler handler
 	switch m.(type) {
 	case JoinParty:
@@ -73,7 +73,7 @@ func (s GameHub) getGameForPartyCode(code string) gamerules.Game {
 	return s.gamesByPartyCode[code]
 }
 
-func (s GameHub) handleJoinPartyCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleJoinPartyCommand(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	joinPartyCommand := message.(JoinParty)
 	updatedGame, err := currentGame.AddPlayer(joinPartyCommand.User)
 
@@ -88,7 +88,7 @@ func (s GameHub) handleJoinPartyCommand(currentGame gamerules.Game, message mess
 	return
 }
 
-func (s GameHub) handleStartGameCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleStartGameCommand(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	updatedGame, err := currentGame.Start(s.allegianceGenerator)
 
 	if err == nil {
@@ -102,7 +102,7 @@ func (s GameHub) handleStartGameCommand(currentGame gamerules.Game, message mess
 	return
 }
 
-func (s GameHub) handleLeaderSelectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleLeaderSelectsMember(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	leaderSelectsMemberCommand := message.(LeaderSelectsMember)
 
 	if leaderSelectsMemberCommand.Leader != currentGame.Leader() {
@@ -123,7 +123,7 @@ func (s GameHub) handleLeaderSelectsMember(currentGame gamerules.Game, message m
 	return
 }
 
-func (s GameHub) handleLeaderDeselectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleLeaderDeselectsMember(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	leaderDeselectsMemberCommand := message.(LeaderDeselectsMember)
 
 	if leaderDeselectsMemberCommand.Leader != currentGame.Leader() {
@@ -144,7 +144,7 @@ func (s GameHub) handleLeaderDeselectsMember(currentGame gamerules.Game, message
 	return
 }
 
-func (s GameHub) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	leaderConfirmsTeamSelectionCommand := message.(LeaderConfirmsTeamSelection)
 
 	if leaderConfirmsTeamSelectionCommand.Leader != currentGame.Leader() {
@@ -164,7 +164,7 @@ func (s GameHub) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, m
 	return
 }
 
-func (s GameHub) handleApproveTeam(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleApproveTeam(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	approveTeamCommand := message.(ApproveTeam)
 	updatedGame, err := currentGame.ApproveTeamBy(approveTeamCommand.Player)
 
@@ -186,7 +186,7 @@ func (s GameHub) handleApproveTeam(currentGame gamerules.Game, message messagebu
 	return
 }
 
-func (s GameHub) handleRejectTeam(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleRejectTeam(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	rejectTeamCommand := message.(RejectTeam)
 	updatedGame, err := currentGame.RejectTeamBy(rejectTeamCommand.Player)
 
@@ -208,8 +208,8 @@ func (s GameHub) handleRejectTeam(currentGame gamerules.Game, message messagebus
 	return
 }
 
-func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []messagebus.Message {
-	commonVoteMessages := []messagebus.Message{}
+func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []Message {
+	commonVoteMessages := []Message{}
 	if updatedGame.State() == gamerules.SelectingTeam {
 		commonVoteMessages = append(commonVoteMessages,
 			AllPlayerVotedOnTeam{
@@ -255,7 +255,7 @@ func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []messa
 	return commonVoteMessages
 }
 
-func (s GameHub) handleSucceedMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleSucceedMission(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	succeedMissionCommand := message.(SucceedMission)
 	updatedGame, err := currentGame.SucceedMissionBy(succeedMissionCommand.Player)
 
@@ -277,9 +277,9 @@ func (s GameHub) handleSucceedMission(currentGame gamerules.Game, message messag
 	return
 }
 
-func (s GameHub) handleFailMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleFailMission(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	failMissionCommand := message.(FailMission)
-	updatedGame, err := currentGame.FailMissionBy(failMissionCommand.player)
+	updatedGame, err := currentGame.FailMissionBy(failMissionCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame
@@ -289,7 +289,7 @@ func (s GameHub) handleFailMission(currentGame gamerules.Game, message messagebu
 	messagesToDispatch = append(messagesToDispatch,
 		PlayerWorkedOnMission{
 			Party:   Party{Code: message.GetPartyCode()},
-			Player:  failMissionCommand.player,
+			Player:  failMissionCommand.Player,
 			Success: false,
 		},
 	)
@@ -299,15 +299,15 @@ func (s GameHub) handleFailMission(currentGame gamerules.Game, message messagebu
 	return
 }
 
-func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []messagebus.Message {
-	commonMissionMessages := []messagebus.Message{}
+func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []Message {
+	commonMissionMessages := []Message{}
 
 	if updatedGame.State() == gamerules.SelectingTeam {
 		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
 		commonMissionMessages = append(commonMissionMessages,
 			MissionCompleted{
 				Party:   Party{Code: code},
-				success: lastGameSuccess,
+				Success: lastGameSuccess,
 			},
 		)
 		commonMissionMessages = append(commonMissionMessages,
@@ -321,7 +321,7 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []me
 		commonMissionMessages = append(commonMissionMessages,
 			MissionCompleted{
 				Party:   Party{Code: code},
-				success: lastGameSuccess,
+				Success: lastGameSuccess,
 			},
 		)
 

@@ -52,7 +52,7 @@ func (p PartyService) CreateParty() string {
 }
 
 func (p PartyService) JoinParty(code string, name string) {
-	p.hub.HandleMessage(gamehub.JoinParty{Party: gamehub.Party{Code: code}, User: name})
+	p.hub.HandleMessage(messagebus.JoinParty{Party: messagebus.Party{Code: code}, User: name})
 }
 
 func main() {

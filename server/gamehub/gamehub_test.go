@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
-	"github.com/damien-springuel/bomb-canary/server/messagebus"
+	. "github.com/damien-springuel/bomb-canary/server/messagebus"
 	. "github.com/onsi/gomega"
 )
 
@@ -17,18 +17,18 @@ func (t testGenerator) GenerateCode() string {
 }
 
 type testMessageDispatcher struct {
-	receivedMessages []messagebus.Message
+	receivedMessages []Message
 }
 
-func (t *testMessageDispatcher) Dispatch(m messagebus.Message) {
+func (t *testMessageDispatcher) Dispatch(m Message) {
 	t.receivedMessages = append(t.receivedMessages, m)
 }
 
-func (t *testMessageDispatcher) messageFromEnd(index int) messagebus.Message {
+func (t *testMessageDispatcher) messageFromEnd(index int) Message {
 	return t.receivedMessages[len(t.receivedMessages)-1-index]
 }
 
-func (t *testMessageDispatcher) lastMessage() messagebus.Message {
+func (t *testMessageDispatcher) lastMessage() Message {
 	return t.messageFromEnd(0)
 }
 
@@ -356,8 +356,8 @@ func almostThreeFailedMissions(hub GameHub, code string) gamerules.Game {
 	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
 	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
 	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Alice"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Bob"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Bob"})
 
 	// #2
 	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Bob", MemberToSelect: "Alice"})
@@ -369,9 +369,9 @@ func almostThreeFailedMissions(hub GameHub, code string) gamerules.Game {
 	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Charlie"})
 	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Dan"})
 	hub.HandleMessage(ApproveTeam{Party: Party{Code: code}, Player: "Edith"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Alice"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Bob"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Charlie"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Bob"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Charlie"})
 
 	// #3 minus last two succeed
 	hub.HandleMessage(LeaderSelectsMember{Party: Party{Code: code}, Leader: "Charlie", MemberToSelect: "Alice"})
@@ -842,7 +842,7 @@ func Test_HandleSucceedMission_MissionCompleted_Successful(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Party: Party{Code: code}, Leader: "Bob"}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, success: true}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, Success: true}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Party: Party{Code: code}, Player: "Bob", Success: true}))
 
 	expectedGame, _ = expectedGame.SucceedMissionBy("Alice")
@@ -854,12 +854,12 @@ func Test_HandleSucceedMission_MissionCompleted_Failure(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConductingMission(hub, code)
 
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Alice"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
 	hub.HandleMessage(SucceedMission{Party: Party{Code: code}, Player: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Party: Party{Code: code}, Leader: "Bob"}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, Success: false}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Party: Party{Code: code}, Player: "Bob", Success: true}))
 
 	expectedGame, _ = expectedGame.FailMissionBy("Alice")
@@ -876,7 +876,7 @@ func Test_HandleSucceedMission_MissionCompleted_ThirdSuccess(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Party: Party{Code: code}, Winner: Resistance}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, success: true}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, Success: true}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Party: Party{Code: code}, Player: "Bob", Success: true}))
 
 	expectedGame, _ = expectedGame.SucceedMissionBy("Alice")
@@ -888,7 +888,7 @@ func Test_HandleFailMission(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConductingMission(hub, code)
 
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Alice"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerWorkedOnMission{Party: Party{Code: code}, Player: "Alice", Success: false}))
@@ -902,7 +902,7 @@ func Test_HandleFailMission_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyConfirmedTeam(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Alice"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeNil())
@@ -913,12 +913,12 @@ func Test_HandleFailMission_MissionCompleted_Failure(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyConductingMission(hub, code)
 
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Alice"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Bob"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Party: Party{Code: code}, Leader: "Bob"}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, Success: false}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Party: Party{Code: code}, Player: "Bob", Success: false}))
 
 	expectedGame, _ = expectedGame.FailMissionBy("Alice")
@@ -930,12 +930,12 @@ func Test_HandleFailMission_MissionCompleted_ThirdFailure(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := almostThreeFailedMissions(hub, code)
 
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Alice"})
-	hub.HandleMessage(FailMission{Party: Party{Code: code}, player: "Bob"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Alice"})
+	hub.HandleMessage(FailMission{Party: Party{Code: code}, Player: "Bob"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Party: Party{Code: code}, Winner: Spy}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Party: Party{Code: code}, Success: false}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Party: Party{Code: code}, Player: "Bob", Success: false}))
 
 	expectedGame, _ = expectedGame.FailMissionBy("Alice")

@@ -1,4 +1,4 @@
-package gamehub
+package messagebus
 
 type Party struct {
 	Code string
@@ -51,5 +51,5 @@ type SucceedMission struct {
 
 type FailMission struct {
 	Party
-	player string
+	Player string
 }

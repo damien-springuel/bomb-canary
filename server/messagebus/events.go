@@ -1,4 +1,4 @@
-package gamehub
+package messagebus
 
 type PlayerJoined struct {
 	Party
@@ -42,7 +42,7 @@ type MissionStarted struct {
 
 type MissionCompleted struct {
 	Party
-	success bool
+	Success bool
 }
 
 type PlayerWorkedOnMission struct {
