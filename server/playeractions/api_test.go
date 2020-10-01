@@ -1,9 +1,13 @@
 package playeractions
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -21,11 +25,64 @@ func (m *mockSessionGetter) Get(session string) (code string, name string, err e
 }
 
 type mockActionBroker struct {
-	receivedCode string
+	gameStarted              bool
+	receivedCode             string
+	receivedLeader           string
+	receivedSelectedMember   string
+	receivedDeselectedMember string
+	teamConfirmed            bool
+	receivedPlayerApprove    string
+	receivedPlayerReject     string
+	receivedPlayerSucceed    string
+	receivedPlayerFail       string
 }
 
 func (m *mockActionBroker) StartGame(code string) {
 	m.receivedCode = code
+	m.gameStarted = true
+}
+
+func (m *mockActionBroker) LeaderSelectsMember(code string, leader string, member string) {
+	m.receivedCode = code
+	m.receivedLeader = leader
+	m.receivedSelectedMember = member
+}
+
+func (m *mockActionBroker) LeaderDeselectsMember(code string, leader string, member string) {
+	m.receivedCode = code
+	m.receivedLeader = leader
+	m.receivedDeselectedMember = member
+}
+
+func (m *mockActionBroker) LeaderConfirmsTeam(code string, leader string) {
+	m.receivedCode = code
+	m.receivedLeader = leader
+	m.teamConfirmed = true
+}
+
+func (m *mockActionBroker) ApproveTeam(code string, player string) {
+	m.receivedCode = code
+	m.receivedPlayerApprove = player
+}
+
+func (m *mockActionBroker) RejectTeam(code string, player string) {
+	m.receivedCode = code
+	m.receivedPlayerReject = player
+}
+
+func (m *mockActionBroker) SucceedMission(code string, player string) {
+	m.receivedCode = code
+	m.receivedPlayerSucceed = player
+}
+
+func (m *mockActionBroker) FailMission(code string, player string) {
+	m.receivedCode = code
+	m.receivedPlayerFail = player
+}
+
+func jsonReader(obj interface{}) io.Reader {
+	jsonBytes, _ := json.Marshal(obj)
+	return bytes.NewReader(jsonBytes)
 }
 
 func makeCall(req *http.Request, sessionGetter *mockSessionGetter) (*mockSessionGetter, *mockActionBroker, *httptest.ResponseRecorder) {
@@ -77,4 +134,161 @@ func Test_StartGame(t *testing.T) {
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
 	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
+	g.Expect(actionBroker.gameStarted).To(BeTrue())
+}
+
+func Test_LeaderSelectsMember(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/leader-selects-member", jsonReader(leaderSelectionRequest{Member: "aMember"}))
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(200))
+	g.Expect(w.Body.String()).To(Equal("{}"))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
+	g.Expect(actionBroker.receivedLeader).To(Equal("testName"))
+	g.Expect(actionBroker.receivedSelectedMember).To(Equal("aMember"))
+}
+
+func Test_LeaderSelectsMember_Returns400IfMemberIsMissing(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/leader-selects-member", jsonReader(leaderSelectionRequest{Member: ""}))
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(400))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal(""))
+	g.Expect(actionBroker.receivedLeader).To(Equal(""))
+	g.Expect(actionBroker.receivedSelectedMember).To(Equal(""))
+}
+
+func Test_LeaderSelectsMember_Returns400IfBodyMalformed(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/leader-selects-member", strings.NewReader("garbage"))
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(400))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal(""))
+	g.Expect(actionBroker.receivedLeader).To(Equal(""))
+	g.Expect(actionBroker.receivedSelectedMember).To(Equal(""))
+}
+
+func Test_LeaderDeselectsMember(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/leader-deselects-member", jsonReader(leaderSelectionRequest{Member: "aMember"}))
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(200))
+	g.Expect(w.Body.String()).To(Equal("{}"))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
+	g.Expect(actionBroker.receivedLeader).To(Equal("testName"))
+	g.Expect(actionBroker.receivedDeselectedMember).To(Equal("aMember"))
+}
+
+func Test_LeaderDeselectsMember_Returns400IfMemberIsMissing(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/leader-deselects-member", jsonReader(leaderSelectionRequest{Member: ""}))
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(400))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal(""))
+	g.Expect(actionBroker.receivedLeader).To(Equal(""))
+	g.Expect(actionBroker.receivedDeselectedMember).To(Equal(""))
+}
+
+func Test_LeaderDeselectsMember_Returns400IfBodyMalformed(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/leader-deselects-member", strings.NewReader("garbage"))
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(400))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal(""))
+	g.Expect(actionBroker.receivedLeader).To(Equal(""))
+	g.Expect(actionBroker.receivedDeselectedMember).To(Equal(""))
+}
+
+func Test_LeaderConfirmsTeam(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/leader-confirms-team", strings.NewReader("garbage"))
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(200))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
+	g.Expect(actionBroker.receivedLeader).To(Equal("testName"))
+	g.Expect(actionBroker.teamConfirmed).To(BeTrue())
+}
+
+func Test_ApproveTeam(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/approve-team", nil)
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(200))
+	g.Expect(w.Body.String()).To(Equal("{}"))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
+	g.Expect(actionBroker.receivedPlayerApprove).To(Equal("testName"))
+}
+
+func Test_RejectTeam(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/reject-team", nil)
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(200))
+	g.Expect(w.Body.String()).To(Equal("{}"))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
+	g.Expect(actionBroker.receivedPlayerReject).To(Equal("testName"))
+}
+
+func Test_SucceedMission(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/succeed-mission", nil)
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(200))
+	g.Expect(w.Body.String()).To(Equal("{}"))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
+	g.Expect(actionBroker.receivedPlayerSucceed).To(Equal("testName"))
+}
+
+func Test_FailMission(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/actions/fail-mission", nil)
+	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
+	sessionGetter, actionBroker, w := makeCall(req, nil)
+
+	g := NewWithT(t)
+	g.Expect(w.Code).To(Equal(200))
+	g.Expect(w.Body.String()).To(Equal("{}"))
+
+	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
+	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
+	g.Expect(actionBroker.receivedPlayerFail).To(Equal("testName"))
 }
