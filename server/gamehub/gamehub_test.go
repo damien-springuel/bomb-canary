@@ -437,6 +437,15 @@ func Test_CreateParty(t *testing.T) {
 	g.Expect(code).To(Equal("testCode"))
 }
 
+func Test_DoesPartyExists(t *testing.T) {
+	s := New(testGenerator{returnCode: "testCode"}, nil, nil)
+	_ = s.CreateParty()
+
+	g := NewWithT(t)
+	g.Expect(s.DoesPartyExist("testCode")).To(BeTrue())
+	g.Expect(s.DoesPartyExist("oops")).To(BeFalse())
+}
+
 func Test_GetGameForPartyCode(t *testing.T) {
 	s := New(testGenerator{returnCode: "testCode"}, nil, nil)
 	code := s.CreateParty()
