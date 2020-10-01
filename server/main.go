@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"time"
 
+	service "github.com/damien-springuel/bomb-canary/server/gamehub"
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
 	"github.com/damien-springuel/bomb-canary/server/lobby"
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
-	"github.com/damien-springuel/bomb-canary/server/service"
 	"github.com/gin-gonic/gin"
 )
 
