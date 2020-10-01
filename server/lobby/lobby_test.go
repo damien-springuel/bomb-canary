@@ -114,7 +114,6 @@ func Test_JoinParty(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(w.Code).To(Equal(200))
-
 	g.Expect(w.Body.String()).To(Equal("{}"))
 
 	actualCookie := w.Result().Cookies()[0]

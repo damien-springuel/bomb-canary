@@ -1,6 +1,9 @@
 package sessions
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
 type playerSession struct {
 	partyCode string
@@ -36,4 +39,15 @@ func (s sessions) Create(code string, name string) string {
 	s.mut.Unlock()
 
 	return uuid
+}
+
+func (s sessions) Get(session string) (code string, name string, err error) {
+	s.mut.RLock()
+	playerSession, exists := s.sessionById[session]
+	s.mut.RUnlock()
+	if !exists {
+		return "", "", errors.New("session doesn't exist")
+	}
+
+	return playerSession.partyCode, playerSession.name, nil
 }
