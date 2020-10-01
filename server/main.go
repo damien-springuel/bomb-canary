@@ -75,7 +75,7 @@ func main() {
 	sessions := sessions.New(uuidV4{})
 
 	router := gin.Default()
-	lobby.Register(router, PartyService{creator: hub, dispatcher: bus}, sessions)
+	lobby.Register(router, PartyService{creator: hub, dispatcher: bus}, &sessions)
 
 	port := ":44324"
 	log.Printf("serving %s\n", port)
