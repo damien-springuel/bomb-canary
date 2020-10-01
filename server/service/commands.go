@@ -1,55 +1,55 @@
 package service
 
-type party struct {
-	code string
+type Party struct {
+	Code string
 }
 
-func (p party) GetPartyCode() string {
-	return p.code
+func (p Party) GetPartyCode() string {
+	return p.Code
 }
 
-type joinParty struct {
-	party
-	user string
+type JoinParty struct {
+	Party
+	User string
 }
 
 type startGame struct {
-	party
+	Party
 }
 
 type leaderSelectsMember struct {
-	party
+	Party
 	leader         string
 	memberToSelect string
 }
 
 type leaderDeselectsMember struct {
-	party
+	Party
 	leader           string
 	memberToDeselect string
 }
 
 type leaderConfirmsTeamSelection struct {
-	party
+	Party
 	leader string
 }
 
 type approveTeam struct {
-	party
+	Party
 	player string
 }
 
 type rejectTeam struct {
-	party
+	Party
 	player string
 }
 
 type succeedMission struct {
-	party
+	Party
 	player string
 }
 
 type failMission struct {
-	party
+	Party
 	player string
 }

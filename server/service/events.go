@@ -1,52 +1,52 @@
 package service
 
 type playerJoined struct {
-	party
+	Party
 	user string
 }
 
 type leaderStartedToSelectMembers struct {
-	party
+	Party
 	leader string
 }
 
 type leaderSelectedMember struct {
-	party
+	Party
 	selectedMember string
 }
 
 type leaderDeselectedMember struct {
-	party
+	Party
 	deselectedMember string
 }
 
 type leaderConfirmedSelection struct {
-	party
+	Party
 }
 
 type playerVotedOnTeam struct {
-	party
+	Party
 	player   string
 	approved bool
 }
 
 type allPlayerVotedOnTeam struct {
-	party
+	Party
 	approved     bool
 	voteFailures int
 }
 
 type missionStarted struct {
-	party
+	Party
 }
 
 type missionCompleted struct {
-	party
+	Party
 	success bool
 }
 
 type playerWorkedOnMission struct {
-	party
+	Party
 	player  string
 	success bool
 }
@@ -59,6 +59,6 @@ const (
 )
 
 type gameEnded struct {
-	party
+	Party
 	winner allegiance
 }
