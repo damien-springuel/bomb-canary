@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	service "github.com/damien-springuel/bomb-canary/server/gamehub"
+	"github.com/damien-springuel/bomb-canary/server/gamehub"
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
 	"github.com/damien-springuel/bomb-canary/server/lobby"
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
@@ -42,25 +42,25 @@ func (r randomAllegianceGenerator) Generate(nbPlayers, nbSpies int) []gamerules.
 }
 
 type PartyService struct {
-	service service.Service
+	hub gamehub.GameHub
 }
 
 // CreateParty() string
 // 	JoinParty(name string)
 func (p PartyService) CreateParty() string {
-	return p.service.CreateParty()
+	return p.hub.CreateParty()
 }
 
 func (p PartyService) JoinParty(code string, name string) {
-	p.service.HandleMessage(service.JoinParty{Party: service.Party{Code: code}, User: name})
+	p.hub.HandleMessage(gamehub.JoinParty{Party: gamehub.Party{Code: code}, User: name})
 }
 
 func main() {
-	service := service.New(randomCodeGenerator{}, dummyDispatcher{}, randomAllegianceGenerator{})
+	hub := gamehub.New(randomCodeGenerator{}, dummyDispatcher{}, randomAllegianceGenerator{})
 
 	router := gin.Default()
 
-	lobby.Register(router, PartyService{service: service})
+	lobby.Register(router, PartyService{hub: hub})
 
 	port := ":44324"
 	log.Printf("serving %s\n", port)

@@ -1,4 +1,4 @@
-package service
+package gamehub
 
 import (
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
@@ -15,15 +15,15 @@ type messageDispatcher interface {
 	Dispatch(m messagebus.Message)
 }
 
-type Service struct {
+type GameHub struct {
 	codeGenerator       codeGenerator
 	messageDispatcher   messageDispatcher
 	allegianceGenerator gamerules.AllegianceGenerator
 	gamesByPartyCode    map[string]gamerules.Game
 }
 
-func New(codeGenerator codeGenerator, messageDispatcher messageDispatcher, allegianceGenerator gamerules.AllegianceGenerator) Service {
-	return Service{
+func New(codeGenerator codeGenerator, messageDispatcher messageDispatcher, allegianceGenerator gamerules.AllegianceGenerator) GameHub {
+	return GameHub{
 		codeGenerator:       codeGenerator,
 		messageDispatcher:   messageDispatcher,
 		allegianceGenerator: allegianceGenerator,
@@ -31,13 +31,13 @@ func New(codeGenerator codeGenerator, messageDispatcher messageDispatcher, alleg
 	}
 }
 
-func (s Service) CreateParty() string {
+func (s GameHub) CreateParty() string {
 	newCode := s.codeGenerator.GenerateCode()
 	s.gamesByPartyCode[newCode] = gamerules.NewGame()
 	return newCode
 }
 
-func (s Service) HandleMessage(m messagebus.Message) {
+func (s GameHub) HandleMessage(m messagebus.Message) {
 	var handler handler
 	switch m.(type) {
 	case JoinParty:
@@ -69,11 +69,11 @@ func (s Service) HandleMessage(m messagebus.Message) {
 	}
 }
 
-func (s Service) getGameForPartyCode(code string) gamerules.Game {
+func (s GameHub) getGameForPartyCode(code string) gamerules.Game {
 	return s.gamesByPartyCode[code]
 }
 
-func (s Service) handleJoinPartyCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleJoinPartyCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	joinPartyCommand := message.(JoinParty)
 	updatedGame, err := currentGame.AddPlayer(joinPartyCommand.User)
 
@@ -88,7 +88,7 @@ func (s Service) handleJoinPartyCommand(currentGame gamerules.Game, message mess
 	return
 }
 
-func (s Service) handleStartGameCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleStartGameCommand(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	updatedGame, err := currentGame.Start(s.allegianceGenerator)
 
 	if err == nil {
@@ -102,7 +102,7 @@ func (s Service) handleStartGameCommand(currentGame gamerules.Game, message mess
 	return
 }
 
-func (s Service) handleLeaderSelectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleLeaderSelectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	leaderSelectsMemberCommand := message.(LeaderSelectsMember)
 
 	if leaderSelectsMemberCommand.Leader != currentGame.Leader() {
@@ -123,7 +123,7 @@ func (s Service) handleLeaderSelectsMember(currentGame gamerules.Game, message m
 	return
 }
 
-func (s Service) handleLeaderDeselectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleLeaderDeselectsMember(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	leaderDeselectsMemberCommand := message.(LeaderDeselectsMember)
 
 	if leaderDeselectsMemberCommand.Leader != currentGame.Leader() {
@@ -144,7 +144,7 @@ func (s Service) handleLeaderDeselectsMember(currentGame gamerules.Game, message
 	return
 }
 
-func (s Service) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	leaderConfirmsTeamSelectionCommand := message.(LeaderConfirmsTeamSelection)
 
 	if leaderConfirmsTeamSelectionCommand.Leader != currentGame.Leader() {
@@ -164,7 +164,7 @@ func (s Service) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, m
 	return
 }
 
-func (s Service) handleApproveTeam(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleApproveTeam(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	approveTeamCommand := message.(ApproveTeam)
 	updatedGame, err := currentGame.ApproveTeamBy(approveTeamCommand.Player)
 
@@ -186,7 +186,7 @@ func (s Service) handleApproveTeam(currentGame gamerules.Game, message messagebu
 	return
 }
 
-func (s Service) handleRejectTeam(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleRejectTeam(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	rejectTeamCommand := message.(RejectTeam)
 	updatedGame, err := currentGame.RejectTeamBy(rejectTeamCommand.Player)
 
@@ -255,7 +255,7 @@ func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []messa
 	return commonVoteMessages
 }
 
-func (s Service) handleSucceedMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleSucceedMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	succeedMissionCommand := message.(SucceedMission)
 	updatedGame, err := currentGame.SucceedMissionBy(succeedMissionCommand.Player)
 
@@ -277,7 +277,7 @@ func (s Service) handleSucceedMission(currentGame gamerules.Game, message messag
 	return
 }
 
-func (s Service) handleFailMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
+func (s GameHub) handleFailMission(currentGame gamerules.Game, message messagebus.Message) (updatedGame gamerules.Game, messagesToDispatch []messagebus.Message) {
 	failMissionCommand := message.(FailMission)
 	updatedGame, err := currentGame.FailMissionBy(failMissionCommand.player)
 
