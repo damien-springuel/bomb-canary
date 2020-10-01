@@ -45,8 +45,6 @@ type PartyService struct {
 	hub gamehub.GameHub
 }
 
-// CreateParty() string
-// 	JoinParty(name string)
 func (p PartyService) CreateParty() string {
 	return p.hub.CreateParty()
 }
