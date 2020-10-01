@@ -1,64 +1,64 @@
 package service
 
-type playerJoined struct {
+type PlayerJoined struct {
 	Party
-	user string
+	User string
 }
 
-type leaderStartedToSelectMembers struct {
+type LeaderStartedToSelectMembers struct {
 	Party
-	leader string
+	Leader string
 }
 
-type leaderSelectedMember struct {
+type LeaderSelectedMember struct {
 	Party
-	selectedMember string
+	SelectedMember string
 }
 
-type leaderDeselectedMember struct {
+type LeaderDeselectedMember struct {
 	Party
-	deselectedMember string
+	DeselectedMember string
 }
 
-type leaderConfirmedSelection struct {
-	Party
-}
-
-type playerVotedOnTeam struct {
-	Party
-	player   string
-	approved bool
-}
-
-type allPlayerVotedOnTeam struct {
-	Party
-	approved     bool
-	voteFailures int
-}
-
-type missionStarted struct {
+type LeaderConfirmedSelection struct {
 	Party
 }
 
-type missionCompleted struct {
+type PlayerVotedOnTeam struct {
+	Party
+	Player   string
+	Approved bool
+}
+
+type AllPlayerVotedOnTeam struct {
+	Party
+	Approved     bool
+	VoteFailures int
+}
+
+type MissionStarted struct {
+	Party
+}
+
+type MissionCompleted struct {
 	Party
 	success bool
 }
 
-type playerWorkedOnMission struct {
+type PlayerWorkedOnMission struct {
 	Party
-	player  string
-	success bool
+	Player  string
+	Success bool
 }
 
-type allegiance string
+type Allegiance string
 
 const (
-	Spy        allegiance = "Spy"
-	Resistance allegiance = "Resistance"
+	Spy        Allegiance = "Spy"
+	Resistance Allegiance = "Resistance"
 )
 
-type gameEnded struct {
+type GameEnded struct {
 	Party
-	winner allegiance
+	Winner Allegiance
 }

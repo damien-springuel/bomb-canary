@@ -13,43 +13,43 @@ type JoinParty struct {
 	User string
 }
 
-type startGame struct {
+type StartGame struct {
 	Party
 }
 
-type leaderSelectsMember struct {
+type LeaderSelectsMember struct {
 	Party
-	leader         string
-	memberToSelect string
+	Leader         string
+	MemberToSelect string
 }
 
-type leaderDeselectsMember struct {
+type LeaderDeselectsMember struct {
 	Party
-	leader           string
-	memberToDeselect string
+	Leader           string
+	MemberToDeselect string
 }
 
-type leaderConfirmsTeamSelection struct {
+type LeaderConfirmsTeamSelection struct {
 	Party
-	leader string
+	Leader string
 }
 
-type approveTeam struct {
+type ApproveTeam struct {
 	Party
-	player string
+	Player string
 }
 
-type rejectTeam struct {
+type RejectTeam struct {
 	Party
-	player string
+	Player string
 }
 
-type succeedMission struct {
+type SucceedMission struct {
 	Party
-	player string
+	Player string
 }
 
-type failMission struct {
+type FailMission struct {
 	Party
 	player string
 }
