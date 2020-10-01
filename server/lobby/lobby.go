@@ -1,11 +1,14 @@
 package lobby
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
 )
+
+var errPartyDoesntExists = errors.New("party doesn't exist")
 
 type createPartyRequest struct {
 	Name string `json:"name"`
@@ -20,9 +23,9 @@ type joinPartyRequest struct {
 	Name string `json:"name"`
 }
 
-type partyService interface {
+type partyBroker interface {
 	CreateParty() string
-	JoinParty(code string, name string)
+	JoinParty(code string, name string) error
 }
 
 type sessionCreator interface {
@@ -30,14 +33,14 @@ type sessionCreator interface {
 }
 
 type lobbyServer struct {
-	partyService partyService
-	session      sessionCreator
+	partyBroker partyBroker
+	session     sessionCreator
 }
 
-func Register(engine *gin.Engine, partyService partyService, session sessionCreator) {
+func Register(engine *gin.Engine, partyBroker partyBroker, session sessionCreator) {
 	lobbyServer := lobbyServer{
-		partyService: partyService,
-		session:      session,
+		partyBroker: partyBroker,
+		session:     session,
 	}
 
 	lobbyGroup := engine.Group("/lobby")
@@ -58,8 +61,8 @@ func (l lobbyServer) createParty(c *gin.Context) {
 		return
 	}
 
-	newCode := l.partyService.CreateParty()
-	l.partyService.JoinParty(newCode, req.Name)
+	newCode := l.partyBroker.CreateParty()
+	_ = l.partyBroker.JoinParty(newCode, req.Name)
 
 	setSessionCookie(c, l.session.Create(newCode, req.Name))
 
@@ -84,7 +87,15 @@ func (l lobbyServer) joinParty(c *gin.Context) {
 		return
 	}
 
-	l.partyService.JoinParty(req.Code, req.Name)
+	err = l.partyBroker.JoinParty(req.Code, req.Name)
+	if err != nil {
+		if errors.Is(err, errPartyDoesntExists) {
+			c.AbortWithStatusJSON(404, gin.H{"error": fmt.Sprintf("%v", err)})
+			return
+		}
+		_ = c.AbortWithError(500, err)
+		return
+	}
 
 	setSessionCookie(c, l.session.Create(req.Code, req.Name))
 

@@ -37,6 +37,11 @@ func (s gameHub) CreateParty() string {
 	return newCode
 }
 
+func (s gameHub) DoesPartyExist(code string) bool {
+	_, exists := s.games.get(code)
+	return exists
+}
+
 func (s gameHub) Consume(m Message) {
 	var handler handler
 	switch m.(type) {
