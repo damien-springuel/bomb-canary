@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      let socket = new WebSocket("ws://localhost:44324/events");
+
+      socket.onopen = function(e) {
+        console.log("[open] Connection established");
+        // socket.close(1000, "client is done, yo");
+      };
+
+      socket.onmessage = function(event) {
+        console.log(`[message] Data received from server: ${event.data}`);
+      };
+
+      socket.onclose = function(event) {
+        if (event.wasClean) {
+          console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`, event);
+        } else {
+          // e.g. server process killed or network down
+          // event.code is usually 1006 in this case
+          console.log('[close] Connection died', event);
+        }
+      };
+
+      socket.onerror = function(error) {
+        console.log(`[error] ${error.message}`);
+      };
+    </script>
+  </head>
+  <body>
+    Bomb canary
+  </body>
+</html>

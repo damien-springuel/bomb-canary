@@ -8,6 +8,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/damien-springuel/bomb-canary/server/clientstream"
 	"github.com/damien-springuel/bomb-canary/server/gamehub"
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
@@ -85,9 +86,15 @@ func main() {
 	// sessions := sessions.New(uuidV4{})
 	sessions := sessions.New(&easySession{}) // for easy testing purposes
 
+	clientStreamer := clientstream.NewClientsStreamer()
+	bus.SubscribeConsumer(clientStreamer)
+
 	router := gin.Default()
 	party.Register(router, party.NewPartyService(hub, hub, bus), sessions)
 	playeractions.Register(router, sessions, playeractions.NewActionService(bus))
+	clientstream.Register(router, sessions, clientStreamer)
+
+	router.StaticFile("/", "./index.html")
 
 	port := ":44324"
 	log.Printf("serving %s\n", port)
