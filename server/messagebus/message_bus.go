@@ -76,7 +76,7 @@ func (m *messageBus) SubscribeConsumer(consumer consumer) {
 	m.consumers = append(m.consumers, newBufferedConsumer(consumer))
 }
 
-func (m *messageBus) close() {
+func (m *messageBus) Close() {
 	close(m.in)
 	<-m.done
 	for _, bc := range m.consumers {

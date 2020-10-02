@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"sync"
@@ -67,21 +66,27 @@ func (e *easySession) Create() string {
 	return session
 }
 
+var blackOnGreen = color.Style{color.BgLightGreen, color.FgBlack}
+var blackOnBlue = color.Style{color.BgLightBlue, color.FgBlack}
+var blackOnYellow = color.Style{color.BgLightYellow, color.FgBlack}
+
 type colorPrinter struct{}
 
 func (c colorPrinter) PrintCommand(m messagebus.Message) {
-	color.Style{color.BgLightGreen, color.FgBlack}.Printf("%s - Command: %#v\n", time.Now().Format("2006/01/02 - 15:04:05"), m)
+	blackOnGreen.Printf("%s - Command: %#v\n", time.Now().Format("2006/01/02 - 15:04:05"), m)
 }
 func (c colorPrinter) PrintEvent(m messagebus.Message) {
-	color.Style{color.BgLightBlue, color.FgBlack}.Printf("%s - Event: %#v\n", time.Now().Format("2006/01/02 - 15:04:05"), m)
+	blackOnBlue.Printf("%s - Event: %#v\n", time.Now().Format("2006/01/02 - 15:04:05"), m)
 }
 
 func main() {
 	bus := messagebus.NewMessageBus()
+	defer bus.Close()
+
+	bus.SubscribeConsumer(messagelogger.New(colorPrinter{}))
 
 	hub := gamehub.New(randomCodeGenerator{}, bus, randomAllegianceGenerator{})
 	bus.SubscribeConsumer(hub)
-	bus.SubscribeConsumer(messagelogger.New(colorPrinter{}))
 
 	// sessions := sessions.New(uuidV4{})
 	sessions := sessions.New(&easySession{}) // for easy testing purposes
@@ -98,8 +103,8 @@ func main() {
 	router.StaticFile("/", "./index.html")
 
 	port := ":44324"
-	log.Printf("serving %s\n", port)
+	blackOnYellow.Printf("serving %s\n", port)
 	if err := http.ListenAndServe(port, router); err != nil {
-		log.Fatalf("error serving %v\n", err)
+		blackOnYellow.Printf("error serving %v\n", err)
 	}
 }
