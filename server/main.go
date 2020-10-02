@@ -87,7 +87,8 @@ func main() {
 	sessions := sessions.New(&easySession{}) // for easy testing purposes
 
 	clientStreamer := clientstream.NewClientsStreamer()
-	bus.SubscribeConsumer(clientStreamer)
+	clientEventBroker := clientstream.NewClientEventBroker(clientStreamer)
+	bus.SubscribeConsumer(clientEventBroker)
 
 	router := gin.Default()
 	party.Register(router, party.NewPartyService(hub, hub, bus), sessions)
