@@ -11,7 +11,7 @@ type code string
 type name string
 
 type client struct {
-	out chan string
+	out chan []byte
 }
 
 type clientStreamer struct {
@@ -26,8 +26,8 @@ func NewClientsStreamer() clientStreamer {
 	}
 }
 
-func (c clientStreamer) Add(partyCode, playerName string) chan string {
-	clientOut := make(chan string)
+func (c clientStreamer) Add(partyCode, playerName string) (chan []byte, func()) {
+	clientOut := make(chan []byte)
 	c.mut.Lock()
 	defer c.mut.Unlock()
 	clients, exists := c.clientsByNameByCode[code(partyCode)]
@@ -39,7 +39,7 @@ func (c clientStreamer) Add(partyCode, playerName string) chan string {
 		}
 	}
 	c.clientsByNameByCode[code(partyCode)] = clients
-	return clientOut
+	return clientOut, func() {}
 }
 
 func (c clientStreamer) sendMessageToParty(partyCode, message string) {
@@ -48,7 +48,7 @@ func (c clientStreamer) sendMessageToParty(partyCode, message string) {
 	clients, exists := c.clientsByNameByCode[code(partyCode)]
 	if exists {
 		for _, client := range clients {
-			client.out <- message
+			client.out <- []byte(message)
 		}
 	}
 }

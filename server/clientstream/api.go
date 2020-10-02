@@ -1,12 +1,11 @@
 package clientstream
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
+
+const outKey = "out"
 
 type websocketWriter func(messageType int, data []byte) error
 
@@ -15,7 +14,7 @@ type sessionGetter interface {
 }
 
 type clientBroker interface {
-	Add(code, name string) chan string
+	Add(code, name string) (chan []byte, func())
 }
 
 type clientStreamServer struct {
@@ -41,7 +40,7 @@ func createWebsocketConnection(c *gin.Context) {
 	upgrader := websocket.Upgrader{}
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
-		log.Print("upgrade:", err)
+		c.Abort()
 		return
 	}
 	defer conn.Close()
@@ -66,28 +65,33 @@ func (s clientStreamServer) checkSession(c *gin.Context) {
 	partyCode, playerName, err := s.sessionGetter.Get(session)
 	if err != nil {
 		_ = writer(websocket.CloseMessage, websocket.FormatCloseMessage(4403, "invalid session"))
+		c.Abort()
 		return
 	}
+	out, closer := s.clientBroker.Add(partyCode, playerName)
+	defer closer()
 
-	c.Set("code", partyCode)
-	c.Set("name", playerName)
+	c.Set(outKey, out)
 
 	c.Next()
 }
 
+func getOutFromContext(c *gin.Context) chan []byte {
+	out, _ := c.Get(outKey)
+	return out.(chan []byte)
+}
+
 func (s clientStreamServer) streamEvents(c *gin.Context) {
 	write := getWebsocketWriterFromContext(c)
-	code := c.GetString("code")
-	name := c.GetString("name")
-	out := s.clientBroker.Add(code, name)
+	out := getOutFromContext(c)
 
-	for {
-		messageToSend, ok := <-out
-		if !ok {
-			break
+	for messageToSend := range out {
+		err := write(websocket.TextMessage, messageToSend)
+		if err != nil {
+			c.Abort()
+			return
 		}
-		_ = write(websocket.TextMessage, []byte(messageToSend))
 	}
-	err := write(websocket.CloseMessage, websocket.FormatCloseMessage(1000, fmt.Sprintf("hello %s from party %s", name, code)))
-	fmt.Printf("write - err: %#v\n", err)
+
+	_ = write(websocket.CloseMessage, websocket.FormatCloseMessage(1000, ""))
 }
