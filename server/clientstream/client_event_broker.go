@@ -44,26 +44,36 @@ func (c clientEventBroker) Consume(m messagebus.Message) {
 	switch m := m.(type) {
 	case messagebus.PlayerJoined:
 		c.send(code, clientEvent{PlayerJoined: &playerJoined{Name: m.Player}})
+
 	case messagebus.LeaderStartedToSelectMembers:
 		c.send(code, clientEvent{LeaderStartedToSelectMembers: &leaderStartedToSelectMembers{Leader: m.Leader}})
+
 	case messagebus.LeaderSelectedMember:
 		c.send(code, clientEvent{LeaderSelectedMember: &leaderSelectedMember{SelectedMember: m.SelectedMember}})
+
 	case messagebus.LeaderDeselectedMember:
 		c.send(code, clientEvent{LeaderDeselectedMember: &leaderDeselectedMember{DeselectedMember: m.DeselectedMember}})
+
 	case messagebus.LeaderConfirmedSelection:
 		c.send(code, clientEvent{LeaderConfirmedSelection: &leaderConfirmedSelection{}})
+
 	case messagebus.PlayerVotedOnTeam:
 		c.sendToPlayer(code, m.Player, clientEvent{PlayerVotedOnTeam: &playerVotedOnTeam{Player: m.Player, Approved: boolP(m.Approved)}})
 		c.sendToAllButPlayer(code, m.Player, clientEvent{PlayerVotedOnTeam: &playerVotedOnTeam{Player: m.Player}})
+
 	case messagebus.AllPlayerVotedOnTeam:
 		c.send(code, clientEvent{AllPlayerVotedOnTeam: &allPlayerVotedOnTeam{Approved: m.Approved, VoteFailures: m.VoteFailures}})
+
 	case messagebus.MissionStarted:
 		c.send(code, clientEvent{MissionStarted: &missionStarted{}})
+
 	case messagebus.PlayerWorkedOnMission:
 		c.sendToPlayer(code, m.Player, clientEvent{PlayerWorkedOnMission: &playerWorkedOnMission{Player: m.Player, Success: boolP(m.Success)}})
 		c.sendToAllButPlayer(code, m.Player, clientEvent{PlayerWorkedOnMission: &playerWorkedOnMission{Player: m.Player}})
+
 	case messagebus.MissionCompleted:
 		c.send(code, clientEvent{MissionCompleted: &missionCompleted{Success: m.Success}})
+
 	case messagebus.GameEnded:
 		c.send(code, clientEvent{GameEnded: &gameEnded{Winner: string(m.Winner)}})
 	}
