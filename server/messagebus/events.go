@@ -48,14 +48,14 @@ type MissionStarted struct {
 	Event
 }
 
-type MissionCompleted struct {
-	Event
-	Success bool
-}
-
 type PlayerWorkedOnMission struct {
 	Event
 	Player  string
+	Success bool
+}
+
+type MissionCompleted struct {
+	Event
 	Success bool
 }
 

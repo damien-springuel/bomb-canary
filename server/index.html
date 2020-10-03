@@ -10,7 +10,11 @@
       };
 
       socket.onmessage = function(event) {
-        console.log(`[message] Data received from server: ${event.data}`);
+        let gameEvent = JSON.parse(event.data)
+        console.log(`[message] Data received from server:`, gameEvent);
+        if (!!gameEvent.LeaderConfirmedSelection) {
+          console.log(`confirmed selection`);
+        }
       };
 
       socket.onclose = function(event) {

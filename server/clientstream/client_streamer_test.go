@@ -112,3 +112,69 @@ func Test_SendMultiplePlayersInMultipleParty(t *testing.T) {
 	g.Expect(actualMessages3).To(Equal([][]byte{[]byte("m2"), []byte("m5"), []byte("m6"), []byte("m8")}))
 	g.Expect(actualMessages4).To(Equal([][]byte{[]byte("m2"), []byte("m5"), []byte("m6"), []byte("m8")}))
 }
+
+func Test_SendToParticularPlayer(t *testing.T) {
+
+	streamer := NewClientsStreamer()
+
+	testOut1 := make(chan [][]byte)
+	done1 := createAndPumpOut(streamer, "c1", "1p1", testOut1)
+	testOut2 := make(chan [][]byte)
+	done2 := createAndPumpOut(streamer, "c1", "1p2", testOut2)
+	testOut3 := make(chan [][]byte)
+	done3 := createAndPumpOut(streamer, "c2", "2p1", testOut3)
+	testOut4 := make(chan [][]byte)
+	done4 := createAndPumpOut(streamer, "c2", "2p2", testOut4)
+
+	streamer.Send("c1", []byte("m1"))
+	streamer.SendToPlayer("c1", "1p1", []byte("m2"))
+	streamer.SendToPlayer("c1", "2p1", []byte("m3"))
+
+	done1()
+	done2()
+	done3()
+	done4()
+	actualMessages1 := <-testOut1
+	actualMessages2 := <-testOut2
+	actualMessages3 := <-testOut3
+	actualMessages4 := <-testOut4
+
+	g := NewWithT(t)
+	g.Expect(actualMessages1).To(Equal([][]byte{[]byte("m1"), []byte("m2")}))
+	g.Expect(actualMessages2).To(Equal([][]byte{[]byte("m1")}))
+	g.Expect(actualMessages3).To(BeEmpty())
+	g.Expect(actualMessages4).To(BeEmpty())
+}
+
+func Test_SendToAllButPlayer(t *testing.T) {
+
+	streamer := NewClientsStreamer()
+
+	testOut1 := make(chan [][]byte)
+	done1 := createAndPumpOut(streamer, "c1", "p1", testOut1)
+	testOut2 := make(chan [][]byte)
+	done2 := createAndPumpOut(streamer, "c1", "p2", testOut2)
+	testOut3 := make(chan [][]byte)
+	done3 := createAndPumpOut(streamer, "c1", "p3", testOut3)
+	testOut4 := make(chan [][]byte)
+	done4 := createAndPumpOut(streamer, "c1", "p4", testOut4)
+
+	streamer.Send("c1", []byte("m1"))
+	streamer.SendToPlayer("c1", "p1", []byte("m2"))
+	streamer.SendToAllButPlayer("c1", "p1", []byte("m3"))
+
+	done1()
+	done2()
+	done3()
+	done4()
+	actualMessages1 := <-testOut1
+	actualMessages2 := <-testOut2
+	actualMessages3 := <-testOut3
+	actualMessages4 := <-testOut4
+
+	g := NewWithT(t)
+	g.Expect(actualMessages1).To(Equal([][]byte{[]byte("m1"), []byte("m2")}))
+	g.Expect(actualMessages2).To(Equal([][]byte{[]byte("m1"), []byte("m3")}))
+	g.Expect(actualMessages3).To(Equal([][]byte{[]byte("m1"), []byte("m3")}))
+	g.Expect(actualMessages4).To(Equal([][]byte{[]byte("m1"), []byte("m3")}))
+}

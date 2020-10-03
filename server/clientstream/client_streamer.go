@@ -62,3 +62,30 @@ func (c clientStreamer) Send(partyCode string, message []byte) {
 		}
 	}
 }
+
+func (c clientStreamer) SendToPlayer(partyCode, playerName string, message []byte) {
+	c.mut.RLock()
+	defer c.mut.RUnlock()
+
+	clients, exists := c.clientOutByNameByCode[code(partyCode)]
+	if exists {
+		out, exists := clients[name(playerName)]
+		if exists {
+			out <- message
+		}
+	}
+}
+
+func (c clientStreamer) SendToAllButPlayer(partyCode, playerName string, message []byte) {
+	c.mut.RLock()
+	defer c.mut.RUnlock()
+
+	clients, exists := c.clientOutByNameByCode[code(partyCode)]
+	if exists {
+		for n, out := range clients {
+			if n != name(playerName) {
+				out <- []byte(message)
+			}
+		}
+	}
+}
