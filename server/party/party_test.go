@@ -47,7 +47,7 @@ func Test_ServiceJoinParty_PartyExists(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(service.JoinParty("code", "name")).To(BeNil())
-	g.Expect(dispatcher.receivedMessage).To(Equal(messagebus.JoinParty{Command: messagebus.Command{Party: messagebus.Party{Code: "code"}}, User: "name"}))
+	g.Expect(dispatcher.receivedMessage).To(Equal(messagebus.JoinParty{Command: messagebus.Command{Party: messagebus.Party{Code: "code"}}, Player: "name"}))
 }
 
 func Test_ServiceJoinParty_PartyDoesntExist(t *testing.T) {

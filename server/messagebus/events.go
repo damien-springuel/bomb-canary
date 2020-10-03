@@ -10,7 +10,7 @@ func (e Event) Type() Type {
 
 type PlayerJoined struct {
 	Event
-	User string
+	Player string
 }
 
 type LeaderStartedToSelectMembers struct {

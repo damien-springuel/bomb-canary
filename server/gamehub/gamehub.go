@@ -87,13 +87,13 @@ func (s gameHub) getGameForPartyCode(code string) gamerules.Game {
 
 func (s gameHub) handleJoinPartyCommand(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	joinPartyCommand := message.(JoinParty)
-	updatedGame, err := currentGame.AddPlayer(joinPartyCommand.User)
+	updatedGame, err := currentGame.AddPlayer(joinPartyCommand.Player)
 
 	if err == nil {
 		messagesToDispatch = append(messagesToDispatch,
 			PlayerJoined{
-				Event: Event{Party: Party{Code: message.GetPartyCode()}},
-				User:  joinPartyCommand.User,
+				Event:  Event{Party: Party{Code: message.GetPartyCode()}},
+				Player: joinPartyCommand.Player,
 			},
 		)
 	}

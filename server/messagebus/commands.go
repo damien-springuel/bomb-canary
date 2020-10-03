@@ -10,7 +10,7 @@ func (c Command) Type() Type {
 
 type JoinParty struct {
 	Command
-	User string
+	Player string
 }
 
 type StartGame struct {

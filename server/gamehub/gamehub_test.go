@@ -58,11 +58,11 @@ func setupHub() (*testMessageDispatcher, gameHub, string) {
 }
 
 func newlyStartedGame(hub gameHub, code string) gamerules.Game {
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Alice"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Bob"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Charlie"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Dan"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Edith"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Alice"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Bob"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Charlie"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Dan"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Edith"})
 	hub.Consume(StartGame{Command: Command{Party: Party{Code: code}}})
 
 	game := gamerules.NewGame()
@@ -76,11 +76,11 @@ func newlyStartedGame(hub gameHub, code string) gamerules.Game {
 }
 
 func newlyConfirmedTeam(hub gameHub, code string) gamerules.Game {
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Alice"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Bob"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Charlie"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Dan"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Edith"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Alice"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Bob"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Charlie"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Dan"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Edith"})
 	hub.Consume(StartGame{Command: Command{Party: Party{Code: code}}})
 	hub.Consume(LeaderSelectsMember{Command: Command{Party: Party{Code: code}}, Leader: "Alice", MemberToSelect: "Alice"})
 	hub.Consume(LeaderSelectsMember{Command: Command{Party: Party{Code: code}}, Leader: "Alice", MemberToSelect: "Bob"})
@@ -100,11 +100,11 @@ func newlyConfirmedTeam(hub gameHub, code string) gamerules.Game {
 }
 
 func fiveFailedVoteInARow(hub gameHub, code string) gamerules.Game {
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Alice"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Bob"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Charlie"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Dan"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Edith"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Alice"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Bob"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Charlie"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Dan"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Edith"})
 	hub.Consume(StartGame{Command: Command{Party: Party{Code: code}}})
 
 	// #1
@@ -216,11 +216,11 @@ func fiveFailedVoteInARow(hub gameHub, code string) gamerules.Game {
 }
 
 func newlyConductingMission(hub gameHub, code string) gamerules.Game {
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Alice"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Bob"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Charlie"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Dan"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Edith"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Alice"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Bob"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Charlie"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Dan"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Edith"})
 	hub.Consume(StartGame{Command: Command{Party: Party{Code: code}}})
 	hub.Consume(LeaderSelectsMember{Command: Command{Party: Party{Code: code}}, Leader: "Alice", MemberToSelect: "Alice"})
 	hub.Consume(LeaderSelectsMember{Command: Command{Party: Party{Code: code}}, Leader: "Alice", MemberToSelect: "Bob"})
@@ -250,11 +250,11 @@ func newlyConductingMission(hub gameHub, code string) gamerules.Game {
 }
 
 func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Alice"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Bob"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Charlie"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Dan"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Edith"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Alice"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Bob"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Charlie"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Dan"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Edith"})
 	hub.Consume(StartGame{Command: Command{Party: Party{Code: code}}})
 
 	// #1
@@ -340,11 +340,11 @@ func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
 }
 
 func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Alice"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Bob"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Charlie"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Dan"})
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Edith"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Alice"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Bob"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Charlie"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Dan"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Edith"})
 	hub.Consume(StartGame{Command: Command{Party: Party{Code: code}}})
 
 	// #1
@@ -458,10 +458,10 @@ func Test_GetGameForPartyCode(t *testing.T) {
 
 func Test_HandleJoinPartyCommand(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Alice"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Alice"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerJoined{Event: Event{Party: Party{Code: code}}, User: "Alice"}))
+	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerJoined{Event: Event{Party: Party{Code: code}}, Player: "Alice"}))
 
 	expectedGame := gamerules.NewGame()
 	expectedGame, _ = expectedGame.AddPlayer("Alice")
@@ -473,7 +473,7 @@ func Test_HandleJoinPartyCommand_IgnoreIfInvalid(t *testing.T) {
 	expectedGame := newlyStartedGame(hub, code)
 
 	messageDispatcher.clearReceivedMessages()
-	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, User: "Fred"})
+	hub.Consume(JoinParty{Command: Command{Party: Party{Code: code}}, Player: "Fred"})
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.receivedMessages).To(BeEmpty())

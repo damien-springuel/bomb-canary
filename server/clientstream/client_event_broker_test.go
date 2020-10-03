@@ -40,7 +40,7 @@ func (m *mockEventSender) SendToAllButPlayer(code, name string, message []byte) 
 func Test_PlayerJoined(t *testing.T) {
 	eventSender := &mockEventSender{}
 	eventBroker := NewClientEventBroker(eventSender)
-	eventBroker.Consume(mb.PlayerJoined{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, User: "testUser"})
+	eventBroker.Consume(mb.PlayerJoined{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, Player: "testUser"})
 
 	g := NewWithT(t)
 	g.Expect(*eventSender).To(Equal(mockEventSender{receivedCode: "testCode", receivedMessage: toJsonBytes(clientEvent{PlayerJoined: &playerJoined{Name: "testUser"}})}))

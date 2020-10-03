@@ -43,7 +43,7 @@ func (c clientEventBroker) Consume(m messagebus.Message) {
 	code := m.GetPartyCode()
 	switch m := m.(type) {
 	case messagebus.PlayerJoined:
-		c.send(code, clientEvent{PlayerJoined: &playerJoined{Name: m.User}})
+		c.send(code, clientEvent{PlayerJoined: &playerJoined{Name: m.Player}})
 	case messagebus.LeaderStartedToSelectMembers:
 		c.send(code, clientEvent{LeaderStartedToSelectMembers: &leaderStartedToSelectMembers{Leader: m.Leader}})
 	case messagebus.LeaderSelectedMember:
