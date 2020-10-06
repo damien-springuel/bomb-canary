@@ -1,6 +1,8 @@
 package clientstream
 
 type clientEvent struct {
+	PlayerConnected              *playerConnected              `json:",omitempty"`
+	PlayerDisconnected           *playerDisconnected           `json:",omitempty"`
 	PlayerJoined                 *playerJoined                 `json:",omitempty"`
 	LeaderStartedToSelectMembers *leaderStartedToSelectMembers `json:",omitempty"`
 	LeaderSelectedMember         *leaderSelectedMember         `json:",omitempty"`
@@ -15,6 +17,14 @@ type clientEvent struct {
 }
 
 type playerJoined struct {
+	Name string
+}
+
+type playerConnected struct {
+	Name string
+}
+
+type playerDisconnected struct {
 	Name string
 }
 

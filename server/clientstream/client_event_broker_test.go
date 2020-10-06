@@ -56,13 +56,41 @@ func (m *mockEventSender) SendToAllButPlayer(code, name string, message []byte) 
 func Test_ClientEventBroker_PlayerJoined(t *testing.T) {
 	eventSender := &mockEventSender{}
 	eventBroker := NewClientEventBroker(eventSender)
-	eventBroker.Consume(mb.PlayerJoined{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, Player: "testUser"})
+	eventBroker.Consume(mb.PlayerJoined{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, Player: "testName"})
 
 	g := NewWithT(t)
 	g.Expect(*eventSender).To(Equal(
 		mockEventSender{
 			receivedCode:    "testCode",
-			receivedMessage: toJsonBytes(clientEvent{PlayerJoined: &playerJoined{Name: "testUser"}}),
+			receivedMessage: toJsonBytes(clientEvent{PlayerJoined: &playerJoined{Name: "testName"}}),
+		},
+	))
+}
+
+func Test_ClientEventBroker_PlayerConnected(t *testing.T) {
+	eventSender := &mockEventSender{}
+	eventBroker := NewClientEventBroker(eventSender)
+	eventBroker.Consume(mb.PlayerConnected{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, Player: "testName"})
+
+	g := NewWithT(t)
+	g.Expect(*eventSender).To(Equal(
+		mockEventSender{
+			receivedCode:    "testCode",
+			receivedMessage: toJsonBytes(clientEvent{PlayerConnected: &playerConnected{Name: "testName"}}),
+		},
+	))
+}
+
+func Test_ClientEventBroker_PlayerDisconnected(t *testing.T) {
+	eventSender := &mockEventSender{}
+	eventBroker := NewClientEventBroker(eventSender)
+	eventBroker.Consume(mb.PlayerDisconnected{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, Player: "testName"})
+
+	g := NewWithT(t)
+	g.Expect(*eventSender).To(Equal(
+		mockEventSender{
+			receivedCode:    "testCode",
+			receivedMessage: toJsonBytes(clientEvent{PlayerDisconnected: &playerDisconnected{Name: "testName"}}),
 		},
 	))
 }
