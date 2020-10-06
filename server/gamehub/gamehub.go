@@ -101,9 +101,21 @@ func (s gameHub) handleJoinPartyCommand(currentGame gamerules.Game, message Mess
 }
 
 func (s gameHub) handleStartGameCommand(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
-	updatedGame, _, err := currentGame.Start(s.allegianceGenerator)
+	updatedGame, playerAllegiancesByName, err := currentGame.Start(s.allegianceGenerator)
 
 	if err == nil {
+
+		allegiances := make(map[string]Allegiance)
+		for name, allegiance := range playerAllegiancesByName {
+			allegiances[name] = Allegiance(allegiance)
+		}
+
+		messagesToDispatch = append(messagesToDispatch,
+			AllegianceRevealed{
+				Event:              Event{Party: Party{Code: message.GetPartyCode()}},
+				AllegianceByPlayer: allegiances,
+			},
+		)
 		messagesToDispatch = append(messagesToDispatch,
 			LeaderStartedToSelectMembers{
 				Event:  Event{Party: Party{Code: message.GetPartyCode()}},
@@ -337,17 +349,10 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []Me
 			},
 		)
 
-		winner := updatedGame.Winner()
-		var messageWinner Allegiance
-		if winner == gamerules.Resistance {
-			messageWinner = Resistance
-		} else if winner == gamerules.Spy {
-			messageWinner = Spy
-		}
 		commonMissionMessages = append(commonMissionMessages,
 			GameEnded{
 				Event:  Event{Party: Party{Code: code}},
-				Winner: messageWinner,
+				Winner: Allegiance(updatedGame.Winner()),
 			},
 		)
 	}

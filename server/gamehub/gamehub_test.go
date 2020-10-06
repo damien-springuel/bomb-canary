@@ -511,7 +511,14 @@ func Test_HandleStartGameCommand(t *testing.T) {
 	expectedGame := newlyStartedGame(hub, code)
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.lastMessage()).To(Equal(LeaderStartedToSelectMembers{Event: Event{Party: Party{Code: code}}, Leader: "Alice"}))
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Event: Event{Party: Party{Code: code}}, Leader: "Alice"}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(AllegianceRevealed{Event: Event{Party: Party{Code: code}}, AllegianceByPlayer: map[string]Allegiance{
+		"Alice":   Spy,
+		"Bob":     Spy,
+		"Charlie": Resistance,
+		"Dan":     Resistance,
+		"Edith":   Resistance,
+	}}))
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 

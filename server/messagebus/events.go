@@ -23,6 +23,11 @@ type PlayerJoined struct {
 	Player string
 }
 
+type AllegianceRevealed struct {
+	Event
+	AllegianceByPlayer map[string]Allegiance
+}
+
 type LeaderStartedToSelectMembers struct {
 	Event
 	Leader string
@@ -72,8 +77,8 @@ type MissionCompleted struct {
 type Allegiance string
 
 const (
-	Spy        Allegiance = "Spy"
-	Resistance Allegiance = "Resistance"
+	Spy        Allegiance = "spy"
+	Resistance Allegiance = "resistance"
 )
 
 type GameEnded struct {
