@@ -91,7 +91,7 @@ func main() {
 	// sessions := sessions.New(uuidV4{})
 	sessions := sessions.New(&easySession{}) // for easy testing purposes
 
-	clientStreamer := clientstream.NewClientsStreamer()
+	clientStreamer := clientstream.NewClientsStreamer(bus)
 	clientEventBroker := clientstream.NewClientEventBroker(clientStreamer)
 	bus.SubscribeConsumer(clientEventBroker)
 

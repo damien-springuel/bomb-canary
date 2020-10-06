@@ -3,8 +3,17 @@ package clientstream
 import (
 	"testing"
 
+	"github.com/damien-springuel/bomb-canary/server/messagebus"
 	. "github.com/onsi/gomega"
 )
+
+type mockMessageDispatcher struct {
+	receivedMessages []messagebus.Message
+}
+
+func (d *mockMessageDispatcher) Dispatch(m messagebus.Message) {
+	d.receivedMessages = append(d.receivedMessages, m)
+}
 
 func createAndPumpOut(streamer clientStreamer, code, name string, done chan [][]byte) func() {
 	out, closer := streamer.Add(code, name)
@@ -22,8 +31,7 @@ func createAndPumpOut(streamer clientStreamer, code, name string, done chan [][]
 }
 
 func Test_Send(t *testing.T) {
-
-	streamer := NewClientsStreamer()
+	streamer := NewClientsStreamer(&mockMessageDispatcher{})
 	testOut := make(chan [][]byte)
 	done := createAndPumpOut(streamer, "testCode", "p1", testOut)
 
@@ -38,8 +46,7 @@ func Test_Send(t *testing.T) {
 }
 
 func Test_SendOnAnotherCode(t *testing.T) {
-
-	streamer := NewClientsStreamer()
+	streamer := NewClientsStreamer(&mockMessageDispatcher{})
 	testOut := make(chan [][]byte)
 	done := createAndPumpOut(streamer, "testCode", "p1", testOut)
 
@@ -53,8 +60,7 @@ func Test_SendOnAnotherCode(t *testing.T) {
 }
 
 func Test_SendMultiplePlayersInParty(t *testing.T) {
-
-	streamer := NewClientsStreamer()
+	streamer := NewClientsStreamer(&mockMessageDispatcher{})
 
 	testOut1 := make(chan [][]byte)
 	done1 := createAndPumpOut(streamer, "testCode", "p1", testOut1)
@@ -75,8 +81,7 @@ func Test_SendMultiplePlayersInParty(t *testing.T) {
 }
 
 func Test_SendMultiplePlayersInMultipleParty(t *testing.T) {
-
-	streamer := NewClientsStreamer()
+	streamer := NewClientsStreamer(&mockMessageDispatcher{})
 
 	testOut1 := make(chan [][]byte)
 	done1 := createAndPumpOut(streamer, "c1", "1p1", testOut1)
@@ -114,8 +119,7 @@ func Test_SendMultiplePlayersInMultipleParty(t *testing.T) {
 }
 
 func Test_SendToParticularPlayer(t *testing.T) {
-
-	streamer := NewClientsStreamer()
+	streamer := NewClientsStreamer(&mockMessageDispatcher{})
 
 	testOut1 := make(chan [][]byte)
 	done1 := createAndPumpOut(streamer, "c1", "1p1", testOut1)
@@ -147,8 +151,7 @@ func Test_SendToParticularPlayer(t *testing.T) {
 }
 
 func Test_SendToAllButPlayer(t *testing.T) {
-
-	streamer := NewClientsStreamer()
+	streamer := NewClientsStreamer(&mockMessageDispatcher{})
 
 	testOut1 := make(chan [][]byte)
 	done1 := createAndPumpOut(streamer, "c1", "p1", testOut1)
@@ -177,4 +180,23 @@ func Test_SendToAllButPlayer(t *testing.T) {
 	g.Expect(actualMessages2).To(Equal([][]byte{[]byte("m1"), []byte("m3")}))
 	g.Expect(actualMessages3).To(Equal([][]byte{[]byte("m1"), []byte("m3")}))
 	g.Expect(actualMessages4).To(Equal([][]byte{[]byte("m1"), []byte("m3")}))
+}
+
+func Test_AddAndRemoveDispatchPlayerConnectedDisconnectedMessage(t *testing.T) {
+	dispatcher := &mockMessageDispatcher{}
+	streamer := NewClientsStreamer(dispatcher)
+	testOut := make(chan [][]byte)
+	done := createAndPumpOut(streamer, "testCode", "p1", testOut)
+
+	streamer.Send("testCode", []byte("message1"))
+	streamer.Send("testCode", []byte("message2"))
+
+	done()
+	<-testOut
+
+	g := NewWithT(t)
+	g.Expect(dispatcher.receivedMessages).To(Equal([]messagebus.Message{
+		messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "p1"},
+		messagebus.PlayerDisconnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "p1"},
+	}))
 }

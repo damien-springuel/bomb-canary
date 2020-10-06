@@ -5,7 +5,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const outKey = "out"
+const (
+	outKey             = "out"
+	connClosedKey      = "connClosed"
+	websocketWriterKey = "websocketWriter"
+)
 
 type websocketWriter func(messageType int, data []byte) error
 
@@ -43,14 +47,31 @@ func createWebsocketConnection(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	defer conn.Close()
-	c.Set("websocketWriter", websocketWriter(conn.WriteMessage))
+	connClosed := make(chan bool)
+	c.Set(connClosedKey, connClosed)
+	go func() {
+		defer conn.Close()
+		for {
+			_, _, err := conn.ReadMessage()
+			if err != nil {
+				break
+			}
+		}
+		close(connClosed)
+	}()
+
+	c.Set(websocketWriterKey, websocketWriter(conn.WriteMessage))
 	c.Next()
 }
 
 func getWebsocketWriterFromContext(c *gin.Context) websocketWriter {
-	value, _ := c.Get("websocketWriter")
+	value, _ := c.Get(websocketWriterKey)
 	return value.(websocketWriter)
+}
+
+func getConnClosedFromContext(c *gin.Context) chan bool {
+	value, _ := c.Get(connClosedKey)
+	return value.(chan bool)
 }
 
 func (s clientStreamServer) checkSession(c *gin.Context) {
@@ -68,12 +89,17 @@ func (s clientStreamServer) checkSession(c *gin.Context) {
 		c.Abort()
 		return
 	}
-	out, closer := s.clientBroker.Add(partyCode, playerName)
-	defer closer()
+	out, closeClientStream := s.clientBroker.Add(partyCode, playerName)
+	go func() {
+		connClosed := getConnClosedFromContext(c)
+		<-connClosed
+		closeClientStream()
+	}()
 
 	c.Set(outKey, out)
 
 	c.Next()
+	closeClientStream()
 }
 
 func getOutFromContext(c *gin.Context) chan []byte {
