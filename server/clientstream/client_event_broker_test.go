@@ -18,23 +18,39 @@ type mockEventSender struct {
 	receiveCodeToAllButPlayer     string
 	receiveNameToAllButPlayer     string
 	receivedMessageToAllButPlayer []byte
+
+	shouldTrackAll      bool
+	allReceivedMessages [][]byte
+}
+
+func (m *mockEventSender) clearAllReceivedMessages() {
+	m.allReceivedMessages = nil
 }
 
 func (m *mockEventSender) Send(code string, message []byte) {
 	m.receivedCode = code
 	m.receivedMessage = message
+	if m.shouldTrackAll {
+		m.allReceivedMessages = append(m.allReceivedMessages, message)
+	}
 }
 
 func (m *mockEventSender) SendToPlayer(code, name string, message []byte) {
 	m.receiveCodeToPlayer = code
 	m.receiveNameToPlayer = name
 	m.receivedMessageToPlayer = message
+	if m.shouldTrackAll {
+		m.allReceivedMessages = append(m.allReceivedMessages, message)
+	}
 }
 
 func (m *mockEventSender) SendToAllButPlayer(code, name string, message []byte) {
 	m.receiveCodeToAllButPlayer = code
 	m.receiveNameToAllButPlayer = name
 	m.receivedMessageToAllButPlayer = message
+	if m.shouldTrackAll {
+		m.allReceivedMessages = append(m.allReceivedMessages, message)
+	}
 }
 
 func Test_ClientEventBroker_PlayerJoined(t *testing.T) {
@@ -177,6 +193,8 @@ func Test_ClientEventBroker_MissionCompleted(t *testing.T) {
 	eventBroker.Consume(mb.MissionCompleted{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, Success: true})
 
 	g := NewWithT(t)
+	g.Expect(eventSender.receivedCode).To(Equal("testCode"))
+	g.Expect(eventSender.receivedCode).To(Equal("testCode"))
 	g.Expect(*eventSender).To(Equal(
 		mockEventSender{
 			receivedCode:    "testCode",

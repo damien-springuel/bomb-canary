@@ -2,6 +2,7 @@ package clientstream
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
 )
@@ -40,6 +41,7 @@ func (c clientEventBroker) sendToAllButPlayer(code, name string, event clientEve
 }
 
 func (c clientEventBroker) Consume(m messagebus.Message) {
+	fmt.Printf("event broker consume %+v\n", m)
 	code := m.GetPartyCode()
 	switch m := m.(type) {
 	case messagebus.PlayerJoined:
