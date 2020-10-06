@@ -101,7 +101,7 @@ func (s gameHub) handleJoinPartyCommand(currentGame gamerules.Game, message Mess
 }
 
 func (s gameHub) handleStartGameCommand(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
-	updatedGame, err := currentGame.Start(s.allegianceGenerator)
+	updatedGame, _, err := currentGame.Start(s.allegianceGenerator)
 
 	if err == nil {
 		messagesToDispatch = append(messagesToDispatch,

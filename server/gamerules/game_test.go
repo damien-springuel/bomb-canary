@@ -27,7 +27,7 @@ func createNewlyStartedGame() Game {
 	newGame, _ = newGame.AddPlayer("Charlie")
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
-	newGame, _ = newGame.Start(spiesFirstGenerator{})
+	newGame, _, _ = newGame.Start(spiesFirstGenerator{})
 	return newGame
 }
 
@@ -71,7 +71,7 @@ func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
 
-	newGame, _ = newGame.Start(spiesFirstGenerator{})
+	newGame, _, _ = newGame.Start(spiesFirstGenerator{})
 
 	newGame, err := newGame.AddPlayer("Frank")
 
@@ -134,7 +134,7 @@ func Test_RemovePlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
 
-	newGame, _ = newGame.Start(spiesFirstGenerator{})
+	newGame, _, _ = newGame.Start(spiesFirstGenerator{})
 
 	newGame, err := newGame.removePlayer("Bob")
 
@@ -149,7 +149,7 @@ func Test_StartGame_WhenFewerThan5Players_ShouldError(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Charlie")
 	newGame, _ = newGame.AddPlayer("Dan")
 
-	newGame, err := newGame.Start(spiesFirstGenerator{})
+	newGame, _, err := newGame.Start(spiesFirstGenerator{})
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errNotEnoughPlayers))
@@ -175,7 +175,7 @@ func Test_StartGame(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Edith")
 
 	spyGenerator := &spyGenerator{}
-	newGame, err := newGame.Start(spyGenerator)
+	newGame, actualPlayerAllegiance, err := newGame.Start(spyGenerator)
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -183,7 +183,7 @@ func Test_StartGame(t *testing.T) {
 	g.Expect(newGame.Leader()).To(Equal("Alice"))
 	g.Expect(newGame.currentTeam).To(BeEmpty())
 	g.Expect(newGame.CurrentMission()).To(Equal(First))
-	g.Expect(newGame.playerAllegiance).To(Equal(map[string]Allegiance{
+	g.Expect(actualPlayerAllegiance).To(Equal(map[string]Allegiance{
 		"Alice":   Spy,
 		"Bob":     Resistance,
 		"Charlie": Spy,
@@ -202,8 +202,8 @@ func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Dan")
 	newGame, _ = newGame.AddPlayer("Edith")
 
-	newGame, _ = newGame.Start(spiesFirstGenerator{})
-	newGame, err := newGame.Start(spiesFirstGenerator{})
+	newGame, _, _ = newGame.Start(spiesFirstGenerator{})
+	newGame, _, err := newGame.Start(spiesFirstGenerator{})
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -688,7 +688,7 @@ func Test_SucceedFailMission_ShouldSometimesNeedTwoFailureToFailTheMission(t *te
 	newGame, _ = newGame.AddPlayer("Edith")
 	newGame, _ = newGame.AddPlayer("Fred")
 	newGame, _ = newGame.AddPlayer("Gordon")
-	newGame, _ = newGame.Start(spiesFirstGenerator{})
+	newGame, _, _ = newGame.Start(spiesFirstGenerator{})
 
 	// First turn
 	newGame, _ = newGame.LeaderSelectsMember("Alice")

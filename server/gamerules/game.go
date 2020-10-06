@@ -112,16 +112,15 @@ var (
 )
 
 type Game struct {
-	state            State
-	players          players
-	playerAllegiance map[string]Allegiance
-	leader           string
-	currentTeam      players
-	currentMission   Mission
-	teamVotes        votes
-	voteFailures     int
-	missionOutcomes  votes
-	missionResults   missionResults
+	state           State
+	players         players
+	leader          string
+	currentTeam     players
+	currentMission  Mission
+	teamVotes       votes
+	voteFailures    int
+	missionOutcomes votes
+	missionResults  missionResults
 }
 
 func NewGame() Game {
@@ -160,25 +159,26 @@ func (g Game) removePlayer(name string) (Game, error) {
 	return g, nil
 }
 
-func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, error) {
+func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, map[string]Allegiance, error) {
 	if g.state != NotStarted {
-		return g, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, NotStarted, g.state)
+		return g, nil, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, NotStarted, g.state)
 	}
 
 	if g.players.count() < minNumberOfPlayers {
-		return g, errNotEnoughPlayers
-	}
-
-	allegiances := allegianceGenerator.Generate(g.players.count(), nbOfSpiesByNumberOfPlayers[g.players.count()])
-	g.playerAllegiance = map[string]Allegiance{}
-	for i, a := range allegiances {
-		g.playerAllegiance[g.players[i]] = a
+		return g, nil, errNotEnoughPlayers
 	}
 
 	g.state = SelectingTeam
 	g.leader = g.players[0]
 	g.currentMission = First
-	return g, nil
+
+	allegiances := allegianceGenerator.Generate(g.players.count(), nbOfSpiesByNumberOfPlayers[g.players.count()])
+	playerAllegiance := map[string]Allegiance{}
+	for i, a := range allegiances {
+		playerAllegiance[g.players[i]] = a
+	}
+
+	return g, playerAllegiance, nil
 }
 
 func (g Game) nbPeopleThatHaveToGoOnMission() int {
