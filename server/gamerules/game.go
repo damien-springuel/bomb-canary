@@ -282,18 +282,18 @@ func (g Game) RejectTeamBy(name string) (Game, map[string]bool, error) {
 	return g.voteBy(name, g.teamVotes.rejectBy)
 }
 
-func (g Game) workOnMissionBy(name string, worker func(name string) (votes, error)) (Game, error) {
+func (g Game) workOnMissionBy(name string, worker func(name string) (votes, error)) (Game, map[string]bool, error) {
 	if g.state != ConductingMission {
-		return g, fmt.Errorf("%w: can only work on mission during %s state, state was %s", errInvalidStateForAction, ConductingMission, g.state)
+		return g, nil, fmt.Errorf("%w: can only work on mission during %s state, state was %s", errInvalidStateForAction, ConductingMission, g.state)
 	}
 
 	if !g.currentTeam.exists(name) {
-		return g, errPlayerNotFound
+		return g, nil, errPlayerNotFound
 	}
 
 	newOutcomes, err := worker(name)
 	if err != nil {
-		return g, err
+		return g, nil, err
 	}
 
 	if newOutcomes.hasEveryoneVoted(g.nbPeopleThatHaveToGoOnMission()) {
@@ -311,18 +311,19 @@ func (g Game) workOnMissionBy(name string, worker func(name string) (votes, erro
 			g.leader = g.players.after(g.leader)
 			g.currentTeam = nil
 		}
-		newOutcomes = nil
+		g.missionOutcomes = nil
+	} else {
+		g.missionOutcomes = newOutcomes
 	}
 
-	g.missionOutcomes = newOutcomes
-	return g, nil
+	return g, newOutcomes.copy(), nil
 }
 
-func (g Game) SucceedMissionBy(name string) (Game, error) {
+func (g Game) SucceedMissionBy(name string) (Game, map[string]bool, error) {
 	return g.workOnMissionBy(name, g.missionOutcomes.approveBy)
 }
 
-func (g Game) FailMissionBy(name string) (Game, error) {
+func (g Game) FailMissionBy(name string) (Game, map[string]bool, error) {
 	return g.workOnMissionBy(name, g.missionOutcomes.rejectBy)
 }
 
