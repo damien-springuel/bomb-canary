@@ -284,7 +284,7 @@ func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string, resulti
 
 func (s gameHub) handleSucceedMission(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	succeedMissionCommand := message.(SucceedMission)
-	updatedGame, _, err := currentGame.SucceedMissionBy(succeedMissionCommand.Player)
+	updatedGame, outcomes, err := currentGame.SucceedMissionBy(succeedMissionCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame
@@ -299,14 +299,14 @@ func (s gameHub) handleSucceedMission(currentGame gamerules.Game, message Messag
 		},
 	)
 
-	messagesToDispatch = append(messagesToDispatch, commonMissionOutgoingMessages(updatedGame, message.GetPartyCode())...)
+	messagesToDispatch = append(messagesToDispatch, commonMissionOutgoingMessages(updatedGame, message.GetPartyCode(), outcomes)...)
 
 	return
 }
 
 func (s gameHub) handleFailMission(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	failMissionCommand := message.(FailMission)
-	updatedGame, _, err := currentGame.FailMissionBy(failMissionCommand.Player)
+	updatedGame, outcomes, err := currentGame.FailMissionBy(failMissionCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame
@@ -321,20 +321,22 @@ func (s gameHub) handleFailMission(currentGame gamerules.Game, message Message) 
 		},
 	)
 
-	messagesToDispatch = append(messagesToDispatch, commonMissionOutgoingMessages(updatedGame, message.GetPartyCode())...)
+	messagesToDispatch = append(messagesToDispatch, commonMissionOutgoingMessages(updatedGame, message.GetPartyCode(), outcomes)...)
 
 	return
 }
 
-func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []Message {
+func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string, outcomes map[string]bool) []Message {
 	commonMissionMessages := []Message{}
 
 	if updatedGame.State() == gamerules.SelectingTeam {
 		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
+		talliedOutcomes := tallyOutcomes(outcomes)
 		commonMissionMessages = append(commonMissionMessages,
 			MissionCompleted{
-				Event:   Event{Party: Party{Code: code}},
-				Success: lastGameSuccess,
+				Event:    Event{Party: Party{Code: code}},
+				Success:  lastGameSuccess,
+				Outcomes: talliedOutcomes,
 			},
 		)
 		commonMissionMessages = append(commonMissionMessages,
@@ -345,10 +347,12 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []Me
 		)
 	} else if updatedGame.State() == gamerules.GameOver {
 		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
+		talliedOutcomes := tallyOutcomes(outcomes)
 		commonMissionMessages = append(commonMissionMessages,
 			MissionCompleted{
-				Event:   Event{Party: Party{Code: code}},
-				Success: lastGameSuccess,
+				Event:    Event{Party: Party{Code: code}},
+				Success:  lastGameSuccess,
+				Outcomes: talliedOutcomes,
 			},
 		)
 
@@ -361,4 +365,12 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string) []Me
 	}
 
 	return commonMissionMessages
+}
+
+func tallyOutcomes(outcomes map[string]bool) map[bool]int {
+	results := make(map[bool]int)
+	for _, outcome := range outcomes {
+		results[outcome] += 1
+	}
+	return results
 }

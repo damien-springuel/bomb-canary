@@ -913,7 +913,13 @@ func Test_HandleSucceedMission_MissionCompleted_Successful(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Event: Event{Party: Party{Code: code}}, Leader: "Bob"}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: true}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		MissionCompleted{
+			Event:    Event{Party: Party{Code: code}},
+			Success:  true,
+			Outcomes: map[bool]int{true: 2},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: true}))
 
 	expectedGame, _, _ = expectedGame.SucceedMissionBy("Alice")
@@ -930,7 +936,13 @@ func Test_HandleSucceedMission_MissionCompleted_Failure(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Event: Event{Party: Party{Code: code}}, Leader: "Bob"}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		MissionCompleted{
+			Event:    Event{Party: Party{Code: code}},
+			Success:  false,
+			Outcomes: map[bool]int{false: 1, true: 1},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: true}))
 
 	expectedGame, _, _ = expectedGame.FailMissionBy("Alice")
@@ -947,7 +959,13 @@ func Test_HandleSucceedMission_MissionCompleted_ThirdSuccess(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Resistance}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: true}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		MissionCompleted{
+			Event:    Event{Party: Party{Code: code}},
+			Success:  true,
+			Outcomes: map[bool]int{true: 2},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: true}))
 
 	expectedGame, _, _ = expectedGame.SucceedMissionBy("Alice")
@@ -989,7 +1007,13 @@ func Test_HandleFailMission_MissionCompleted_Failure(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Event: Event{Party: Party{Code: code}}, Leader: "Bob"}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		MissionCompleted{
+			Event:    Event{Party: Party{Code: code}},
+			Success:  false,
+			Outcomes: map[bool]int{false: 2},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: false}))
 
 	expectedGame, _, _ = expectedGame.FailMissionBy("Alice")
@@ -1006,7 +1030,13 @@ func Test_HandleFailMission_MissionCompleted_ThirdFailure(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: false}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		MissionCompleted{
+			Event:    Event{Party: Party{Code: code}},
+			Success:  false,
+			Outcomes: map[bool]int{false: 2},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: false}))
 
 	expectedGame, _, _ = expectedGame.FailMissionBy("Alice")

@@ -72,7 +72,8 @@ type PlayerWorkedOnMission struct {
 
 type MissionCompleted struct {
 	Event
-	Success bool
+	Success  bool
+	Outcomes map[bool]int
 }
 
 type Allegiance string
