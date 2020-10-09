@@ -190,7 +190,7 @@ func (s gameHub) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, m
 
 func (s gameHub) handleApproveTeam(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	approveTeamCommand := message.(ApproveTeam)
-	updatedGame, err, resultingVote := currentGame.ApproveTeamBy(approveTeamCommand.Player)
+	updatedGame, resultingVote, err := currentGame.ApproveTeamBy(approveTeamCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame
@@ -212,7 +212,7 @@ func (s gameHub) handleApproveTeam(currentGame gamerules.Game, message Message) 
 
 func (s gameHub) handleRejectTeam(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	rejectTeamCommand := message.(RejectTeam)
-	updatedGame, err, resultingVotes := currentGame.RejectTeamBy(rejectTeamCommand.Player)
+	updatedGame, resultingVotes, err := currentGame.RejectTeamBy(rejectTeamCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame

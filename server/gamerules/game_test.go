@@ -321,7 +321,7 @@ func Test_LeaderConfirmsSelection_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 
 func Test_ApproveTeam(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, err, resultingVotes := newGame.ApproveTeamBy("Alice")
+	newGame, resultingVotes, err := newGame.ApproveTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -333,7 +333,7 @@ func Test_ApproveTeam(t *testing.T) {
 func Test_ApproveTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _, _ = newGame.ApproveTeamBy("Alice")
-	newGame, err, resultingVotes := newGame.ApproveTeamBy("Alice")
+	newGame, resultingVotes, err := newGame.ApproveTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
@@ -343,7 +343,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
 func Test_ApproveTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _, _ = newGame.ApproveTeamBy("Alice")
-	newGame, err, resultingVotes := newGame.RejectTeamBy("Alice")
+	newGame, resultingVotes, err := newGame.RejectTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
@@ -352,7 +352,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 
 func Test_ApproveTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, err, resultingVotes := newGame.ApproveTeamBy("NotThere")
+	newGame, resultingVotes, err := newGame.ApproveTeamBy("NotThere")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
@@ -361,7 +361,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 
 func Test_ApproveTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 	newGame := createNewlyStartedGame()
-	newGame, err, resultingVotes := newGame.ApproveTeamBy("Alice")
+	newGame, resultingVotes, err := newGame.ApproveTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -370,7 +370,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 
 func Test_RejectTeam(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, err, resultingVotes := newGame.RejectTeamBy("Alice")
+	newGame, resultingVotes, err := newGame.RejectTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -382,7 +382,7 @@ func Test_RejectTeam(t *testing.T) {
 func Test_RejectTeam_ShouldReturnErrorIfAlreadyRejected(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _, _ = newGame.RejectTeamBy("Alice")
-	newGame, err, resultingVotes := newGame.RejectTeamBy("Alice")
+	newGame, resultingVotes, err := newGame.RejectTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
@@ -392,7 +392,7 @@ func Test_RejectTeam_ShouldReturnErrorIfAlreadyRejected(t *testing.T) {
 func Test_RejectTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _, _ = newGame.RejectTeamBy("Alice")
-	newGame, err, resultingVotes := newGame.ApproveTeamBy("Alice")
+	newGame, resultingVotes, err := newGame.ApproveTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
@@ -401,7 +401,7 @@ func Test_RejectTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 
 func Test_RejectTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, err, resultingVotes := newGame.RejectTeamBy("NotThere")
+	newGame, resultingVotes, err := newGame.RejectTeamBy("NotThere")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
@@ -410,7 +410,7 @@ func Test_RejectTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 
 func Test_RejectTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 	newGame := createNewlyStartedGame()
-	newGame, err, resultingVotes := newGame.RejectTeamBy("Alice")
+	newGame, resultingVotes, err := newGame.RejectTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -423,7 +423,7 @@ func Test_ApproveRejectTeam_ShouldMoveToConductingMissionIfVoteHasMajority(t *te
 	newGame, _, _ = newGame.ApproveTeamBy("Bob")
 	newGame, _, _ = newGame.ApproveTeamBy("Charlie")
 	newGame, _, _ = newGame.RejectTeamBy("Dan")
-	newGame, err, resultingVotes := newGame.RejectTeamBy("Edith")
+	newGame, resultingVotes, err := newGame.RejectTeamBy("Edith")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -438,7 +438,7 @@ func Test_ApproveRejectTeam_ShouldMoveToSelectingTeamIfVoteDoesntHaveMajority_An
 	newGame, _, _ = newGame.ApproveTeamBy("Bob")
 	newGame, _, _ = newGame.RejectTeamBy("Charlie")
 	newGame, _, _ = newGame.RejectTeamBy("Dan")
-	newGame, err, resultingVotes := newGame.RejectTeamBy("Edith")
+	newGame, resultingVotes, err := newGame.RejectTeamBy("Edith")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
@@ -496,7 +496,7 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	newGame, _, _ = newGame.ApproveTeamBy("Bob")
 	newGame, _, _ = newGame.RejectTeamBy("Charlie")
 	newGame, _, _ = newGame.RejectTeamBy("Dan")
-	newGame, err, resultingVotes := newGame.RejectTeamBy("Edith")
+	newGame, resultingVotes, err := newGame.RejectTeamBy("Edith")
 
 	g.Expect(err).To(BeNil())
 	g.Expect(newGame.State()).To(Equal(GameOver))
@@ -522,7 +522,7 @@ func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testin
 	newGame, _, _ = newGame.ApproveTeamBy("Bob")
 	newGame, _, _ = newGame.ApproveTeamBy("Charlie")
 	newGame, _, _ = newGame.ApproveTeamBy("Dan")
-	newGame, err, resultingVotes := newGame.ApproveTeamBy("Edith")
+	newGame, resultingVotes, err := newGame.ApproveTeamBy("Edith")
 
 	g := NewWithT(t)
 	g.Expect(err).To(BeNil())
