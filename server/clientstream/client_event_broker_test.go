@@ -258,15 +258,19 @@ func Test_ClientEventBroker_PlayerWorkedOnMission(t *testing.T) {
 func Test_ClientEventBroker_MissionCompleted(t *testing.T) {
 	eventSender := &mockEventSender{}
 	eventBroker := NewClientEventBroker(eventSender)
-	eventBroker.Consume(mb.MissionCompleted{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, Success: true})
+	eventBroker.Consume(
+		mb.MissionCompleted{
+			Event:    mb.Event{Party: mb.Party{Code: "testCode"}},
+			Success:  true,
+			Outcomes: map[bool]int{true: 4, false: 2},
+		},
+	)
 
 	g := NewWithT(t)
-	g.Expect(eventSender.receivedCode).To(Equal("testCode"))
-	g.Expect(eventSender.receivedCode).To(Equal("testCode"))
 	g.Expect(*eventSender).To(Equal(
 		mockEventSender{
 			receivedCode:    "testCode",
-			receivedMessage: toJsonBytes(clientEvent{MissionCompleted: &missionCompleted{Success: true}}),
+			receivedMessage: toJsonBytes(clientEvent{MissionCompleted: &missionCompleted{Success: true, NbFails: 2}}),
 		},
 	))
 }

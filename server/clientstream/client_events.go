@@ -67,6 +67,7 @@ type playerWorkedOnMission struct {
 
 type missionCompleted struct {
 	Success bool
+	NbFails int
 }
 
 type gameEnded struct {
