@@ -190,7 +190,7 @@ func (s gameHub) handleLeaderConfirmsTeamSelection(currentGame gamerules.Game, m
 
 func (s gameHub) handleApproveTeam(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	approveTeamCommand := message.(ApproveTeam)
-	updatedGame, err := currentGame.ApproveTeamBy(approveTeamCommand.Player)
+	updatedGame, err, resultingVote := currentGame.ApproveTeamBy(approveTeamCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame
@@ -205,14 +205,14 @@ func (s gameHub) handleApproveTeam(currentGame gamerules.Game, message Message) 
 		},
 	)
 
-	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessages(updatedGame, message.GetPartyCode())...)
+	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessages(updatedGame, message.GetPartyCode(), resultingVote)...)
 
 	return
 }
 
 func (s gameHub) handleRejectTeam(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	rejectTeamCommand := message.(RejectTeam)
-	updatedGame, err := currentGame.RejectTeamBy(rejectTeamCommand.Player)
+	updatedGame, err, resultingVotes := currentGame.RejectTeamBy(rejectTeamCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame
@@ -227,12 +227,12 @@ func (s gameHub) handleRejectTeam(currentGame gamerules.Game, message Message) (
 		},
 	)
 
-	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessages(updatedGame, message.GetPartyCode())...)
+	messagesToDispatch = append(messagesToDispatch, commonVoteOutgoingMessages(updatedGame, message.GetPartyCode(), resultingVotes)...)
 
 	return
 }
 
-func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []Message {
+func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string, resultingVote map[string]bool) []Message {
 	commonVoteMessages := []Message{}
 	if updatedGame.State() == gamerules.SelectingTeam {
 		commonVoteMessages = append(commonVoteMessages,
@@ -240,6 +240,7 @@ func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []Messa
 				Event:        Event{Party: Party{Code: code}},
 				Approved:     false,
 				VoteFailures: updatedGame.VoteFailures(),
+				PlayerVotes:  resultingVote,
 			},
 		)
 		commonVoteMessages = append(commonVoteMessages,
@@ -251,8 +252,9 @@ func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []Messa
 	} else if updatedGame.State() == gamerules.ConductingMission {
 		commonVoteMessages = append(commonVoteMessages,
 			AllPlayerVotedOnTeam{
-				Event:    Event{Party: Party{Code: code}},
-				Approved: true,
+				Event:       Event{Party: Party{Code: code}},
+				Approved:    true,
+				PlayerVotes: resultingVote,
 			},
 		)
 		commonVoteMessages = append(commonVoteMessages,
@@ -266,6 +268,7 @@ func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string) []Messa
 				Event:        Event{Party: Party{Code: code}},
 				Approved:     false,
 				VoteFailures: updatedGame.VoteFailures(),
+				PlayerVotes:  resultingVote,
 			},
 		)
 		commonVoteMessages = append(commonVoteMessages,

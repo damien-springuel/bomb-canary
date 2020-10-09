@@ -168,50 +168,50 @@ func fiveFailedVoteInARow(hub gameHub, code string) gamerules.Game {
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.RejectTeamBy("Alice")
-	game, _ = game.RejectTeamBy("Bob")
-	game, _ = game.RejectTeamBy("Charlie")
-	game, _ = game.RejectTeamBy("Dan")
-	game, _ = game.RejectTeamBy("Edith")
+	game, _, _ = game.RejectTeamBy("Alice")
+	game, _, _ = game.RejectTeamBy("Bob")
+	game, _, _ = game.RejectTeamBy("Charlie")
+	game, _, _ = game.RejectTeamBy("Dan")
+	game, _, _ = game.RejectTeamBy("Edith")
 
 	// #2
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.RejectTeamBy("Alice")
-	game, _ = game.RejectTeamBy("Bob")
-	game, _ = game.RejectTeamBy("Charlie")
-	game, _ = game.RejectTeamBy("Dan")
-	game, _ = game.RejectTeamBy("Edith")
+	game, _, _ = game.RejectTeamBy("Alice")
+	game, _, _ = game.RejectTeamBy("Bob")
+	game, _, _ = game.RejectTeamBy("Charlie")
+	game, _, _ = game.RejectTeamBy("Dan")
+	game, _, _ = game.RejectTeamBy("Edith")
 
 	// #3
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.RejectTeamBy("Alice")
-	game, _ = game.RejectTeamBy("Bob")
-	game, _ = game.RejectTeamBy("Charlie")
-	game, _ = game.RejectTeamBy("Dan")
-	game, _ = game.RejectTeamBy("Edith")
+	game, _, _ = game.RejectTeamBy("Alice")
+	game, _, _ = game.RejectTeamBy("Bob")
+	game, _, _ = game.RejectTeamBy("Charlie")
+	game, _, _ = game.RejectTeamBy("Dan")
+	game, _, _ = game.RejectTeamBy("Edith")
 
 	// #4
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.RejectTeamBy("Alice")
-	game, _ = game.RejectTeamBy("Bob")
-	game, _ = game.RejectTeamBy("Charlie")
-	game, _ = game.RejectTeamBy("Dan")
-	game, _ = game.RejectTeamBy("Edith")
+	game, _, _ = game.RejectTeamBy("Alice")
+	game, _, _ = game.RejectTeamBy("Bob")
+	game, _, _ = game.RejectTeamBy("Charlie")
+	game, _, _ = game.RejectTeamBy("Dan")
+	game, _, _ = game.RejectTeamBy("Edith")
 
 	// #5 minus Edith's vote
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.RejectTeamBy("Alice")
-	game, _ = game.RejectTeamBy("Bob")
-	game, _ = game.RejectTeamBy("Charlie")
-	game, _ = game.RejectTeamBy("Dan")
+	game, _, _ = game.RejectTeamBy("Alice")
+	game, _, _ = game.RejectTeamBy("Bob")
+	game, _, _ = game.RejectTeamBy("Charlie")
+	game, _, _ = game.RejectTeamBy("Dan")
 	return game
 }
 
@@ -241,11 +241,11 @@ func newlyConductingMission(hub gameHub, code string) gamerules.Game {
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.ApproveTeamBy("Alice")
-	game, _ = game.ApproveTeamBy("Bob")
-	game, _ = game.ApproveTeamBy("Charlie")
-	game, _ = game.ApproveTeamBy("Dan")
-	game, _ = game.ApproveTeamBy("Edith")
+	game, _, _ = game.ApproveTeamBy("Alice")
+	game, _, _ = game.ApproveTeamBy("Bob")
+	game, _, _ = game.ApproveTeamBy("Charlie")
+	game, _, _ = game.ApproveTeamBy("Dan")
+	game, _, _ = game.ApproveTeamBy("Edith")
 	return game
 }
 
@@ -305,11 +305,11 @@ func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.ApproveTeamBy("Alice")
-	game, _ = game.ApproveTeamBy("Bob")
-	game, _ = game.ApproveTeamBy("Charlie")
-	game, _ = game.ApproveTeamBy("Dan")
-	game, _ = game.ApproveTeamBy("Edith")
+	game, _, _ = game.ApproveTeamBy("Alice")
+	game, _, _ = game.ApproveTeamBy("Bob")
+	game, _, _ = game.ApproveTeamBy("Charlie")
+	game, _, _ = game.ApproveTeamBy("Dan")
+	game, _, _ = game.ApproveTeamBy("Edith")
 	game, _ = game.SucceedMissionBy("Alice")
 	game, _ = game.SucceedMissionBy("Bob")
 
@@ -318,11 +318,11 @@ func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderSelectsMember("Charlie")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.ApproveTeamBy("Alice")
-	game, _ = game.ApproveTeamBy("Bob")
-	game, _ = game.ApproveTeamBy("Charlie")
-	game, _ = game.ApproveTeamBy("Dan")
-	game, _ = game.ApproveTeamBy("Edith")
+	game, _, _ = game.ApproveTeamBy("Alice")
+	game, _, _ = game.ApproveTeamBy("Bob")
+	game, _, _ = game.ApproveTeamBy("Charlie")
+	game, _, _ = game.ApproveTeamBy("Dan")
+	game, _, _ = game.ApproveTeamBy("Edith")
 	game, _ = game.SucceedMissionBy("Alice")
 	game, _ = game.SucceedMissionBy("Bob")
 	game, _ = game.SucceedMissionBy("Charlie")
@@ -331,11 +331,11 @@ func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.ApproveTeamBy("Alice")
-	game, _ = game.ApproveTeamBy("Bob")
-	game, _ = game.ApproveTeamBy("Charlie")
-	game, _ = game.ApproveTeamBy("Dan")
-	game, _ = game.ApproveTeamBy("Edith")
+	game, _, _ = game.ApproveTeamBy("Alice")
+	game, _, _ = game.ApproveTeamBy("Bob")
+	game, _, _ = game.ApproveTeamBy("Charlie")
+	game, _, _ = game.ApproveTeamBy("Dan")
+	game, _, _ = game.ApproveTeamBy("Edith")
 	return game
 }
 
@@ -395,11 +395,11 @@ func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.ApproveTeamBy("Alice")
-	game, _ = game.ApproveTeamBy("Bob")
-	game, _ = game.ApproveTeamBy("Charlie")
-	game, _ = game.ApproveTeamBy("Dan")
-	game, _ = game.ApproveTeamBy("Edith")
+	game, _, _ = game.ApproveTeamBy("Alice")
+	game, _, _ = game.ApproveTeamBy("Bob")
+	game, _, _ = game.ApproveTeamBy("Charlie")
+	game, _, _ = game.ApproveTeamBy("Dan")
+	game, _, _ = game.ApproveTeamBy("Edith")
 	game, _ = game.FailMissionBy("Alice")
 	game, _ = game.FailMissionBy("Bob")
 
@@ -408,11 +408,11 @@ func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderSelectsMember("Charlie")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.ApproveTeamBy("Alice")
-	game, _ = game.ApproveTeamBy("Bob")
-	game, _ = game.ApproveTeamBy("Charlie")
-	game, _ = game.ApproveTeamBy("Dan")
-	game, _ = game.ApproveTeamBy("Edith")
+	game, _, _ = game.ApproveTeamBy("Alice")
+	game, _, _ = game.ApproveTeamBy("Bob")
+	game, _, _ = game.ApproveTeamBy("Charlie")
+	game, _, _ = game.ApproveTeamBy("Dan")
+	game, _, _ = game.ApproveTeamBy("Edith")
 	game, _ = game.FailMissionBy("Alice")
 	game, _ = game.FailMissionBy("Bob")
 	game, _ = game.FailMissionBy("Charlie")
@@ -421,11 +421,11 @@ func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
-	game, _ = game.ApproveTeamBy("Alice")
-	game, _ = game.ApproveTeamBy("Bob")
-	game, _ = game.ApproveTeamBy("Charlie")
-	game, _ = game.ApproveTeamBy("Dan")
-	game, _ = game.ApproveTeamBy("Edith")
+	game, _, _ = game.ApproveTeamBy("Alice")
+	game, _, _ = game.ApproveTeamBy("Bob")
+	game, _, _ = game.ApproveTeamBy("Charlie")
+	game, _, _ = game.ApproveTeamBy("Dan")
+	game, _, _ = game.ApproveTeamBy("Edith")
 	return game
 }
 
@@ -674,7 +674,7 @@ func Test_HandleApproveTeam(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Player: "Alice", Approved: true}))
 
-	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Alice")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -702,14 +702,21 @@ func Test_HandleApproveTeam_AllPlayerVoted_Approved(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(MissionStarted{Event: Event{Party: Party{Code: code}}}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(AllPlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Approved: true, VoteFailures: 0}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		AllPlayerVotedOnTeam{
+			Event:        Event{Party: Party{Code: code}},
+			Approved:     true,
+			VoteFailures: 0,
+			PlayerVotes:  map[string]bool{"Alice": true, "Bob": true, "Charlie": true, "Dan": true, "Edith": true},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Player: "Edith", Approved: true}))
 
-	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Bob")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Charlie")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Dan")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Edith")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Alice")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Bob")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Charlie")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Dan")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Edith")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -725,14 +732,21 @@ func Test_HandleApproveTeam_AllPlayerVoted_Rejected(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Event: Event{Party: Party{Code: code}}, Leader: "Bob"}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(AllPlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Approved: false, VoteFailures: 1}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		AllPlayerVotedOnTeam{
+			Event:        Event{Party: Party{Code: code}},
+			Approved:     false,
+			VoteFailures: 1,
+			PlayerVotes:  map[string]bool{"Alice": true, "Bob": false, "Charlie": false, "Dan": false, "Edith": true},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Player: "Edith", Approved: true}))
 
-	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
-	expectedGame, _ = expectedGame.RejectTeamBy("Bob")
-	expectedGame, _ = expectedGame.RejectTeamBy("Charlie")
-	expectedGame, _ = expectedGame.RejectTeamBy("Dan")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Edith")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Alice")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Bob")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Charlie")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Dan")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Edith")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -744,10 +758,17 @@ func Test_HandleApproveTeam_RejectedFiveTimeInARow(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(AllPlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Approved: false, VoteFailures: 5}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		AllPlayerVotedOnTeam{
+			Event:        Event{Party: Party{Code: code}},
+			Approved:     false,
+			VoteFailures: 5,
+			PlayerVotes:  map[string]bool{"Alice": false, "Bob": false, "Charlie": false, "Dan": false, "Edith": true},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Player: "Edith", Approved: true}))
 
-	expectedGame, _ = expectedGame.ApproveTeamBy("Edith")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Edith")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -760,7 +781,7 @@ func Test_HandleRejectTeam(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Player: "Alice", Approved: false}))
 
-	expectedGame, _ = expectedGame.RejectTeamBy("Alice")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Alice")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -788,14 +809,21 @@ func Test_HandleRejectTeam_AllPlayerVoted_Approved(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(MissionStarted{Event: Event{Party: Party{Code: code}}}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(AllPlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Approved: true, VoteFailures: 0}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		AllPlayerVotedOnTeam{
+			Event:        Event{Party: Party{Code: code}},
+			Approved:     true,
+			VoteFailures: 0,
+			PlayerVotes:  map[string]bool{"Alice": true, "Bob": true, "Charlie": true, "Dan": true, "Edith": false},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Player: "Edith", Approved: false}))
 
-	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Bob")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Charlie")
-	expectedGame, _ = expectedGame.ApproveTeamBy("Dan")
-	expectedGame, _ = expectedGame.RejectTeamBy("Edith")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Alice")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Bob")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Charlie")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Dan")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Edith")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -811,14 +839,21 @@ func Test_HandleRejectTeam_AllPlayerVoted_Rejected(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(LeaderStartedToSelectMembers{Event: Event{Party: Party{Code: code}}, Leader: "Bob"}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(AllPlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Approved: false, VoteFailures: 1}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		AllPlayerVotedOnTeam{
+			Event:        Event{Party: Party{Code: code}},
+			Approved:     false,
+			VoteFailures: 1,
+			PlayerVotes:  map[string]bool{"Alice": true, "Bob": false, "Charlie": false, "Dan": false, "Edith": false},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Player: "Edith", Approved: false}))
 
-	expectedGame, _ = expectedGame.ApproveTeamBy("Alice")
-	expectedGame, _ = expectedGame.RejectTeamBy("Bob")
-	expectedGame, _ = expectedGame.RejectTeamBy("Charlie")
-	expectedGame, _ = expectedGame.RejectTeamBy("Dan")
-	expectedGame, _ = expectedGame.RejectTeamBy("Edith")
+	expectedGame, _, _ = expectedGame.ApproveTeamBy("Alice")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Bob")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Charlie")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Dan")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Edith")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -830,10 +865,17 @@ func Test_HandleRejectTeam_RejectedFiveTimeInARow(t *testing.T) {
 
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy}))
-	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(AllPlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Approved: false, VoteFailures: 5}))
+	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
+		AllPlayerVotedOnTeam{
+			Event:        Event{Party: Party{Code: code}},
+			Approved:     false,
+			VoteFailures: 5,
+			PlayerVotes:  map[string]bool{"Alice": false, "Bob": false, "Charlie": false, "Dan": false, "Edith": false},
+		},
+	))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerVotedOnTeam{Event: Event{Party: Party{Code: code}}, Player: "Edith", Approved: false}))
 
-	expectedGame, _ = expectedGame.RejectTeamBy("Edith")
+	expectedGame, _, _ = expectedGame.RejectTeamBy("Edith")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
