@@ -51,6 +51,19 @@ func (c clientEventBroker) Consume(m messagebus.Message) {
 	case messagebus.PlayerJoined:
 		c.send(code, clientEvent{PlayerJoined: &playerJoined{Name: m.Player}})
 
+	case messagebus.AllegianceRevealed:
+		spies := make(map[string]struct{})
+		for name, allegiance := range m.AllegianceByPlayer {
+			if allegiance == messagebus.Resistance {
+				c.sendToPlayer(code, name, clientEvent{SpiesRevealed: &spiesRevealed{}})
+			} else {
+				spies[name] = struct{}{}
+			}
+		}
+		for spy := range spies {
+			c.sendToPlayer(code, spy, clientEvent{SpiesRevealed: &spiesRevealed{Spies: spies}})
+		}
+
 	case messagebus.LeaderStartedToSelectMembers:
 		c.send(code, clientEvent{LeaderStartedToSelectMembers: &leaderStartedToSelectMembers{Leader: m.Leader}})
 

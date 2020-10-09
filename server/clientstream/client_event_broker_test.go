@@ -11,13 +11,14 @@ type mockEventSender struct {
 	receivedCode    string
 	receivedMessage []byte
 
-	receiveCodeToPlayer     string
-	receiveNameToPlayer     string
-	receivedMessageToPlayer []byte
+	receivedCodeToPlayer     string
+	receivedNameToPlayer     string
+	receivedAllNamesToPlayer map[string][]byte
+	receivedMessageToPlayer  []byte
 
-	receiveCodeToAllButPlayer     string
-	receiveNameToAllButPlayer     string
-	receivedMessageToAllButPlayer []byte
+	receivedCodeToAllButPlayer     string
+	receivedNameToAllButPlayer     string
+	receivedMessageToAllButPlayers []byte
 
 	shouldTrackAll      bool
 	allReceivedMessages [][]byte
@@ -36,18 +37,22 @@ func (m *mockEventSender) Send(code string, message []byte) {
 }
 
 func (m *mockEventSender) SendToPlayer(code, name string, message []byte) {
-	m.receiveCodeToPlayer = code
-	m.receiveNameToPlayer = name
+	m.receivedCodeToPlayer = code
+	m.receivedNameToPlayer = name
 	m.receivedMessageToPlayer = message
 	if m.shouldTrackAll {
+		if m.receivedAllNamesToPlayer == nil {
+			m.receivedAllNamesToPlayer = make(map[string][]byte)
+		}
+		m.receivedAllNamesToPlayer[name] = message
 		m.allReceivedMessages = append(m.allReceivedMessages, message)
 	}
 }
 
-func (m *mockEventSender) SendToAllButPlayer(code, name string, message []byte) {
-	m.receiveCodeToAllButPlayer = code
-	m.receiveNameToAllButPlayer = name
-	m.receivedMessageToAllButPlayer = message
+func (m *mockEventSender) SendToAllButPlayer(code string, name string, message []byte) {
+	m.receivedCodeToAllButPlayer = code
+	m.receivedNameToAllButPlayer = name
+	m.receivedMessageToAllButPlayers = message
 	if m.shouldTrackAll {
 		m.allReceivedMessages = append(m.allReceivedMessages, message)
 	}
@@ -91,6 +96,30 @@ func Test_ClientEventBroker_PlayerDisconnected(t *testing.T) {
 		mockEventSender{
 			receivedCode:    "testCode",
 			receivedMessage: toJsonBytes(clientEvent{PlayerDisconnected: &playerDisconnected{Name: "testName"}}),
+		},
+	))
+}
+
+func Test_ClientEventBroker_SpiesRevealed(t *testing.T) {
+	eventSender := &mockEventSender{shouldTrackAll: true}
+	eventBroker := NewClientEventBroker(eventSender)
+	eventBroker.Consume(mb.AllegianceRevealed{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, AllegianceByPlayer: map[string]mb.Allegiance{
+		"p1": mb.Spy,
+		"p2": mb.Spy,
+		"p3": mb.Resistance,
+		"p4": mb.Resistance,
+		"p5": mb.Resistance,
+	}})
+
+	g := NewWithT(t)
+	g.Expect(eventSender.receivedCodeToPlayer).To(Equal("testCode"))
+	g.Expect(eventSender.receivedAllNamesToPlayer).To(Equal(
+		map[string][]byte{
+			"p1": toJsonBytes(clientEvent{SpiesRevealed: &spiesRevealed{Spies: map[string]struct{}{"p1": {}, "p2": {}}}}),
+			"p2": toJsonBytes(clientEvent{SpiesRevealed: &spiesRevealed{Spies: map[string]struct{}{"p1": {}, "p2": {}}}}),
+			"p3": toJsonBytes(clientEvent{SpiesRevealed: &spiesRevealed{}}),
+			"p4": toJsonBytes(clientEvent{SpiesRevealed: &spiesRevealed{}}),
+			"p5": toJsonBytes(clientEvent{SpiesRevealed: &spiesRevealed{}}),
 		},
 	))
 }
@@ -159,12 +188,12 @@ func Test_ClientEventBroker_PlayerVotedOnTeam(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(*eventSender).To(Equal(
 		mockEventSender{
-			receiveCodeToPlayer:           "testCode",
-			receiveNameToPlayer:           "testPlayer",
-			receivedMessageToPlayer:       toJsonBytes(clientEvent{PlayerVotedOnTeam: &playerVotedOnTeam{Player: "testPlayer", Approved: boolP(true)}}),
-			receiveCodeToAllButPlayer:     "testCode",
-			receiveNameToAllButPlayer:     "testPlayer",
-			receivedMessageToAllButPlayer: toJsonBytes(clientEvent{PlayerVotedOnTeam: &playerVotedOnTeam{Player: "testPlayer"}}),
+			receivedCodeToPlayer:           "testCode",
+			receivedNameToPlayer:           "testPlayer",
+			receivedMessageToPlayer:        toJsonBytes(clientEvent{PlayerVotedOnTeam: &playerVotedOnTeam{Player: "testPlayer", Approved: boolP(true)}}),
+			receivedCodeToAllButPlayer:     "testCode",
+			receivedNameToAllButPlayer:     "testPlayer",
+			receivedMessageToAllButPlayers: toJsonBytes(clientEvent{PlayerVotedOnTeam: &playerVotedOnTeam{Player: "testPlayer"}}),
 		},
 	))
 }
@@ -205,12 +234,12 @@ func Test_ClientEventBroker_PlayerWorkedOnMission(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(*eventSender).To(Equal(
 		mockEventSender{
-			receiveCodeToPlayer:           "testCode",
-			receiveNameToPlayer:           "testPlayer",
-			receivedMessageToPlayer:       toJsonBytes(clientEvent{PlayerWorkedOnMission: &playerWorkedOnMission{Player: "testPlayer", Success: boolP(true)}}),
-			receiveCodeToAllButPlayer:     "testCode",
-			receiveNameToAllButPlayer:     "testPlayer",
-			receivedMessageToAllButPlayer: toJsonBytes(clientEvent{PlayerWorkedOnMission: &playerWorkedOnMission{Player: "testPlayer"}}),
+			receivedCodeToPlayer:           "testCode",
+			receivedNameToPlayer:           "testPlayer",
+			receivedMessageToPlayer:        toJsonBytes(clientEvent{PlayerWorkedOnMission: &playerWorkedOnMission{Player: "testPlayer", Success: boolP(true)}}),
+			receivedCodeToAllButPlayer:     "testCode",
+			receivedNameToAllButPlayer:     "testPlayer",
+			receivedMessageToAllButPlayers: toJsonBytes(clientEvent{PlayerWorkedOnMission: &playerWorkedOnMission{Player: "testPlayer"}}),
 		},
 	))
 }
