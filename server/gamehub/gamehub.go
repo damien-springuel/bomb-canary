@@ -284,7 +284,7 @@ func commonVoteOutgoingMessages(updatedGame gamerules.Game, code string, resulti
 
 func (s gameHub) handleSucceedMission(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	succeedMissionCommand := message.(SucceedMission)
-	updatedGame, err := currentGame.SucceedMissionBy(succeedMissionCommand.Player)
+	updatedGame, _, err := currentGame.SucceedMissionBy(succeedMissionCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame
@@ -306,7 +306,7 @@ func (s gameHub) handleSucceedMission(currentGame gamerules.Game, message Messag
 
 func (s gameHub) handleFailMission(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
 	failMissionCommand := message.(FailMission)
-	updatedGame, err := currentGame.FailMissionBy(failMissionCommand.Player)
+	updatedGame, _, err := currentGame.FailMissionBy(failMissionCommand.Player)
 
 	if err != nil {
 		updatedGame = currentGame

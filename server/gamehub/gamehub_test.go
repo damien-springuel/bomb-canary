@@ -310,8 +310,8 @@ func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
 	game, _, _ = game.ApproveTeamBy("Charlie")
 	game, _, _ = game.ApproveTeamBy("Dan")
 	game, _, _ = game.ApproveTeamBy("Edith")
-	game, _ = game.SucceedMissionBy("Alice")
-	game, _ = game.SucceedMissionBy("Bob")
+	game, _, _ = game.SucceedMissionBy("Alice")
+	game, _, _ = game.SucceedMissionBy("Bob")
 
 	// #2
 	game, _ = game.LeaderSelectsMember("Alice")
@@ -323,9 +323,9 @@ func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
 	game, _, _ = game.ApproveTeamBy("Charlie")
 	game, _, _ = game.ApproveTeamBy("Dan")
 	game, _, _ = game.ApproveTeamBy("Edith")
-	game, _ = game.SucceedMissionBy("Alice")
-	game, _ = game.SucceedMissionBy("Bob")
-	game, _ = game.SucceedMissionBy("Charlie")
+	game, _, _ = game.SucceedMissionBy("Alice")
+	game, _, _ = game.SucceedMissionBy("Bob")
+	game, _, _ = game.SucceedMissionBy("Charlie")
 
 	// #3
 	game, _ = game.LeaderSelectsMember("Alice")
@@ -400,8 +400,8 @@ func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
 	game, _, _ = game.ApproveTeamBy("Charlie")
 	game, _, _ = game.ApproveTeamBy("Dan")
 	game, _, _ = game.ApproveTeamBy("Edith")
-	game, _ = game.FailMissionBy("Alice")
-	game, _ = game.FailMissionBy("Bob")
+	game, _, _ = game.FailMissionBy("Alice")
+	game, _, _ = game.FailMissionBy("Bob")
 
 	// #2
 	game, _ = game.LeaderSelectsMember("Alice")
@@ -413,9 +413,9 @@ func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
 	game, _, _ = game.ApproveTeamBy("Charlie")
 	game, _, _ = game.ApproveTeamBy("Dan")
 	game, _, _ = game.ApproveTeamBy("Edith")
-	game, _ = game.FailMissionBy("Alice")
-	game, _ = game.FailMissionBy("Bob")
-	game, _ = game.FailMissionBy("Charlie")
+	game, _, _ = game.FailMissionBy("Alice")
+	game, _, _ = game.FailMissionBy("Bob")
+	game, _, _ = game.FailMissionBy("Charlie")
 
 	// #3
 	game, _ = game.LeaderSelectsMember("Alice")
@@ -888,7 +888,7 @@ func Test_HandleSucceedMission(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Alice", Success: true}))
 
-	expectedGame, _ = expectedGame.SucceedMissionBy("Alice")
+	expectedGame, _, _ = expectedGame.SucceedMissionBy("Alice")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -916,8 +916,8 @@ func Test_HandleSucceedMission_MissionCompleted_Successful(t *testing.T) {
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: true}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: true}))
 
-	expectedGame, _ = expectedGame.SucceedMissionBy("Alice")
-	expectedGame, _ = expectedGame.SucceedMissionBy("Bob")
+	expectedGame, _, _ = expectedGame.SucceedMissionBy("Alice")
+	expectedGame, _, _ = expectedGame.SucceedMissionBy("Bob")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -933,8 +933,8 @@ func Test_HandleSucceedMission_MissionCompleted_Failure(t *testing.T) {
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: false}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: true}))
 
-	expectedGame, _ = expectedGame.FailMissionBy("Alice")
-	expectedGame, _ = expectedGame.SucceedMissionBy("Bob")
+	expectedGame, _, _ = expectedGame.FailMissionBy("Alice")
+	expectedGame, _, _ = expectedGame.SucceedMissionBy("Bob")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -950,8 +950,8 @@ func Test_HandleSucceedMission_MissionCompleted_ThirdSuccess(t *testing.T) {
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: true}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: true}))
 
-	expectedGame, _ = expectedGame.SucceedMissionBy("Alice")
-	expectedGame, _ = expectedGame.SucceedMissionBy("Bob")
+	expectedGame, _, _ = expectedGame.SucceedMissionBy("Alice")
+	expectedGame, _, _ = expectedGame.SucceedMissionBy("Bob")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -964,7 +964,7 @@ func Test_HandleFailMission(t *testing.T) {
 	g := NewWithT(t)
 	g.Expect(messageDispatcher.lastMessage()).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Alice", Success: false}))
 
-	expectedGame, _ = expectedGame.FailMissionBy("Alice")
+	expectedGame, _, _ = expectedGame.FailMissionBy("Alice")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -992,8 +992,8 @@ func Test_HandleFailMission_MissionCompleted_Failure(t *testing.T) {
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: false}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: false}))
 
-	expectedGame, _ = expectedGame.FailMissionBy("Alice")
-	expectedGame, _ = expectedGame.FailMissionBy("Bob")
+	expectedGame, _, _ = expectedGame.FailMissionBy("Alice")
+	expectedGame, _, _ = expectedGame.FailMissionBy("Bob")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
 
@@ -1009,7 +1009,7 @@ func Test_HandleFailMission_MissionCompleted_ThirdFailure(t *testing.T) {
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(MissionCompleted{Event: Event{Party: Party{Code: code}}, Success: false}))
 	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(PlayerWorkedOnMission{Event: Event{Party: Party{Code: code}}, Player: "Bob", Success: false}))
 
-	expectedGame, _ = expectedGame.FailMissionBy("Alice")
-	expectedGame, _ = expectedGame.FailMissionBy("Bob")
+	expectedGame, _, _ = expectedGame.FailMissionBy("Alice")
+	expectedGame, _, _ = expectedGame.FailMissionBy("Bob")
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }
