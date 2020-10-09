@@ -55,6 +55,7 @@ type playerVotedOnTeam struct {
 type allPlayerVotedOnTeam struct {
 	Approved     bool
 	VoteFailures int
+	PlayerVotes  map[string]bool
 }
 
 type missionStarted struct{}

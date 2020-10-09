@@ -81,7 +81,7 @@ func (c clientEventBroker) Consume(m messagebus.Message) {
 		c.sendToAllButPlayer(code, m.Player, clientEvent{PlayerVotedOnTeam: &playerVotedOnTeam{Player: m.Player}})
 
 	case messagebus.AllPlayerVotedOnTeam:
-		c.send(code, clientEvent{AllPlayerVotedOnTeam: &allPlayerVotedOnTeam{Approved: m.Approved, VoteFailures: m.VoteFailures}})
+		c.send(code, clientEvent{AllPlayerVotedOnTeam: &allPlayerVotedOnTeam{Approved: m.Approved, VoteFailures: m.VoteFailures, PlayerVotes: m.PlayerVotes}})
 
 	case messagebus.MissionStarted:
 		c.send(code, clientEvent{MissionStarted: &missionStarted{}})

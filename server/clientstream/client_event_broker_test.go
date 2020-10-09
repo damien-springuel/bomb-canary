@@ -201,13 +201,24 @@ func Test_ClientEventBroker_PlayerVotedOnTeam(t *testing.T) {
 func Test_ClientEventBroker_AllPlayerVotedOnTeam(t *testing.T) {
 	eventSender := &mockEventSender{}
 	eventBroker := NewClientEventBroker(eventSender)
-	eventBroker.Consume(mb.AllPlayerVotedOnTeam{Event: mb.Event{Party: mb.Party{Code: "testCode"}}, Approved: true, VoteFailures: 3})
+	eventBroker.Consume(mb.AllPlayerVotedOnTeam{
+		Event:        mb.Event{Party: mb.Party{Code: "testCode"}},
+		Approved:     true,
+		VoteFailures: 3,
+		PlayerVotes:  map[string]bool{"p1": true, "p2": false},
+	})
 
 	g := NewWithT(t)
 	g.Expect(*eventSender).To(Equal(
 		mockEventSender{
-			receivedCode:    "testCode",
-			receivedMessage: toJsonBytes(clientEvent{AllPlayerVotedOnTeam: &allPlayerVotedOnTeam{Approved: true, VoteFailures: 3}}),
+			receivedCode: "testCode",
+			receivedMessage: toJsonBytes(clientEvent{
+				AllPlayerVotedOnTeam: &allPlayerVotedOnTeam{
+					Approved:     true,
+					VoteFailures: 3,
+					PlayerVotes:  map[string]bool{"p1": true, "p2": false},
+				},
+			}),
 		},
 	))
 }
