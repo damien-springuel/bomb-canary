@@ -238,18 +238,18 @@ func (g Game) LeaderConfirmsTeamSelection() (Game, error) {
 	return g, nil
 }
 
-func (g Game) voteBy(name string, voter func(name string) (votes, error)) (Game, error) {
+func (g Game) voteBy(name string, voter func(name string) (votes, error)) (Game, error, map[string]bool) {
 	if g.state != VotingOnTeam {
-		return g, fmt.Errorf("%w: can only vote on team during %s state, state was %s", errInvalidStateForAction, VotingOnTeam, g.state)
+		return g, fmt.Errorf("%w: can only vote on team during %s state, state was %s", errInvalidStateForAction, VotingOnTeam, g.state), nil
 	}
 
 	if !g.players.exists(name) {
-		return g, errPlayerNotFound
+		return g, errPlayerNotFound, nil
 	}
 
 	newVotes, err := voter(name)
 	if err != nil {
-		return g, err
+		return g, err, nil
 	}
 
 	if newVotes.hasEveryoneVoted(g.players.count()) {
@@ -266,18 +266,19 @@ func (g Game) voteBy(name string, voter func(name string) (votes, error)) (Game,
 				g.leader = g.players.after(g.leader)
 			}
 		}
-		newVotes = nil
+		g.teamVotes = nil
+	} else {
+		g.teamVotes = newVotes
 	}
 
-	g.teamVotes = newVotes
-	return g, nil
+	return g, nil, newVotes.copy()
 }
 
-func (g Game) ApproveTeamBy(name string) (Game, error) {
+func (g Game) ApproveTeamBy(name string) (Game, error, map[string]bool) {
 	return g.voteBy(name, g.teamVotes.approveBy)
 }
 
-func (g Game) RejectTeamBy(name string) (Game, error) {
+func (g Game) RejectTeamBy(name string) (Game, error, map[string]bool) {
 	return g.voteBy(name, g.teamVotes.rejectBy)
 }
 

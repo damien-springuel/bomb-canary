@@ -60,3 +60,11 @@ func (v votes) nbRejections() int {
 
 	return nbRejections
 }
+
+func (v votes) copy() votes {
+	copy := make(votes)
+	for name, vote := range v {
+		copy[name] = vote
+	}
+	return copy
+}
