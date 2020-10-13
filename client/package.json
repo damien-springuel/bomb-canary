@@ -1,10 +1,10 @@
 {
-  "name": "svelte-app",
+  "name": "bomb-canary",
   "version": "1.0.0",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public",
+    "start": "sirv public --host 0.0.0.0 --port 44322",
     "validate": "svelte-check",
     "build:tailwind": "tailwind build public/tailwind.css -o public/build/bundle.tailwind.css"
   },
