@@ -3,6 +3,7 @@ module github.com/damien-springuel/bomb-canary/server
 go 1.15
 
 require (
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/google/uuid v1.1.2
 	github.com/gookit/color v1.3.1

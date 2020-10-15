@@ -44,8 +44,8 @@ func Register(engine *gin.Engine, partyBroker partyBroker, session sessionCreato
 	}
 
 	lobbyGroup := engine.Group("/party")
-	lobbyGroup.GET("/create", lobbyServer.createParty)
-	lobbyGroup.GET("/join", lobbyServer.joinParty)
+	lobbyGroup.POST("/create", lobbyServer.createParty)
+	lobbyGroup.POST("/join", lobbyServer.joinParty)
 }
 
 func (l lobbyServer) createParty(c *gin.Context) {

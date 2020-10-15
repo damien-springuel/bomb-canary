@@ -15,6 +15,7 @@ import (
 	"github.com/damien-springuel/bomb-canary/server/party"
 	"github.com/damien-springuel/bomb-canary/server/playeractions"
 	"github.com/damien-springuel/bomb-canary/server/sessions"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/gookit/color"
@@ -98,6 +99,8 @@ func main() {
 	bus.SubscribeConsumer(eventReplayer)
 
 	router := gin.Default()
+	router.Use(cors.Default())
+
 	party.Register(router, party.NewPartyService(hub, hub, bus), sessions)
 	playeractions.Register(router, sessions, playeractions.NewActionService(bus))
 	clientstream.Register(router, sessions, clientStreamer)

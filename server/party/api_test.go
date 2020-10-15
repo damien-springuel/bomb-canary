@@ -64,7 +64,7 @@ func makeCall(req *http.Request, partyBroker *mockPartyBroker) (*mockPartyBroker
 }
 
 func Test_CreateParty(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/create", jsonReader(createPartyRequest{Name: "testName"}))
+	req, _ := http.NewRequest("POST", "/party/create", jsonReader(createPartyRequest{Name: "testName"}))
 	partyBroker, sessions, w := makeCall(req, nil)
 
 	g := NewWithT(t)
@@ -84,7 +84,7 @@ func Test_CreateParty(t *testing.T) {
 }
 
 func Test_CreateParty_ShouldReturn400IfNameIsAbsent(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/create", jsonReader(createPartyRequest{Name: ""}))
+	req, _ := http.NewRequest("POST", "/party/create", jsonReader(createPartyRequest{Name: ""}))
 	partyBroker, sessions, w := makeCall(req, nil)
 
 	g := NewWithT(t)
@@ -96,7 +96,7 @@ func Test_CreateParty_ShouldReturn400IfNameIsAbsent(t *testing.T) {
 }
 
 func Test_CreateParty_ShouldReturn400IfMalformedBody(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/create", strings.NewReader("garbage"))
+	req, _ := http.NewRequest("POST", "/party/create", strings.NewReader("garbage"))
 	partyBroker, sessions, w := makeCall(req, nil)
 
 	g := NewWithT(t)
@@ -109,7 +109,7 @@ func Test_CreateParty_ShouldReturn400IfMalformedBody(t *testing.T) {
 }
 
 func Test_JoinParty(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/join", jsonReader(joinPartyRequest{Code: "joinCode", Name: "testName"}))
+	req, _ := http.NewRequest("POST", "/party/join", jsonReader(joinPartyRequest{Code: "joinCode", Name: "testName"}))
 	_, sessions, w := makeCall(req, nil)
 
 	g := NewWithT(t)
@@ -125,7 +125,7 @@ func Test_JoinParty(t *testing.T) {
 }
 
 func Test_JoinParty_Should400IfCodeAbsent(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/join", jsonReader(joinPartyRequest{Code: "", Name: "testName"}))
+	req, _ := http.NewRequest("POST", "/party/join", jsonReader(joinPartyRequest{Code: "", Name: "testName"}))
 	partyBroker, sessions, w := makeCall(req, nil)
 
 	g := NewWithT(t)
@@ -138,7 +138,7 @@ func Test_JoinParty_Should400IfCodeAbsent(t *testing.T) {
 }
 
 func Test_JoinParty_Should400IfNameAbsent(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/join", jsonReader(joinPartyRequest{Code: "joinCode", Name: ""}))
+	req, _ := http.NewRequest("POST", "/party/join", jsonReader(joinPartyRequest{Code: "joinCode", Name: ""}))
 	partyBroker, sessions, w := makeCall(req, nil)
 
 	g := NewWithT(t)
@@ -151,7 +151,7 @@ func Test_JoinParty_Should400IfNameAbsent(t *testing.T) {
 }
 
 func Test_JoinParty_Should400IfMalformedBody(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/join", strings.NewReader("garbage"))
+	req, _ := http.NewRequest("POST", "/party/join", strings.NewReader("garbage"))
 	partyBroker, sessions, w := makeCall(req, nil)
 
 	g := NewWithT(t)
@@ -164,7 +164,7 @@ func Test_JoinParty_Should400IfMalformedBody(t *testing.T) {
 }
 
 func Test_JoinParty_Should404IfCantJoinBecausePartyDoesntExist(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/join", jsonReader(joinPartyRequest{Code: "code", Name: "name"}))
+	req, _ := http.NewRequest("POST", "/party/join", jsonReader(joinPartyRequest{Code: "code", Name: "name"}))
 	partyBroker := &mockPartyBroker{}
 	partyBroker.joinPartyResponse = errPartyDoesntExists
 	_, sessions, w := makeCall(req, partyBroker)
@@ -179,7 +179,7 @@ func Test_JoinParty_Should404IfCantJoinBecausePartyDoesntExist(t *testing.T) {
 }
 
 func Test_JoinParty_Should500IfJoinReturnsOtherError(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/party/join", jsonReader(joinPartyRequest{Code: "code", Name: "name"}))
+	req, _ := http.NewRequest("POST", "/party/join", jsonReader(joinPartyRequest{Code: "code", Name: "name"}))
 	partyBroker := &mockPartyBroker{}
 	partyBroker.joinPartyResponse = errors.New("random error")
 	_, sessions, w := makeCall(req, partyBroker)
