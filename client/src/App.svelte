@@ -1,10 +1,15 @@
 <script lang="ts">
 import Axios from "axios";
+import type {Message} from "./messagebus";
+import {CreatePartyClicked} from "./messagebus";
+export let dispatcher: {Dispatch: (message: Message) => void};
+export let store: any;
 
 let name: string;
 
 function createParty() {
-  Axios.post("http://localhost:44324/party/create", {name: name}, {withCredentials: true}).then(r => console.log(r));
+  dispatcher.Dispatch(new CreatePartyClicked(name))
+  // Axios.post("http://localhost:44324/party/create", {name: name}, {withCredentials: true}).then(r => console.log(r));
 }
 
 </script>
@@ -16,6 +21,7 @@ function createParty() {
   <h2 class="text-2xl text-center text-blue-400">
     A real-time app to play "The Resistance" board game with friends.
   </h2>
+  <h3>like {$store.name}</h3>
 
   <div class="flex-grow flex flex-col justify-evenly w-full text-2xl items-stretch space-y-10 mb-4">
     <input type="text" placeholder="Name" class="bg-blue-400 focus:bg-blue-200 hover:bg-blue-300 placeholder-gray-700 rounded-lg px-2 text-gray-900 outline-none" bind:value={name}>
