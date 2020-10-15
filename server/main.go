@@ -99,7 +99,10 @@ func main() {
 	bus.SubscribeConsumer(eventReplayer)
 
 	router := gin.Default()
-	router.Use(cors.Default())
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowCredentials = true
+	corsConfig.AllowOrigins = []string{"http://localhost:44322"}
+	router.Use(cors.New(corsConfig))
 
 	party.Register(router, party.NewPartyService(hub, hub, bus), sessions)
 	playeractions.Register(router, sessions, playeractions.NewActionService(bus))
