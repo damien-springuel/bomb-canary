@@ -1,5 +1,7 @@
 export interface Message {}
 
+export interface Event extends Message {}
+
 export interface Consumer{
   consume(message: Message): void
 }
@@ -14,8 +16,4 @@ export class MessageBus {
   public Dispatch(message: Message): void {
     this.consumers.forEach(c => c.consume(message));
   }
-}
-
-export class CreatePartyClicked implements Message {
-  constructor(readonly name:string){}
 }
