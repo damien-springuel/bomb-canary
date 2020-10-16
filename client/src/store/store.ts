@@ -1,7 +1,7 @@
 import type {Writable, Readable} from "svelte/store";
 import {writable} from "svelte/store";
 
-interface StoreValues {
+export interface StoreValues {
   name: string
 }
 

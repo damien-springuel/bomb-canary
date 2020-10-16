@@ -1,7 +1,7 @@
 <script lang="ts">
 import Axios from "axios";
 import type {Message} from "./messagebus";
-import type {Store} from "./store";
+import type {Store} from "./store/store";
 import {CreatePartyClicked} from "./messagebus";
 export let dispatcher: {Dispatch: (message: Message) => void};
 export let store: Store;

@@ -1,7 +1,6 @@
 import App from './App.svelte';
 import { CreatePartyClicked, Message, MessageBus } from './messagebus';
-import {writable} from "svelte/store";
-import { Store } from './store';
+import { Store } from './store/store';
 
 const store = new Store();
 
