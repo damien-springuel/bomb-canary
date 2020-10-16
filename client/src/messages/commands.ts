@@ -1,7 +1,5 @@
 import type { Message } from "./messagebus";
 
-export interface Command extends Message {}
-
-export class CreateParty implements Command {
+export class CreateParty implements Message {
   constructor(readonly name:string){}
 }

@@ -1,7 +1,5 @@
 export interface Message {}
 
-export interface Event extends Message {}
-
 export interface Consumer{
   consume(message: Message): void
 }

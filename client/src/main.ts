@@ -13,7 +13,7 @@ messageBus.subscribeConsumer({
   consume: (m) => console.log(`Incoming Message: `, m)
 });
 
-const party = new Party(axiosInstance);
+const party = new Party(axiosInstance, messageBus);
 messageBus.subscribeConsumer(party);
 
 const app = new App({
