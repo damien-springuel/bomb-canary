@@ -1,16 +1,14 @@
 <script lang="ts">
-import Axios from "axios";
 import type {Message} from "./messages/messagebus";
 import type {Store} from "./store/store";
 import {CreateParty} from "./messages/commands";
-export let dispatcher: {Dispatch: (message: Message) => void};
+export let dispatcher: {dispatch: (message: Message) => void};
 export let store: Store;
 
 let name: string;
 
 function createParty() {
-  dispatcher.Dispatch(new CreateParty(name))
-  // Axios.post("http://localhost:44324/party/create", {name: name}, {withCredentials: true}).then(r => console.log(r));
+  dispatcher.dispatch(new CreateParty(name))
 }
 
 </script>

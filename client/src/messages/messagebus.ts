@@ -9,11 +9,11 @@ export interface Consumer{
 export class MessageBus {
   private readonly consumers: Consumer[] = [];
 
-  public SubscribeConsumer(consumer: Consumer) {
+  public subscribeConsumer(consumer: Consumer) {
     this.consumers.push(consumer);
   }
 
-  public Dispatch(message: Message): void {
+  public dispatch(message: Message): void {
     this.consumers.forEach(c => c.consume(message));
   }
 }
