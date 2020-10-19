@@ -1,6 +1,8 @@
 package clientstream
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 )
@@ -41,7 +43,7 @@ func Register(engine *gin.Engine, sessionGetter sessionGetter, clientBroker clie
 }
 
 func createWebsocketConnection(c *gin.Context) {
-	upgrader := websocket.Upgrader{}
+	upgrader := websocket.Upgrader{CheckOrigin: func(r *http.Request) bool { return true }} // temporary while developing frontend
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		c.Abort()
