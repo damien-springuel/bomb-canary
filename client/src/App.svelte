@@ -2,6 +2,8 @@
 import type {Message} from "./messages/messagebus";
 import type {Store} from "./store/store";
 import {CreateParty} from "./messages/commands";
+import { AppLoaded } from "./messages/events";
+import { onMount } from "svelte";
 export let dispatcher: {dispatch: (message: Message) => void};
 export let store: Store;
 
@@ -11,6 +13,7 @@ function createParty() {
   dispatcher.dispatch(new CreateParty(name))
 }
 
+onMount(() => dispatcher.dispatch(new AppLoaded()));
 </script>
 
 <div class="flex flex-col items-center h-full bg-gray-900 text-blue-500 px-6 overflow-auto">

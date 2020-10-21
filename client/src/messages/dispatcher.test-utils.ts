@@ -16,3 +16,11 @@ export class AsyncDispatcherMock {
     this.done();
   }
 }
+
+export class DispatcherMock {
+  public receivedMessage: Message
+
+  dispatch(m: Message): void {
+    this.receivedMessage = m;
+  }
+}

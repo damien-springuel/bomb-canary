@@ -10,7 +10,8 @@ export interface CreatePartyResponse {
 export class Party {
   constructor(
     private readonly http: HttpPost<CreatePartyResponse>,
-    private readonly dispatcher: {dispatch: (m:Message) => void}){}
+    private readonly dispatcher: {dispatch: (m:Message) => void},
+  ){}
   
   consume(message: Message): void {
     if(message instanceof CreateParty) {
