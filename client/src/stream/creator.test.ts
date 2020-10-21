@@ -1,6 +1,6 @@
 import test from "ava";
 import type { ServerEvent } from "./server-event";
-import { ServerStream } from "./server-stream";
+import { Creator } from "./creator";
 
 
 class WebsocketMock{
@@ -28,7 +28,7 @@ class EventHandlerMock {
 function setup(): {websocket: WebsocketMock, handler: EventHandlerMock} {
   let websocket = new WebsocketMock();
   let handler = new EventHandlerMock();
-  const ss = new ServerStream(() => websocket, handler);
+  const ss = new Creator(() => websocket, handler);
   ss.open();
   return {websocket, handler};
 }

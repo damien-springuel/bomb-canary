@@ -12,7 +12,7 @@ interface EventHandler {
   onEvent(event: ServerEvent)
 }
 
-export class ServerStream {
+export class Creator {
   constructor(
     private readonly wsCreator: () => BasicWebsocket,
     private readonly handler: EventHandler,

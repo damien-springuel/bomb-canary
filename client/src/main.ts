@@ -4,8 +4,8 @@ import { MessageBus } from './messages/messagebus';
 import { Party } from './party/party';
 import { Store } from './store/store';
 import { Handler } from './stream/handler';
-import { ServerEventConnectionOpener } from './stream/server-event-connection';
-import { ServerStream } from './stream/server-stream';
+import { Opener } from './stream/opener';
+import { Creator } from './stream/creator';
 
 const axiosInstance = Axios.create({baseURL: "http://localhost:44324", withCredentials: true});
 
@@ -20,8 +20,8 @@ const party = new Party(axiosInstance, messageBus);
 messageBus.subscribeConsumer(party);
 
 const handler = new Handler(messageBus);
-const serverStream = new ServerStream(() => new WebSocket(`ws://localhost:44324/events`), handler);
-const serverEventConnectionOpener = new ServerEventConnectionOpener(serverStream);
+const serverStream = new Creator(() => new WebSocket(`ws://localhost:44324/events`), handler);
+const serverEventConnectionOpener = new Opener(serverStream);
 messageBus.subscribeConsumer(serverEventConnectionOpener);
 
 const app = new App({
