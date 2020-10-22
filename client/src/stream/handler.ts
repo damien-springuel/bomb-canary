@@ -1,4 +1,4 @@
-import { PlayerConnected, ServerConnectionClosed, ServerConnectionErrorOccured } from "../messages/events";
+import { PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 import type { ServerEvent } from "./server-event";
 
@@ -15,6 +15,12 @@ export class Handler {
   onEvent(event: ServerEvent) {
     if (event.PlayerConnected) {
       this.dispatcher.dispatch(new PlayerConnected(event.PlayerConnected.Name));
+    }
+    else if (event.PlayerDisconnected) {
+      this.dispatcher.dispatch(new PlayerDisconnected(event.PlayerDisconnected.Name));
+    }
+    else if (event.PlayerJoined) {
+      this.dispatcher.dispatch(new PlayerJoined(event.PlayerJoined.Name));
     }
   }
 }

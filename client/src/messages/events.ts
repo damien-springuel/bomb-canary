@@ -12,3 +12,11 @@ export class ServerConnectionErrorOccured implements Message {}
 export class PlayerConnected implements Message {
   constructor(readonly name:string){}
 }
+
+export class PlayerDisconnected implements Message {
+  constructor(readonly name:string){}
+}
+
+export class PlayerJoined implements Message {
+  constructor(readonly name:string){}
+}
