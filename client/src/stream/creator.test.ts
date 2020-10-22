@@ -29,23 +29,23 @@ function setup(): {websocket: WebsocketMock, handler: EventHandlerMock} {
   let websocket = new WebsocketMock();
   let handler = new EventHandlerMock();
   const ss = new Creator(() => websocket, handler);
-  ss.open();
+  ss.create();
   return {websocket, handler};
 }
 
-test(`Server Stream - on close`, t => {
+test(`Creator - on close`, t => {
   let {websocket, handler} = setup();
   websocket.onclose({} as CloseEvent);
   t.true(handler.onCloseCalled);
 });
 
-test(`Server Stream - on error`, t => {
+test(`Creator - on error`, t => {
   let {websocket, handler} = setup();
   websocket.onerror({} as Event);
   t.true(handler.onErrorCalled);
 });
 
-test(`Server Stream - on message`, t => {
+test(`Creator - on message`, t => {
   let {websocket, handler} = setup();
   const testServerEvent = {test: `event`} as ServerEvent
   websocket.onmessage({data: JSON.stringify(testServerEvent)} as MessageEvent);

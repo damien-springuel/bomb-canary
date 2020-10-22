@@ -2,18 +2,16 @@ import test from "ava";
 import { AppLoaded, PartyCreated } from "../messages/events";
 import { Opener } from "./opener";
 
-test(`Server Event Connection - open on AppLoaded`, t => {
-  let wasOpen = false
-  const opener = {open: () => {wasOpen = true;}};
-  const serverEventConnectionOpener = new Opener(opener);
-  serverEventConnectionOpener.consume(new AppLoaded())
-  t.true(wasOpen);
+test(`Opener - open on AppLoaded`, t => {
+  let wasCreated = false
+  const opener = new Opener({create: () => {wasCreated = true;}});
+  opener.consume(new AppLoaded())
+  t.true(wasCreated);
 });
 
-test(`Server Event Connection - open on PartyCreated`, t => {
-  let wasOpen = false
-  const opener = {open: () => {wasOpen = true;}};
-  const serverEventConnectionOpener = new Opener(opener);
-  serverEventConnectionOpener.consume(new PartyCreated(null))
-  t.true(wasOpen);
+test(`Opener - open on PartyCreated`, t => {
+  let wasCreated = false
+  const opener = new Opener({create: () => {wasCreated = true;}});
+  opener.consume(new PartyCreated(null))
+  t.true(wasCreated);
 });

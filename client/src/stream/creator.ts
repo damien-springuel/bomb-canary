@@ -18,7 +18,7 @@ export class Creator {
     private readonly handler: EventHandler,
   ){}
 
-  open(): void {
+  create(): void {
     let socket = this.wsCreator();
 
     socket.onmessage = event => {

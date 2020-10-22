@@ -20,9 +20,9 @@ const party = new Party(axiosInstance, messageBus);
 messageBus.subscribeConsumer(party);
 
 const handler = new Handler(messageBus);
-const serverStream = new Creator(() => new WebSocket(`ws://localhost:44324/events`), handler);
-const serverEventConnectionOpener = new Opener(serverStream);
-messageBus.subscribeConsumer(serverEventConnectionOpener);
+const creator = new Creator(() => new WebSocket(`ws://localhost:44324/events`), handler);
+const opener = new Opener(creator);
+messageBus.subscribeConsumer(opener);
 
 const app = new App({
   target: document.body,
