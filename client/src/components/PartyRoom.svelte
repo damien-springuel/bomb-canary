@@ -12,12 +12,12 @@ function startGame() {
 }
 </script>
 
-<div class="flex flex-col items-center h-full bg-gray-900 text-blue-500 px-6 overflow-auto">
+<div class="flex flex-col items-center h-full bg-gray-900 text-blue-500 px-6">
   <h1 class="text-5xl">
     Party Code
   </h1>
   <h2 class="text-2xl text-center text-blue-400">
     {storeValues.partyCode}
   </h2>
-  <button class="rounded-full px-6 py-4 bg-blue-500 hover:bg-blue-300 text-gray-900 focus:outline-none" on:click={startGame}>Start Game</button>
+  <button class="bc-button bc-button-blue" on:click={startGame}>Start Game</button>
 </div>
