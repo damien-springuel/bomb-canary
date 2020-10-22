@@ -1,27 +1,36 @@
 import type {Writable, Readable} from "svelte/store";
 import {writable} from "svelte/store";
 
+export enum Page {
+  Loading = "loading",
+  Lobby = "lobby",
+}
+
 export interface StoreValues {
-  name: string
+  pageToShow: Page
 }
 
 export class Store implements Readable<StoreValues> {
 
   protected readonly writable: Writable<StoreValues>;
   constructor() {
-    this.writable = writable({} as StoreValues);
+    this.writable = writable(
+      {
+        pageToShow: Page.Loading,
+      },
+    );
   }
 
   subscribe(run: (value: StoreValues) => void, invalidate?: (value?: StoreValues) => void): () => void {
     return this.writable.subscribe(run, invalidate);
   }
 
-  setName = setName;
+  showLobby = showLobby;
 }
 
-function setName(this: Store, name: string) {
+function showLobby(this: Store) {
   this.writable.update(v => {
-    v.name = name
+    v.pageToShow = Page.Lobby
     return v;
   });
 }

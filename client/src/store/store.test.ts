@@ -1,16 +1,20 @@
 import test from "ava";
-import { Store, StoreValues } from "./store";
+import { Page, Store, StoreValues } from "./store";
 import {get} from "svelte/store";
 
-test(`Store`, t => {
+test(`Store - default values`, t => {
   const store = new Store();
   const storeValues: StoreValues = get(store);
-  t.deepEqual(storeValues, {} as StoreValues);
+  t.deepEqual(storeValues, 
+    {
+      pageToShow: Page.Loading,
+    }
+  );
 });
 
-test(`Store - setname`, t => {
+test(`Store - showLobby`, t => {
   const store = new Store();
-  store.setName("test");
+  store.showLobby();
   const storeValues: StoreValues = get(store);
-  t.is(storeValues.name, "test");
+  t.is(storeValues.pageToShow, Page.Lobby);
 });
