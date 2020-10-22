@@ -8,7 +8,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var expectedReplayEnded, _ = json.Marshal(struct{ ReplayEnded struct{} }{ReplayEnded: struct{}{}})
+var expectedReplayEnded, _ = json.Marshal(clientEvent{EventsReplayEnded: &eventsReplayEnded{}})
 
 func Test_Replayer_NothingToReplay(t *testing.T) {
 	mockEventSender := &mockEventSender{shouldTrackAll: true}

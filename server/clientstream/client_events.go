@@ -15,6 +15,7 @@ type clientEvent struct {
 	PlayerWorkedOnMission        *playerWorkedOnMission        `json:",omitempty"`
 	MissionCompleted             *missionCompleted             `json:",omitempty"`
 	GameEnded                    *gameEnded                    `json:",omitempty"`
+	EventsReplayEnded            *eventsReplayEnded            `json:",omitempty"`
 }
 
 type playerJoined struct {
@@ -73,3 +74,5 @@ type missionCompleted struct {
 type gameEnded struct {
 	Winner string
 }
+
+type eventsReplayEnded struct{}

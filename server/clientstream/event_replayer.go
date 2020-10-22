@@ -51,7 +51,7 @@ func (e eventReplayer) Consume(m messagebus.Message) {
 				}
 			}
 		}
-		replayEndedMessage, _ := json.Marshal(struct{ ReplayEnded struct{} }{ReplayEnded: struct{}{}})
+		replayEndedMessage, _ := json.Marshal(clientEvent{EventsReplayEnded: &eventsReplayEnded{}})
 		e.eventSender.SendToPlayer(connectEvent.Code, connectEvent.Player, replayEndedMessage)
 	}
 }
