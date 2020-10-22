@@ -1,6 +1,6 @@
 import type { HttpPost } from "../http/post";
 import { CreateParty } from "../messages/commands";
-import { AppLoaded, PartyCreated } from "../messages/events";
+import { PartyCreated } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
 export interface CreatePartyResponse {
