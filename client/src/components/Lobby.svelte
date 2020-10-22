@@ -1,14 +1,14 @@
 <script lang="ts">
-  import type { Message } from "../messages/messagebus";
-  import { CreateParty } from "../messages/commands";
-  export let dispatcher: {dispatch: (message: Message) => void};
-  
-  let name: string;
-  
-  function createParty() {
-    dispatcher.dispatch(new CreateParty(name))
-  }
-  </script>
+import type { Message } from "../messages/messagebus";
+import { CreateParty } from "../messages/commands";
+export let dispatcher: {dispatch: (message: Message) => void};
+
+let name: string;
+
+function createParty() {
+  dispatcher.dispatch(new CreateParty(name))
+}
+</script>
 
 <div class="flex flex-col items-center h-full bg-gray-900 text-blue-500 px-6 overflow-auto">
   <h1 class="text-5xl">

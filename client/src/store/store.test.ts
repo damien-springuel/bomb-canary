@@ -8,6 +8,7 @@ test(`Store - default values`, t => {
   t.deepEqual(storeValues, 
     {
       pageToShow: Page.Loading,
+      partyCode: "",
     }
   );
 });
@@ -16,5 +17,13 @@ test(`Store - showLobby`, t => {
   const store = new Store();
   store.showLobby();
   const storeValues: StoreValues = get(store);
-  t.is(storeValues.pageToShow, Page.Lobby);
+  t.deepEqual(storeValues.pageToShow, Page.Lobby);
+});
+
+test(`Store - showPartyRoom`, t => {
+  const store = new Store();
+  store.showPartyRoom("testCode");
+  const storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.pageToShow, Page.PartyRoom);
+  t.deepEqual(storeValues.partyCode, "testCode");
 });
