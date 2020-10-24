@@ -42,6 +42,9 @@ func (c clientEventBroker) sendToAllButPlayer(code, name string, event clientEve
 func (c clientEventBroker) Consume(m messagebus.Message) {
 	code := m.GetPartyCode()
 	switch m := m.(type) {
+	case messagebus.PartyCreated:
+		c.send(code, clientEvent{PartyCreated: &partyCreated{Code: m.Code}})
+
 	case messagebus.PlayerConnected:
 		c.send(code, clientEvent{PlayerConnected: &playerConnected{Name: m.Player}})
 

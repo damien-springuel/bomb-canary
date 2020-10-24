@@ -72,6 +72,20 @@ func Test_ClientEventBroker_PlayerJoined(t *testing.T) {
 	))
 }
 
+func Test_ClientEventBroker_PartyCreated(t *testing.T) {
+	eventSender := &mockEventSender{}
+	eventBroker := NewClientEventBroker(eventSender)
+	eventBroker.Consume(mb.PartyCreated{Event: mb.Event{Party: mb.Party{Code: "testCode"}}})
+
+	g := NewWithT(t)
+	g.Expect(*eventSender).To(Equal(
+		mockEventSender{
+			receivedCode:    "testCode",
+			receivedMessage: toJsonBytes(clientEvent{PartyCreated: &partyCreated{Code: "testCode"}}),
+		},
+	))
+}
+
 func Test_ClientEventBroker_PlayerConnected(t *testing.T) {
 	eventSender := &mockEventSender{}
 	eventBroker := NewClientEventBroker(eventSender)
