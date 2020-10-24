@@ -1,6 +1,6 @@
 import type { HttpPost } from "../http/post";
 import { CreateParty } from "../messages/commands";
-import { PartyCreated } from "../messages/events";
+import { CreatePartySucceeded } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
 export interface CreatePartyResponse {
@@ -16,9 +16,7 @@ export class Party {
   consume(message: Message): void {
     if(message instanceof CreateParty) {
       this.http.post('/party/create', {name: message.name}).then(
-        response => {
-          this.dispatcher.dispatch(new PartyCreated(response.data.code));
-        },
+        () => this.dispatcher.dispatch(new CreatePartySucceeded()),
       );
     }
   }

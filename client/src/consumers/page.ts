@@ -14,10 +14,7 @@ export class PageManager {
     if (message instanceof ServerConnectionClosed) {
       this.store.showLobby();
     } 
-    else if(
-      message instanceof PartyCreated || 
-      message instanceof PlayerJoined) {
-      
+    else if(message instanceof PartyCreated) {
       this.store.showPartyRoom(message.partyCode);
     }
   }
