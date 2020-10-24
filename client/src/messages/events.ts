@@ -10,13 +10,17 @@ export class ServerConnectionClosed implements Message {}
 export class ServerConnectionErrorOccured implements Message {}
 
 export class PlayerConnected implements Message {
-  constructor(readonly name:string){}
+  constructor(readonly name: string){}
 }
 
 export class PlayerDisconnected implements Message {
-  constructor(readonly name:string){}
+  constructor(readonly name: string){}
 }
 
 export class PlayerJoined implements Message {
-  constructor(readonly name:string){}
+  constructor(
+    readonly name: string, 
+    readonly partyCode: string) {}
 }
+
+export class EventsReplayEnded implements Message {}

@@ -12,35 +12,53 @@ export interface StoreValues {
   partyCode: string
 }
 
+function defaultValues(): StoreValues {
+  return {
+    pageToShow: Page.Loading,
+    partyCode: "",
+  }
+}
+
 export class Store implements Readable<StoreValues> {
 
-  protected readonly writable: Writable<StoreValues>;
-  constructor() {
-    this.writable = writable(
-      {
-        pageToShow: Page.Loading,
-        partyCode: "",
-      },
-    );
-  }
+  protected replayingEvent: boolean = true;
+  protected replayedValues: StoreValues = defaultValues();
+  protected readonly writable: Writable<StoreValues> = writable(defaultValues());
 
   subscribe(run: (value: StoreValues) => void, invalidate?: (value?: StoreValues) => void): () => void {
     return this.writable.subscribe(run, invalidate);
   }
 
-  showLobby = showLobby;
-  showPartyRoom = showPartyRoom;
+  protected update(updater: (value: StoreValues) => StoreValues) {
+    if (this.replayingEvent) {
+      this.replayedValues = updater(this.replayedValues);
+    } 
+    else {
+      this.writable.update(updater);
+    }
+  }
+
+  endReplay() {
+    if (this.replayingEvent) {
+      this.writable.set({...this.replayedValues});
+      this.replayedValues = null;
+      this.replayingEvent = false;
+    }
+  }
+
+  readonly showLobby = showLobby;
+  readonly showPartyRoom = showPartyRoom;
 }
 
 function showLobby(this: Store) {
-  this.writable.update(v => {
+  this.update(v => {
     v.pageToShow = Page.Lobby
     return v;
   });
 }
 
 function showPartyRoom(this: Store, code: string) {
-  this.writable.update(v => {
+  this.update(v => {
     v.pageToShow = Page.PartyRoom
     v.partyCode = code;
     return v;

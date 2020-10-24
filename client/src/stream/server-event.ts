@@ -9,6 +9,7 @@ export interface ServerEvent {
   
   PlayerJoined?: {
     Name: string
+    Code: string
   },
   
   SpiesRevealed?: {
@@ -55,4 +56,6 @@ export interface ServerEvent {
   GameEnded?: {
     Winner: string,
   }
+
+  EventsReplayEnded?: {}
 }

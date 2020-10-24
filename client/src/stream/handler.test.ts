@@ -35,6 +35,6 @@ test(`Handler - onEvent - PlayerDisconnected`, t => {
 test(`Handler - onEvent - PlayerJoined`, t => {
   const dispatcher: DispatcherMock = new DispatcherMock();
   const handler = new Handler(dispatcher);
-  handler.onEvent({PlayerJoined: {Name: "testName"}} as ServerEvent);
-  t.deepEqual(dispatcher.receivedMessage, new PlayerJoined("testName"));
+  handler.onEvent({PlayerJoined: {Name: "testName", Code: "testCode"}} as ServerEvent);
+  t.deepEqual(dispatcher.receivedMessage, new PlayerJoined("testName", "testCode"));
 });

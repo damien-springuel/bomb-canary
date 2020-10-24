@@ -6,8 +6,8 @@ import { Store } from './store/store';
 import { Handler } from './stream/handler';
 import { Opener } from './stream/opener';
 import { Creator } from './stream/creator';
-import { ServerConnectionClosed } from './messages/events';
 import { PageManager } from './consumers/page';
+import { ReplayManager } from './consumers/replay';
 
 const axiosInstance = Axios.create({baseURL: "http://localhost:44324", withCredentials: true});
 
@@ -26,6 +26,7 @@ const creator = new Creator(() => new WebSocket(`ws://localhost:44324/events`), 
 const opener = new Opener(creator);
 messageBus.subscribeConsumer(opener);
 messageBus.subscribeConsumer(new PageManager(store));
+messageBus.subscribeConsumer(new ReplayManager(store));
 
 const app = new App({
   target: document.body,
