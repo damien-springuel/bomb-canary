@@ -430,15 +430,18 @@ func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
 }
 
 func Test_CreateParty(t *testing.T) {
-	s := New(testGenerator{returnCode: "testCode"}, nil, nil)
+	dispatcher := &testMessageDispatcher{}
+	s := New(testGenerator{returnCode: "testCode"}, dispatcher, nil)
 	code := s.CreateParty()
 
 	g := NewWithT(t)
 	g.Expect(code).To(Equal("testCode"))
+	g.Expect(dispatcher.receivedMessages).To(HaveLen(1))
+	g.Expect(dispatcher.receivedMessages[0]).To(Equal(PartyCreated{Event: Event{Party: Party{Code: code}}}))
 }
 
 func Test_DoesPartyExists(t *testing.T) {
-	s := New(testGenerator{returnCode: "testCode"}, nil, nil)
+	s := New(testGenerator{returnCode: "testCode"}, &testMessageDispatcher{}, nil)
 	_ = s.CreateParty()
 
 	g := NewWithT(t)
@@ -447,7 +450,7 @@ func Test_DoesPartyExists(t *testing.T) {
 }
 
 func Test_GetGameForPartyCode(t *testing.T) {
-	s := New(testGenerator{returnCode: "testCode"}, nil, nil)
+	s := New(testGenerator{returnCode: "testCode"}, &testMessageDispatcher{}, nil)
 	code := s.CreateParty()
 	game := s.getGameForPartyCode(code)
 

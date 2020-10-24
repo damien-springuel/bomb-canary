@@ -20,19 +20,19 @@ func newGames() games {
 
 func (g games) create(code string) {
 	g.mut.Lock()
+	defer g.mut.Unlock()
 	g.gamesByCode[code] = gamerules.NewGame()
-	g.mut.Unlock()
 }
 
 func (g games) get(code string) (gamerules.Game, bool) {
 	g.mut.RLock()
+	defer g.mut.RUnlock()
 	game, exists := g.gamesByCode[code]
-	g.mut.RUnlock()
 	return game, exists
 }
 
 func (g games) set(code string, game gamerules.Game) {
 	g.mut.Lock()
+	defer g.mut.Unlock()
 	g.gamesByCode[code] = game
-	g.mut.Unlock()
 }

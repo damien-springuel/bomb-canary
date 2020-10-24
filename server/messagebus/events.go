@@ -8,6 +8,10 @@ func (e Event) Type() Type {
 	return EventMessage
 }
 
+type PartyCreated struct {
+	Event
+}
+
 type PlayerConnected struct {
 	Event
 	Player string

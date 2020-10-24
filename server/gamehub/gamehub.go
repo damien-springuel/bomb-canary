@@ -34,6 +34,7 @@ func New(codeGenerator codeGenerator, messageDispatcher messageDispatcher, alleg
 func (s gameHub) CreateParty() string {
 	newCode := s.codeGenerator.GenerateCode()
 	s.games.create(newCode)
+	s.messageDispatcher.Dispatch(PartyCreated{Event: Event{Party: Party{Code: newCode}}})
 	return newCode
 }
 
