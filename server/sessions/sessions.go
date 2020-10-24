@@ -29,22 +29,23 @@ func New(uuidCreator uuidCreator) sessions {
 }
 
 func (s sessions) Create(code string, name string) string {
+	s.mut.Lock()
+	defer s.mut.Unlock()
+
 	uuid := s.uuidCreator.Create()
 
-	s.mut.Lock()
 	s.sessionById[uuid] = playerSession{
 		partyCode: code,
 		name:      name,
 	}
-	s.mut.Unlock()
 
 	return uuid
 }
 
 func (s sessions) Get(session string) (code string, name string, err error) {
 	s.mut.RLock()
+	defer s.mut.RUnlock()
 	playerSession, exists := s.sessionById[session]
-	s.mut.RUnlock()
 	if !exists {
 		return "", "", errors.New("session doesn't exist")
 	}
