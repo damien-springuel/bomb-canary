@@ -9,6 +9,7 @@ test(`Store - default values`, t => {
     {
       pageToShow: Page.Loading,
       partyCode: "",
+      players: [],
     }
   );
 });
@@ -59,4 +60,16 @@ test(`Store - showPartyRoom`, t => {
   const storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.PartyRoom);
   t.deepEqual(storeValues.partyCode, "testCode");
+});
+
+test(`Store - joinPlayer`, t => {
+  const store = getReplayEndedStore();
+  store.joinPlayer("testName1");
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.players, ["testName1"]);
+
+
+  store.joinPlayer("testName2");
+  storeValues = get(store);
+  t.deepEqual(storeValues.players, ["testName1", "testName2"]);
 });
