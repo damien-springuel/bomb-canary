@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/damien-springuel/bomb-canary/server/clientstream"
+	"github.com/damien-springuel/bomb-canary/server/codegenerator"
 	"github.com/damien-springuel/bomb-canary/server/gamehub"
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
@@ -20,12 +21,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gookit/color"
 )
-
-type randomCodeGenerator struct{}
-
-func (r randomCodeGenerator) GenerateCode() string {
-	return "AAA"
-}
 
 type randomAllegianceGenerator struct{}
 
@@ -86,7 +81,13 @@ func main() {
 
 	bus.SubscribeConsumer(messagelogger.New(colorPrinter{}))
 
-	hub := gamehub.New(randomCodeGenerator{}, bus, randomAllegianceGenerator{})
+	nowRandom := rand.New(rand.NewSource(time.Now().UnixNano()))
+	randomRuneGenerator := func() rune {
+		min := 65 // A
+		max := 90 // Z
+		return rune(nowRandom.Intn(max-min+1) + min)
+	}
+	hub := gamehub.New(codegenerator.New(randomRuneGenerator), bus, randomAllegianceGenerator{})
 	bus.SubscribeConsumer(hub)
 
 	// sessions := sessions.New(uuidV4{})
