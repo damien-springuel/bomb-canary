@@ -101,7 +101,7 @@ func main() {
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{"http://localhost:44322"}
+	corsConfig.AllowOrigins = []string{"http://localhost:44322", "http://192.168.0.103:44322"}
 	router.Use(cors.New(corsConfig))
 
 	party.Register(router, party.NewPartyService(hub, hub, bus), sessions)
