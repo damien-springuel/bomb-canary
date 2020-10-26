@@ -41,6 +41,16 @@ test(`Store - endReplay twice`, t => {
   t.deepEqual(storeValues.partyCode, "test");
 });
 
+test(`Store - reset`, t => {
+  const store = new Store();
+  store.showPartyRoom("test");
+  store.joinPlayer("name1");
+  store.reset();
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.pageToShow, Page.Loading);
+  t.deepEqual(storeValues.players, []);
+});
+
 function getReplayEndedStore(): Store {
   const store = new Store();
   store.endReplay();
@@ -60,6 +70,13 @@ test(`Store - showPartyRoom`, t => {
   const storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.PartyRoom);
   t.deepEqual(storeValues.partyCode, "testCode");
+});
+
+test(`Store - showGameRoom`, t => {
+  const store = getReplayEndedStore();
+  store.showGameRoom();
+  const storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.pageToShow, Page.Game);
 });
 
 test(`Store - joinPlayer`, t => {

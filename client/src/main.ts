@@ -9,6 +9,8 @@ import { Creator } from './stream/creator';
 import { PageManager } from './consumers/page';
 import { ReplayManager } from './consumers/replay';
 import { PlayerManager } from './consumers/player';
+import { PlayerActions } from './player-actions/player-actions';
+import { ResetManager } from './consumers/reset';
 
 const hostname = window.location.hostname;
 
@@ -24,11 +26,15 @@ messageBus.subscribeConsumer({
 const party = new Party(axiosInstance, messageBus);
 messageBus.subscribeConsumer(party);
 
+const playerActions = new PlayerActions(axiosInstance);
+messageBus.subscribeConsumer(playerActions);
+
 const handler = new Handler(messageBus);
 const creator = new Creator(() => new WebSocket(`ws://${hostname}:44324/events`), handler);
 const opener = new Opener(creator);
 messageBus.subscribeConsumer(opener);
 
+messageBus.subscribeConsumer(new ResetManager(store));
 messageBus.subscribeConsumer(new PageManager(store));
 messageBus.subscribeConsumer(new ReplayManager(store));
 messageBus.subscribeConsumer(new PlayerManager(store));

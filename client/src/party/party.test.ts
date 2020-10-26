@@ -7,7 +7,7 @@ import { CreatePartySucceeded, JoinPartySucceeded} from "../messages/events";
 import { Party } from "./party";
 
 test(`Create Party`, async t => {
-  const http = new HttpPostMock<{}>(Promise.resolve({data:{}} as AxiosResponse<{}>));
+  const http = new HttpPostMock(Promise.resolve({data:{}} as AxiosResponse<{}>));
   const dispatcher = new AsyncDispatcherMock();
   
   const party = new Party(http, dispatcher);
@@ -21,7 +21,7 @@ test(`Create Party`, async t => {
 });
 
 test(`Join Party`, async t => {
-  const http = new HttpPostMock<{}>(Promise.resolve({data:{}} as AxiosResponse<{}>));
+  const http = new HttpPostMock(Promise.resolve({data:{}} as AxiosResponse<{}>));
   const dispatcher = new AsyncDispatcherMock();
   
   const party = new Party(http, dispatcher);

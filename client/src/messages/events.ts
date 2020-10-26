@@ -8,6 +8,7 @@ export class JoinPartySucceeded implements Message{}
 export class ServerConnectionClosed implements Message {}
 export class ServerConnectionErrorOccured implements Message {}
 
+export class EventsReplayEnded implements Message {}
 
 export class PartyCreated implements Message{
   constructor(readonly partyCode: string){}
@@ -24,4 +25,6 @@ export class PlayerJoined implements Message {
   constructor(readonly name: string) {}
 }
 
-export class EventsReplayEnded implements Message {}
+export class SpiesRevealed implements Message {
+  constructor(readonly spies: Set<string>) {}
+}

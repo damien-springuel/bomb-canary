@@ -5,6 +5,7 @@ export enum Page {
   Loading = "loading",
   Lobby = "lobby",
   PartyRoom = "partyRoom",
+  Game = "game",
 }
 
 export interface StoreValues {
@@ -48,8 +49,13 @@ export class Store implements Readable<StoreValues> {
     }
   }
 
+  reset() {
+    this.writable.set(defaultValues());
+  }
+
   readonly showLobby = showLobby;
   readonly showPartyRoom = showPartyRoom;
+  readonly showGameRoom = showGameRoom;
   readonly joinPlayer = joinPlayer;
 }
 
@@ -64,6 +70,13 @@ function showPartyRoom(this: Store, code: string) {
   this.update(v => {
     v.pageToShow = Page.PartyRoom
     v.partyCode = code;
+    return v;
+  });
+}
+
+function showGameRoom(this: Store) {
+  this.update(v => {
+    v.pageToShow = Page.Game
     return v;
   });
 }

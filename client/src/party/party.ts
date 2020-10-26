@@ -5,7 +5,7 @@ import type { Message } from "../messages/messagebus";
 
 export class Party {
   constructor(
-    private readonly http: HttpPost<{}>,
+    private readonly http: HttpPost,
     private readonly dispatcher: {dispatch: (m:Message) => void},
   ){}
   

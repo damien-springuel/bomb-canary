@@ -6,6 +6,7 @@ import { AppLoaded } from "./messages/events";
 import { onMount } from "svelte";
 import Lobby from "./components/Lobby.svelte";
 import PartyRoom from "./components/PartyRoom.svelte";
+import Game from "./components/Game.svelte";
 export let dispatcher: {dispatch: (message: Message) => void};
 export let store: Store;
 
@@ -21,6 +22,8 @@ onMount(() => dispatcher.dispatch(new AppLoaded()));
   <Lobby dispatcher={dispatcher}/>
 {:else if storeValues.pageToShow == Page.PartyRoom}
   <PartyRoom dispatcher={dispatcher} store={store}/>
+{:else if storeValues.pageToShow == Page.Game}
+  <Game/>
 {:else}
   Bomb canary loading
 {/if}

@@ -1,6 +1,6 @@
 import test from "ava";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured } from "../messages/events";
+import { PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {
@@ -43,4 +43,11 @@ test(`Handler - onEvent - PlayerJoined`, t => {
   const handler = new Handler(dispatcher);
   handler.onEvent({PlayerJoined: {Name: "testName", Code: "testCode"}});
   t.deepEqual(dispatcher.receivedMessage, new PlayerJoined("testName"));
+});
+
+test(`Handler - onEvent - SpiesRevealed`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({SpiesRevealed: {Spies: {"Alice": {}, "Charlie": {}}}});
+  t.deepEqual(dispatcher.receivedMessage, new SpiesRevealed(new Set<string>(["Alice", "Charlie"])));
 });

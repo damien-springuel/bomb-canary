@@ -1,4 +1,4 @@
-import { EventsReplayEnded, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured } from "../messages/events";
+import { EventsReplayEnded, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 import type { ServerEvent } from "./server-event";
 
@@ -27,6 +27,9 @@ export class Handler {
     }
     else if (event.PlayerJoined) {
       this.dispatcher.dispatch(new PlayerJoined(event.PlayerJoined.Name));
+    }
+    else if (event.SpiesRevealed) {
+      this.dispatcher.dispatch(new SpiesRevealed(new Set<string>(Object.keys(event.SpiesRevealed.Spies))));
     }
   }
 }
