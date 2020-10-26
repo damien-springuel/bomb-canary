@@ -3,6 +3,7 @@ import type { Message } from "./messagebus";
 export class AppLoaded implements Message{}
 
 export class CreatePartySucceeded implements Message{}
+export class JoinPartySucceeded implements Message{}
 
 export class ServerConnectionClosed implements Message {}
 export class ServerConnectionErrorOccured implements Message {}
