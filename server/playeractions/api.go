@@ -44,14 +44,14 @@ func Register(engine *gin.Engine, sessionGetter sessionGetter, actionBroker acti
 
 	actions := engine.Group("/actions")
 	actions.Use(playerActionServer.checkSession)
-	actions.GET("/start-game", playerActionServer.startGame)
-	actions.GET("/leader-selects-member", playerActionServer.leaderSelectsMember)
-	actions.GET("/leader-deselects-member", playerActionServer.leaderDeselectsMember)
-	actions.GET("/leader-confirms-team", playerActionServer.leaderConfirmsTeam)
-	actions.GET("/approve-team", playerActionServer.approveTeam)
-	actions.GET("/reject-team", playerActionServer.rejectTeam)
-	actions.GET("/succeed-mission", playerActionServer.succeedMission)
-	actions.GET("/fail-mission", playerActionServer.failMission)
+	actions.POST("/start-game", playerActionServer.startGame)
+	actions.POST("/leader-selects-member", playerActionServer.leaderSelectsMember)
+	actions.POST("/leader-deselects-member", playerActionServer.leaderDeselectsMember)
+	actions.POST("/leader-confirms-team", playerActionServer.leaderConfirmsTeam)
+	actions.POST("/approve-team", playerActionServer.approveTeam)
+	actions.POST("/reject-team", playerActionServer.rejectTeam)
+	actions.POST("/succeed-mission", playerActionServer.succeedMission)
+	actions.POST("/fail-mission", playerActionServer.failMission)
 }
 
 func (p playerActionServer) checkSession(c *gin.Context) {

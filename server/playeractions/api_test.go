@@ -103,7 +103,7 @@ func makeCall(req *http.Request, sessionGetter *mockSessionGetter) (*mockSession
 }
 
 func Test_CheckSessionMiddleware_Return401IfNoSessionCookie(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/start-game", nil)
+	req, _ := http.NewRequest("POST", "/actions/start-game", nil)
 	req.AddCookie(&http.Cookie{Name: "other", Value: "value"})
 	_, _, w := makeCall(req, nil)
 
@@ -112,7 +112,7 @@ func Test_CheckSessionMiddleware_Return401IfNoSessionCookie(t *testing.T) {
 }
 
 func Test_CheckSessionMiddleware_Return403IfGettingSessionReturnsError(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/start-game", nil)
+	req, _ := http.NewRequest("POST", "/actions/start-game", nil)
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter := &mockSessionGetter{}
 	sessionGetter.getError = fmt.Errorf("get error")
@@ -124,7 +124,7 @@ func Test_CheckSessionMiddleware_Return403IfGettingSessionReturnsError(t *testin
 }
 
 func Test_StartGame(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/start-game", nil)
+	req, _ := http.NewRequest("POST", "/actions/start-game", nil)
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -138,7 +138,7 @@ func Test_StartGame(t *testing.T) {
 }
 
 func Test_LeaderSelectsMember(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/leader-selects-member", jsonReader(leaderSelectionRequest{Member: "aMember"}))
+	req, _ := http.NewRequest("POST", "/actions/leader-selects-member", jsonReader(leaderSelectionRequest{Member: "aMember"}))
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -153,7 +153,7 @@ func Test_LeaderSelectsMember(t *testing.T) {
 }
 
 func Test_LeaderSelectsMember_Returns400IfMemberIsMissing(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/leader-selects-member", jsonReader(leaderSelectionRequest{Member: ""}))
+	req, _ := http.NewRequest("POST", "/actions/leader-selects-member", jsonReader(leaderSelectionRequest{Member: ""}))
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -167,7 +167,7 @@ func Test_LeaderSelectsMember_Returns400IfMemberIsMissing(t *testing.T) {
 }
 
 func Test_LeaderSelectsMember_Returns400IfBodyMalformed(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/leader-selects-member", strings.NewReader("garbage"))
+	req, _ := http.NewRequest("POST", "/actions/leader-selects-member", strings.NewReader("garbage"))
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -181,7 +181,7 @@ func Test_LeaderSelectsMember_Returns400IfBodyMalformed(t *testing.T) {
 }
 
 func Test_LeaderDeselectsMember(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/leader-deselects-member", jsonReader(leaderSelectionRequest{Member: "aMember"}))
+	req, _ := http.NewRequest("POST", "/actions/leader-deselects-member", jsonReader(leaderSelectionRequest{Member: "aMember"}))
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -196,7 +196,7 @@ func Test_LeaderDeselectsMember(t *testing.T) {
 }
 
 func Test_LeaderDeselectsMember_Returns400IfMemberIsMissing(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/leader-deselects-member", jsonReader(leaderSelectionRequest{Member: ""}))
+	req, _ := http.NewRequest("POST", "/actions/leader-deselects-member", jsonReader(leaderSelectionRequest{Member: ""}))
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -210,7 +210,7 @@ func Test_LeaderDeselectsMember_Returns400IfMemberIsMissing(t *testing.T) {
 }
 
 func Test_LeaderDeselectsMember_Returns400IfBodyMalformed(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/leader-deselects-member", strings.NewReader("garbage"))
+	req, _ := http.NewRequest("POST", "/actions/leader-deselects-member", strings.NewReader("garbage"))
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -224,7 +224,7 @@ func Test_LeaderDeselectsMember_Returns400IfBodyMalformed(t *testing.T) {
 }
 
 func Test_LeaderConfirmsTeam(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/leader-confirms-team", strings.NewReader("garbage"))
+	req, _ := http.NewRequest("POST", "/actions/leader-confirms-team", strings.NewReader("garbage"))
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -238,7 +238,7 @@ func Test_LeaderConfirmsTeam(t *testing.T) {
 }
 
 func Test_ApproveTeam(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/approve-team", nil)
+	req, _ := http.NewRequest("POST", "/actions/approve-team", nil)
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -252,7 +252,7 @@ func Test_ApproveTeam(t *testing.T) {
 }
 
 func Test_RejectTeam(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/reject-team", nil)
+	req, _ := http.NewRequest("POST", "/actions/reject-team", nil)
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -266,7 +266,7 @@ func Test_RejectTeam(t *testing.T) {
 }
 
 func Test_SucceedMission(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/succeed-mission", nil)
+	req, _ := http.NewRequest("POST", "/actions/succeed-mission", nil)
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
@@ -280,7 +280,7 @@ func Test_SucceedMission(t *testing.T) {
 }
 
 func Test_FailMission(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/actions/fail-mission", nil)
+	req, _ := http.NewRequest("POST", "/actions/fail-mission", nil)
 	req.AddCookie(&http.Cookie{Name: "session", Value: "testSession"})
 	sessionGetter, actionBroker, w := makeCall(req, nil)
 
