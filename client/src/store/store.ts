@@ -12,6 +12,7 @@ export interface StoreValues {
   pageToShow: Page
   partyCode: string
   players: string[]
+  leader: string
 }
 
 function defaultValues(): StoreValues {
@@ -19,6 +20,7 @@ function defaultValues(): StoreValues {
     pageToShow: Page.Loading,
     partyCode: "",
     players: [],
+    leader: "",
   }
 }
 
@@ -57,6 +59,7 @@ export class Store implements Readable<StoreValues> {
   readonly showPartyRoom = showPartyRoom;
   readonly showGameRoom = showGameRoom;
   readonly joinPlayer = joinPlayer;
+  readonly assignLeader = assignLeader;
 }
 
 function showLobby(this: Store) {
@@ -84,6 +87,13 @@ function showGameRoom(this: Store) {
 function joinPlayer(this: Store, name: string) {
   this.update(v => {
     v.players.push(name);
+    return v;
+  });
+}
+
+function assignLeader(this: Store, leader: string) {
+  this.update(v => {
+    v.leader = leader;
     return v;
   });
 }

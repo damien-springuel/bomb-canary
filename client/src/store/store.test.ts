@@ -10,6 +10,7 @@ test(`Store - default values`, t => {
       pageToShow: Page.Loading,
       partyCode: "",
       players: [],
+      leader: "",
     }
   );
 });
@@ -89,4 +90,11 @@ test(`Store - joinPlayer`, t => {
   store.joinPlayer("testName2");
   storeValues = get(store);
   t.deepEqual(storeValues.players, ["testName1", "testName2"]);
+});
+
+test(`Store - assignLeader`, t => {
+  const store = getReplayEndedStore();
+  store.assignLeader("testName1");
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.leader, "testName1");
 });

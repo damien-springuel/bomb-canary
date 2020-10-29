@@ -11,6 +11,7 @@ import { ReplayManager } from './consumers/replay';
 import { PlayerManager } from './consumers/player';
 import { PlayerActions } from './player-actions/player-actions';
 import { ResetManager } from './consumers/reset';
+import { GameManager } from './consumers/game';
 
 const hostname = window.location.hostname;
 
@@ -38,6 +39,7 @@ messageBus.subscribeConsumer(new ResetManager(store));
 messageBus.subscribeConsumer(new PageManager(store));
 messageBus.subscribeConsumer(new ReplayManager(store));
 messageBus.subscribeConsumer(new PlayerManager(store));
+messageBus.subscribeConsumer(new GameManager(store));
 
 const app = new App({
   target: document.body,

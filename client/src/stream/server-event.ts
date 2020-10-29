@@ -13,7 +13,6 @@ export interface ServerEvent {
   
   PlayerJoined?: {
     Name: string
-    Code: string
   },
   
   SpiesRevealed?: {

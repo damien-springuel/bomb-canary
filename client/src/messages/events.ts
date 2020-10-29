@@ -28,3 +28,7 @@ export class PlayerJoined implements Message {
 export class SpiesRevealed implements Message {
   constructor(readonly spies: Set<string>) {}
 }
+
+export class LeaderStartedToSelectMembers implements Message {
+  constructor(readonly leader: string) {}
+}

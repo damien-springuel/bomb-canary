@@ -1,12 +1,10 @@
 <script lang="ts">
 import { StartGame } from "../messages/commands";
 import type { Message } from "../messages/messagebus";
-import type { Store, StoreValues } from "../store/store";
+import type { StoreValues } from "../store/store";
 export let dispatcher: {dispatch: (message: Message) => void};
-export let store: Store;
+export let storeValues: StoreValues;
 
-let storeValues: StoreValues;
-$: storeValues = $store;
 function startGame() {
   dispatcher.dispatch(new StartGame())
 }

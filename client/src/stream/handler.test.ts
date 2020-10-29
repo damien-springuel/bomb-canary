@@ -1,6 +1,6 @@
 import test from "ava";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
+import { LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {
@@ -41,13 +41,27 @@ test(`Handler - onEvent - PlayerDisconnected`, t => {
 test(`Handler - onEvent - PlayerJoined`, t => {
   const dispatcher: DispatcherMock = new DispatcherMock();
   const handler = new Handler(dispatcher);
-  handler.onEvent({PlayerJoined: {Name: "testName", Code: "testCode"}});
+  handler.onEvent({PlayerJoined: {Name: "testName"}});
   t.deepEqual(dispatcher.receivedMessage, new PlayerJoined("testName"));
 });
 
 test(`Handler - onEvent - SpiesRevealed`, t => {
   const dispatcher: DispatcherMock = new DispatcherMock();
   const handler = new Handler(dispatcher);
-  handler.onEvent({SpiesRevealed: {Spies: {"Alice": {}, "Charlie": {}}}});
-  t.deepEqual(dispatcher.receivedMessage, new SpiesRevealed(new Set<string>(["Alice", "Charlie"])));
+  handler.onEvent({SpiesRevealed: {Spies: {"name1": {}, "name2": {}}}});
+  t.deepEqual(dispatcher.receivedMessage, new SpiesRevealed(new Set<string>(["name1", "name2"])));
+});
+
+test(`Handler - onEvent - SpiesRevealed - no spies`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({SpiesRevealed: {Spies: {}}});
+  t.deepEqual(dispatcher.receivedMessage, new SpiesRevealed(new Set<string>([])));
+});
+
+test(`Handler - onEvent - LeaderStartedToSelectMembers`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({LeaderStartedToSelectMembers: {Leader: "testName"}});
+  t.deepEqual(dispatcher.receivedMessage, new LeaderStartedToSelectMembers("testName"));
 });

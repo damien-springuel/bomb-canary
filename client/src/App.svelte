@@ -13,7 +13,6 @@ export let store: Store;
 let storeValues: StoreValues;
 $: storeValues = $store;
 
-
 onMount(() => dispatcher.dispatch(new AppLoaded()));
 // onMount(() => setTimeout(() => dispatcher.dispatch(new AppLoaded()), 1000));
 </script>
@@ -21,9 +20,9 @@ onMount(() => dispatcher.dispatch(new AppLoaded()));
 {#if storeValues.pageToShow == Page.Lobby}
   <Lobby dispatcher={dispatcher}/>
 {:else if storeValues.pageToShow == Page.PartyRoom}
-  <PartyRoom dispatcher={dispatcher} store={store}/>
+  <PartyRoom dispatcher={dispatcher} storeValues={storeValues}/>
 {:else if storeValues.pageToShow == Page.Game}
-  <Game/>
+  <Game storeValues={storeValues}/>
 {:else}
   Bomb canary loading
 {/if}

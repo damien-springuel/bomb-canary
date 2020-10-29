@@ -2,9 +2,9 @@ import { PartyCreated, PlayerJoined, ServerConnectionClosed, SpiesRevealed } fro
 import type { Message } from "../messages/messagebus";
 
 export interface RoomStore {
-  showLobby: () => void,
-  showPartyRoom: (code: string) => void,
-  showGameRoom: () => void,
+  showLobby(): void,
+  showPartyRoom(code: string): void,
+  showGameRoom(): void,
 }
 
 export class PageManager {
