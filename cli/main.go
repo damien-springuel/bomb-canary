@@ -26,37 +26,34 @@ func main() {
 	defer termui.Close()
 
 	l := widgets.NewList()
-	l.Title = "Actions"
+	l.Title = "Actions (^C to quit)"
 	l.Rows = []string{
 		"[0] Create Game",
 	}
-	l.TextStyle = termui.NewStyle(termui.ColorYellow)
-	l.WrapText = false
-	l.SetRect(0, 0, 25, 8)
 
-	termui.Render(l)
+	grid := termui.NewGrid()
+	termWidth, termHeight := termui.TerminalDimensions()
+	grid.SetRect(0, 0, termWidth, termHeight)
+	grid.Set(termui.NewRow(1, l))
+
+	termui.Render(grid)
 
 	uiEvents := termui.PollEvents()
-	go func() {
-		for {
-			e := <-uiEvents
-			switch e.ID {
-			case "0":
-				log.Printf("another channel reader \n")
-			}
-		}
-	}()
 	for {
 		e := <-uiEvents
 		switch e.ID {
-		case "q", "<C-c>":
+		case "<C-c>":
 			return
+		case "<Resize>":
+			payload := e.Payload.(termui.Resize)
+			grid.SetRect(0, 0, payload.Width, payload.Height)
+			termui.Clear()
 		case "0":
 			code, session := createGame("From Cli")
 			log.Printf("code: %s session: %s\n", code, session)
 		}
 
-		termui.Render(l)
+		termui.Render(grid)
 	}
 }
 
