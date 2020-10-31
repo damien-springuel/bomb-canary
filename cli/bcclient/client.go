@@ -22,6 +22,10 @@ type joinPartyRequest struct {
 	Name string `json:"name"`
 }
 
+type leaderSelectionRequest struct {
+	Member string `json:"member"`
+}
+
 func makePartyRequest(path string, body interface{}, responseValue interface{}) (session string) {
 	bodyJson, err := json.Marshal(body)
 	if err != nil {
@@ -65,4 +69,38 @@ func CreateGame(name string) (code string, session string) {
 func JoinGame(code, name string) (session string) {
 	session = makePartyRequest("party/join", joinPartyRequest{Code: code, Name: name}, nil)
 	return
+}
+
+func makePlayerActionRequest(url string, body interface{}, session string) {
+	var bodyJson []byte
+	var err error
+	if body != nil {
+		bodyJson, err = json.Marshal(body)
+		if err != nil {
+			log.Fatalf("can't marshall body: %+v\n", err)
+		}
+	}
+	client := http.Client{}
+	request, err := http.NewRequest("POST", fmt.Sprintf("http://localhost:44324/%s", url), bytes.NewReader(bodyJson))
+	request.AddCookie(&http.Cookie{Name: "session", Value: session})
+	if err != nil {
+		log.Fatalf("can't create request: %+v\n", err)
+	}
+	_, err = client.Do(request)
+	if err != nil {
+		log.Fatalf("can't do request: %+v\n", err)
+	}
+
+}
+
+func StartGame(session string) {
+	makePlayerActionRequest("actions/start-game", nil, session)
+}
+
+func LeaderSelectsMember(session, name string) {
+	makePlayerActionRequest("actions/leader-selects-member", leaderSelectionRequest{Member: name}, session)
+}
+
+func LeaderDeselectsMember(session, name string) {
+	makePlayerActionRequest("actions/leader-deselects-member", leaderSelectionRequest{Member: name}, session)
 }

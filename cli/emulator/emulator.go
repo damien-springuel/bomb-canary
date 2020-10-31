@@ -38,8 +38,13 @@ func createSetNameAction(name string) func(ctx context.Context) context.Context 
 		nameContext := context.WithValue(ctx, "name", name)
 		action := ctx.Value("action").(func(context.Context) context.Context)
 		resultCtx := action(nameContext)
-		actionDescCtx := context.WithValue(resultCtx, "actionDesc", "")
-		return context.WithValue(actionDescCtx, "currentPage", actions)
+		nextPage := resultCtx.Value("nextPage")
+		actionDescCtx := resultCtx
+		if nextPage == nil {
+			nextPage = actions
+			actionDescCtx = context.WithValue(resultCtx, "actionDesc", "")
+		}
+		return context.WithValue(actionDescCtx, "currentPage", nextPage.(pageType))
 	}
 }
 
@@ -98,6 +103,49 @@ func New() *Emulator {
 					session := bcclient.JoinGame(code, name)
 					return context.WithValue(ctx, "session"+name, session)
 				}, "is joining the game?"),
+			},
+			{
+				description: "Start Game",
+				action: createActionWithName(func(ctx context.Context) context.Context {
+					name := ctx.Value("name").(string)
+					session := ctx.Value("session" + name).(string)
+					bcclient.StartGame(session)
+					return ctx
+				}, "is starting the game?"),
+			},
+			{
+				description: "Leader Selects Member",
+				action: createActionWithName(func(ctx context.Context) context.Context {
+					name := ctx.Value("name").(string)
+					leaderCtx := context.WithValue(ctx, "leader", name)
+					nextPageCtx := context.WithValue(leaderCtx, "nextPage", people)
+					actionCtx := context.WithValue(nextPageCtx, "action", func(ctx context.Context) context.Context {
+						leader := ctx.Value("leader").(string)
+						session := ctx.Value("session" + leader).(string)
+						name := ctx.Value("name").(string)
+						bcclient.LeaderSelectsMember(session, name)
+						return context.WithValue(ctx, "nextPage", nil)
+					})
+					actionDescCtx := context.WithValue(actionCtx, "actionDesc", "is being selected?")
+					return context.WithValue(actionDescCtx, "currentPage", people)
+				}, "is the leader?"),
+			},
+			{
+				description: "Leader Deselects Member",
+				action: createActionWithName(func(ctx context.Context) context.Context {
+					name := ctx.Value("name").(string)
+					leaderCtx := context.WithValue(ctx, "leader", name)
+					nextPageCtx := context.WithValue(leaderCtx, "nextPage", people)
+					actionCtx := context.WithValue(nextPageCtx, "action", func(ctx context.Context) context.Context {
+						leader := ctx.Value("leader").(string)
+						session := ctx.Value("session" + leader).(string)
+						name := ctx.Value("name").(string)
+						bcclient.LeaderDeselectsMember(session, name)
+						return context.WithValue(ctx, "nextPage", nil)
+					})
+					actionDescCtx := context.WithValue(actionCtx, "actionDesc", "is being deselected?")
+					return context.WithValue(actionDescCtx, "currentPage", people)
+				}, "is the leader?"),
 			},
 		},
 	}
