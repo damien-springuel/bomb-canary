@@ -14,6 +14,7 @@ import (
 type pageType string
 
 const (
+	presets pageType = "presets"
 	actions pageType = "actions"
 	people  pageType = "people"
 )
@@ -56,8 +57,52 @@ func createActionWithName(a func(ctx context.Context) context.Context, actionDes
 	}
 }
 
-func New() *Emulator {
+func blankPreset(ctx context.Context) context.Context {
+	return context.WithValue(ctx, "currentPage", actions)
+}
 
+func createdAndJoined5Players(ctx context.Context) context.Context {
+	ctx = blankPreset(ctx)
+	ctx = context.WithValue(ctx, "currentPage", actions)
+	code, session := bcclient.CreateGame("Alice")
+	ctx = context.WithValue(ctx, "code", code)
+	ctx = context.WithValue(ctx, "sessionAlice", session)
+	session = bcclient.JoinGame(code, "Bob")
+	ctx = context.WithValue(ctx, "sessionBob", session)
+	session = bcclient.JoinGame(code, "Charlie")
+	ctx = context.WithValue(ctx, "sessionCharlie", session)
+	session = bcclient.JoinGame(code, "Dan")
+	ctx = context.WithValue(ctx, "sessionDan", session)
+	session = bcclient.JoinGame(code, "Edith")
+	ctx = context.WithValue(ctx, "sessionEdith", session)
+	return ctx
+}
+
+func started5PlayerGame(ctx context.Context) context.Context {
+	ctx = createdAndJoined5Players(ctx)
+	session := ctx.Value("sessionAlice").(string)
+	bcclient.StartGame(session)
+	return ctx
+}
+
+func New() *Emulator {
+	presetsPage := page{
+		title: "Presets",
+		rows: []choice{
+			{
+				description: "Blank",
+				action:      blankPreset,
+			},
+			{
+				description: "Created and joined 5 players",
+				action:      createdAndJoined5Players,
+			},
+			{
+				description: "Started 5-player game",
+				action:      started5PlayerGame,
+			},
+		},
+	}
 	peoplePage := page{
 		title: "Who ",
 		rows: []choice{
@@ -143,8 +188,7 @@ func New() *Emulator {
 						bcclient.LeaderDeselectsMember(session, name)
 						return context.WithValue(ctx, "nextPage", nil)
 					})
-					actionDescCtx := context.WithValue(actionCtx, "actionDesc", "is being deselected?")
-					return context.WithValue(actionDescCtx, "currentPage", people)
+					return context.WithValue(actionCtx, "actionDesc", "is being deselected?")
 				}, "is the leader?"),
 			},
 		},
@@ -156,8 +200,9 @@ func New() *Emulator {
 		pages: map[pageType]page{
 			actions: actionPage,
 			people:  peoplePage,
+			presets: presetsPage,
 		},
-		ctx: context.WithValue(context.Background(), "currentPage", actions),
+		ctx: context.WithValue(context.Background(), "currentPage", presets),
 	}
 }
 
@@ -186,6 +231,9 @@ func (e *Emulator) getCurrentPage() page {
 func (e *Emulator) HandleUiEvent(event termui.Event) {
 	index, err := strconv.ParseInt(event.ID, 10, 0)
 	if err != nil {
+		return
+	}
+	if int(index) > len(e.getCurrentPage().rows) {
 		return
 	}
 	e.ctx = e.getCurrentPage().rows[index-1].action(e.ctx)
