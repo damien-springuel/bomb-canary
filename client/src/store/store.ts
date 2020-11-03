@@ -1,4 +1,4 @@
-import type {Writable, Readable} from "svelte/store";
+import {Writable, Readable, get} from "svelte/store";
 import {writable} from "svelte/store";
 
 export enum Page {
@@ -26,7 +26,7 @@ function defaultValues(): StoreValues {
 
 export class Store implements Readable<StoreValues> {
 
-  protected replayingEvent: boolean = true;
+  protected replayingEvent: boolean = false;
   protected replayedValues: StoreValues = defaultValues();
   protected readonly writable: Writable<StoreValues> = writable(defaultValues());
 
@@ -40,6 +40,13 @@ export class Store implements Readable<StoreValues> {
     } 
     else {
       this.writable.update(updater);
+    }
+  }
+
+  startReplay() {
+    if (!this.replayingEvent) {
+      this.replayedValues = {...get(this.writable)};
+      this.replayingEvent = true;
     }
   }
 

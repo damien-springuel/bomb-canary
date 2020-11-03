@@ -17,29 +17,61 @@ test(`Store - default values`, t => {
 
 test(`Store - endReplay`, t => {
   const store = new Store();
+  store.startReplay();
   store.showPartyRoom("test");
+  store.assignLeader("leader");
+  
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.Loading);
   t.deepEqual(storeValues.partyCode, "");
+  t.deepEqual(storeValues.leader, "");
 
   store.endReplay()
+  
   storeValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.PartyRoom);
   t.deepEqual(storeValues.partyCode, "test");
+  t.deepEqual(storeValues.leader, "leader");
 });
 
 test(`Store - endReplay twice`, t => {
   const store = new Store();
+  store.startReplay();
   store.showPartyRoom("test");
+  store.assignLeader("leader")
+  
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.pageToShow, Page.Loading);
+  t.deepEqual(storeValues.partyCode, "");
+  t.deepEqual(storeValues.leader, "");
+
+  store.endReplay()
+  store.endReplay()
+
+  storeValues = get(store);
+  t.deepEqual(storeValues.pageToShow, Page.PartyRoom);
+  t.deepEqual(storeValues.partyCode, "test");
+  t.deepEqual(storeValues.leader, "leader");
+});
+
+test(`Store - startReplay twice`, t => {
+  const store = new Store();
+  
+  store.startReplay();
+  store.startReplay();
+  store.showPartyRoom("test");
+  store.assignLeader("leader");
+  
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.Loading);
   t.deepEqual(storeValues.partyCode, "");
 
   store.endReplay()
-  store.endReplay()
+  
   storeValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.PartyRoom);
   t.deepEqual(storeValues.partyCode, "test");
+  t.deepEqual(storeValues.leader, "leader");
 });
 
 test(`Store - reset`, t => {
@@ -52,21 +84,15 @@ test(`Store - reset`, t => {
   t.deepEqual(storeValues.players, []);
 });
 
-function getReplayEndedStore(): Store {
-  const store = new Store();
-  store.endReplay();
-  return store;
-}
-
 test(`Store - showLobby`, t => {
-  const store = getReplayEndedStore();
+  const store = new Store();
   store.showLobby();
   const storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.Lobby);
 });
 
 test(`Store - showPartyRoom`, t => {
-  const store = getReplayEndedStore();
+  const store = new Store();
   store.showPartyRoom("testCode");
   const storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.PartyRoom);
@@ -74,14 +100,14 @@ test(`Store - showPartyRoom`, t => {
 });
 
 test(`Store - showGameRoom`, t => {
-  const store = getReplayEndedStore();
+  const store = new Store();
   store.showGameRoom();
   const storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.Game);
 });
 
 test(`Store - joinPlayer`, t => {
-  const store = getReplayEndedStore();
+  const store = new Store();
   store.joinPlayer("testName1");
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.players, ["testName1"]);
@@ -93,7 +119,7 @@ test(`Store - joinPlayer`, t => {
 });
 
 test(`Store - assignLeader`, t => {
-  const store = getReplayEndedStore();
+  const store = new Store();
   store.assignLeader("testName1");
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.leader, "testName1");
