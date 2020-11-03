@@ -11,6 +11,7 @@ export enum Page {
 export interface StoreValues {
   pageToShow: Page
   partyCode: string
+  player: string
   players: string[]
   leader: string
 }
@@ -19,6 +20,7 @@ function defaultValues(): StoreValues {
   return {
     pageToShow: Page.Loading,
     partyCode: "",
+    player: "",
     players: [],
     leader: "",
   }
@@ -66,6 +68,7 @@ export class Store implements Readable<StoreValues> {
   readonly showPartyRoom = showPartyRoom;
   readonly showGameRoom = showGameRoom;
   readonly joinPlayer = joinPlayer;
+  readonly definePlayer = definePlayer;
   readonly assignLeader = assignLeader;
 }
 
@@ -87,6 +90,13 @@ function showPartyRoom(this: Store, code: string) {
 function showGameRoom(this: Store) {
   this.update(v => {
     v.pageToShow = Page.Game
+    return v;
+  });
+}
+
+function definePlayer(this: Store, name: string) {
+  this.update(v => {
+    v.player = name;
     return v;
   });
 }

@@ -9,6 +9,7 @@ test(`Store - default values`, t => {
     {
       pageToShow: Page.Loading,
       partyCode: "",
+      player: "",
       players: [],
       leader: "",
     }
@@ -104,6 +105,13 @@ test(`Store - showGameRoom`, t => {
   store.showGameRoom();
   const storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.pageToShow, Page.Game);
+});
+
+test(`Store - definePlayer`, t => {
+  const store = new Store();
+  store.definePlayer("testName");
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.player, "testName");
 });
 
 test(`Store - joinPlayer`, t => {
