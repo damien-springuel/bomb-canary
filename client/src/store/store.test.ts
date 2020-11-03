@@ -12,6 +12,7 @@ test(`Store - default values`, t => {
       player: "",
       players: [],
       leader: "",
+      isPlayerTheLeader: false,
     }
   );
 });
@@ -131,4 +132,16 @@ test(`Store - assignLeader`, t => {
   store.assignLeader("testName1");
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.leader, "testName1");
+});
+
+test(`Store - isLeader`, t => {
+  const store = new Store();
+  store.definePlayer("testName");
+  store.assignLeader("anotherLeader");
+  let storeValues: StoreValues = get(store);
+  t.false(storeValues.isPlayerTheLeader);
+  
+  store.assignLeader("testName");
+  storeValues = get(store);
+  t.true(storeValues.isPlayerTheLeader);
 });

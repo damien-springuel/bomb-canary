@@ -14,6 +14,7 @@ export interface StoreValues {
   player: string
   players: string[]
   leader: string
+  isPlayerTheLeader: boolean
 }
 
 function defaultValues(): StoreValues {
@@ -23,6 +24,7 @@ function defaultValues(): StoreValues {
     player: "",
     players: [],
     leader: "",
+    isPlayerTheLeader: false,
   }
 }
 
@@ -38,11 +40,16 @@ export class Store implements Readable<StoreValues> {
 
   protected update(updater: (value: StoreValues) => StoreValues) {
     if (this.replayingEvent) {
-      this.replayedValues = updater(this.replayedValues);
+      this.replayedValues = this.updateComputed(updater(this.replayedValues));
     } 
     else {
-      this.writable.update(updater);
+      this.writable.update(v => this.updateComputed(updater(v)));
     }
+  }
+
+  protected updateComputed(value: StoreValues): StoreValues {
+    value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
+    return value;
   }
 
   startReplay() {

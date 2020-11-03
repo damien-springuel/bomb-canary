@@ -25,7 +25,7 @@ export let storeValues: StoreValues;
       </button>
     {/each}
   </div>
-  {#if storeValues.leader == storeValues.player}
+  {#if storeValues.isPlayerTheLeader}
     <button class="bc-button bc-button-blue">I'm done</button>
   {/if}
 </div>
