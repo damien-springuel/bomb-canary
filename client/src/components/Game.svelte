@@ -1,4 +1,5 @@
 <script lang="ts">
+import type { LeaderStartedToSelectMembers } from "../messages/events";
 import type { StoreValues } from "../store/store";
 export let storeValues: StoreValues;
 </script>
@@ -21,11 +22,10 @@ export let storeValues: StoreValues;
     {#each storeValues.players as player}
       <button class="bc-button bc-button-blue">
         {player}
-        {#if player == storeValues.leader}
-          <span class="font-bold">(L)</span>
-        {/if}
       </button>
     {/each}
   </div>
-  <button class="bc-button bc-button-blue">I'm done</button>
+  {#if storeValues.leader == storeValues.player}
+    <button class="bc-button bc-button-blue">I'm done</button>
+  {/if}
 </div>
