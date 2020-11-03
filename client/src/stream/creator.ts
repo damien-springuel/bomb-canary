@@ -26,13 +26,11 @@ export class Creator {
       this.handler.onEvent(gameEvent);
     };
 
-    socket.onclose = (e) => {
-      console.log(`stream closed`, e)
+    socket.onclose = () => {
       this.handler.onClose();
     };
 
-    socket.onerror = (e) => {
-      console.log(`stream errored`, e)
+    socket.onerror = () => {
       this.handler.onError();
     };
   }

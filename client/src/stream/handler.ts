@@ -1,5 +1,6 @@
 import { 
   EventsReplayEnded, 
+  EventsReplayStarted, 
   LeaderStartedToSelectMembers, 
   PartyCreated, 
   PlayerConnected, 
@@ -23,6 +24,9 @@ export class Handler {
     this.dispatcher.dispatch(new ServerConnectionErrorOccured());
   }
   onEvent(event: ServerEvent) {
+    if (event.EventsReplayStarted) {
+      this.dispatcher.dispatch(new EventsReplayStarted(event.EventsReplayStarted.Player));
+    }
     if (event.EventsReplayEnded) {
       this.dispatcher.dispatch(new EventsReplayEnded());
     }

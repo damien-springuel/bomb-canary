@@ -60,5 +60,9 @@ export interface ServerEvent {
     Winner: string,
   }
 
+  EventsReplayStarted?: {
+    Player: string,
+  }
+  
   EventsReplayEnded?: {}
 }

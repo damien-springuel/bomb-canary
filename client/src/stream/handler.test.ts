@@ -1,6 +1,6 @@
 import test from "ava";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
+import { EventsReplayEnded, EventsReplayStarted, LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {
@@ -15,6 +15,20 @@ test(`Handler - onError`, t => {
   const handler = new Handler(dispatcher);
   handler.onError();
   t.deepEqual(dispatcher.receivedMessage, new ServerConnectionErrorOccured());
+});
+
+test(`Handler - onEvent - EventsReplayStarted`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({EventsReplayStarted: {Player: "testName"}});
+  t.deepEqual(dispatcher.receivedMessage, new EventsReplayStarted("testName"));
+});
+
+test(`Handler - onEvent - EventsReplayEnded`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({EventsReplayEnded: {}});
+  t.deepEqual(dispatcher.receivedMessage, new EventsReplayEnded());
 });
 
 test(`Handler - onEvent - PartyCreated`, t => {

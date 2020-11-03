@@ -8,6 +8,9 @@ export class JoinPartySucceeded implements Message{}
 export class ServerConnectionClosed implements Message {}
 export class ServerConnectionErrorOccured implements Message {}
 
+export class EventsReplayStarted implements Message {
+  constructor(readonly playerName: string){}
+}
 export class EventsReplayEnded implements Message {}
 
 export class PartyCreated implements Message{
