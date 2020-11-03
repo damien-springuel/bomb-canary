@@ -36,24 +36,23 @@ type page struct {
 
 func createSetNameAction(name string) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		nameContext := context.WithValue(ctx, "name", name)
+		ctx = context.WithValue(ctx, "name", name)
 		action := ctx.Value("action").(func(context.Context) context.Context)
-		resultCtx := action(nameContext)
-		nextPage := resultCtx.Value("nextPage")
-		actionDescCtx := resultCtx
+		ctx = action(ctx)
+		nextPage := ctx.Value("nextPage")
 		if nextPage == nil {
 			nextPage = actions
-			actionDescCtx = context.WithValue(resultCtx, "actionDesc", "")
+			ctx = context.WithValue(ctx, "actionDesc", "")
 		}
-		return context.WithValue(actionDescCtx, "currentPage", nextPage.(pageType))
+		return context.WithValue(ctx, "currentPage", nextPage.(pageType))
 	}
 }
 
 func createActionWithName(a func(ctx context.Context) context.Context, actionDesc string) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		actionCtx := context.WithValue(ctx, "action", a)
-		actionDescCtx := context.WithValue(actionCtx, "actionDesc", actionDesc)
-		return context.WithValue(actionDescCtx, "currentPage", people)
+		ctx = context.WithValue(ctx, "action", a)
+		ctx = context.WithValue(ctx, "actionDesc", actionDesc)
+		return context.WithValue(ctx, "currentPage", people)
 	}
 }
 
@@ -136,8 +135,8 @@ func New() *Emulator {
 				action: createActionWithName(func(ctx context.Context) context.Context {
 					name := ctx.Value("name").(string)
 					code, session := bcclient.CreateGame(name)
-					codeCtx := context.WithValue(ctx, "code", code)
-					return context.WithValue(codeCtx, "session"+name, session)
+					ctx = context.WithValue(ctx, "code", code)
+					return context.WithValue(ctx, "session"+name, session)
 				}, "is creating the game?"),
 			},
 			{
@@ -162,33 +161,33 @@ func New() *Emulator {
 				description: "Leader Selects Member",
 				action: createActionWithName(func(ctx context.Context) context.Context {
 					name := ctx.Value("name").(string)
-					leaderCtx := context.WithValue(ctx, "leader", name)
-					nextPageCtx := context.WithValue(leaderCtx, "nextPage", people)
-					actionCtx := context.WithValue(nextPageCtx, "action", func(ctx context.Context) context.Context {
+					ctx = context.WithValue(ctx, "leader", name)
+					ctx = context.WithValue(ctx, "nextPage", people)
+					ctx = context.WithValue(ctx, "action", func(ctx context.Context) context.Context {
 						leader := ctx.Value("leader").(string)
 						session := ctx.Value("session" + leader).(string)
 						name := ctx.Value("name").(string)
 						bcclient.LeaderSelectsMember(session, name)
 						return context.WithValue(ctx, "nextPage", nil)
 					})
-					actionDescCtx := context.WithValue(actionCtx, "actionDesc", "is being selected?")
-					return context.WithValue(actionDescCtx, "currentPage", people)
+					ctx = context.WithValue(ctx, "actionDesc", "is being selected?")
+					return context.WithValue(ctx, "currentPage", people)
 				}, "is the leader?"),
 			},
 			{
 				description: "Leader Deselects Member",
 				action: createActionWithName(func(ctx context.Context) context.Context {
 					name := ctx.Value("name").(string)
-					leaderCtx := context.WithValue(ctx, "leader", name)
-					nextPageCtx := context.WithValue(leaderCtx, "nextPage", people)
-					actionCtx := context.WithValue(nextPageCtx, "action", func(ctx context.Context) context.Context {
+					ctx = context.WithValue(ctx, "leader", name)
+					ctx = context.WithValue(ctx, "nextPage", people)
+					ctx = context.WithValue(ctx, "action", func(ctx context.Context) context.Context {
 						leader := ctx.Value("leader").(string)
 						session := ctx.Value("session" + leader).(string)
 						name := ctx.Value("name").(string)
 						bcclient.LeaderDeselectsMember(session, name)
 						return context.WithValue(ctx, "nextPage", nil)
 					})
-					return context.WithValue(actionCtx, "actionDesc", "is being deselected?")
+					return context.WithValue(ctx, "actionDesc", "is being deselected?")
 				}, "is the leader?"),
 			},
 		},

@@ -90,7 +90,6 @@ func makePlayerActionRequest(url string, body interface{}, session string) {
 	if err != nil {
 		log.Fatalf("can't do request: %+v\n", err)
 	}
-
 }
 
 func StartGame(session string) {
