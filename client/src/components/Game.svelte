@@ -1,7 +1,24 @@
 <script lang="ts">
-import type { LeaderStartedToSelectMembers } from "../messages/events";
+import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../messages/commands";
+
+import type { Message } from "../messages/messagebus";
 import type { StoreValues } from "../store/store";
 export let storeValues: StoreValues;
+export let dispatcher: {dispatch: (message: Message) => void};
+
+function togglePlayerSelection(member: string): void {
+  if (storeValues.isPlayerTheLeader) {
+    if (storeValues.isPlayerInTeam(member)) {
+      dispatcher.dispatch(new LeaderDeselectsMember(member));
+    } else {
+      dispatcher.dispatch(new LeaderSelectsMember(member));
+    }
+  }
+}
+
+function confirmTeam(): void {
+  dispatcher.dispatch(new LeaderConfirmsTeam());
+}
 </script>
 
 <div class="flex flex-col items-center h-full bg-gray-900 p-6 text-blue-500 space-y-4 text-2xl">
@@ -20,12 +37,12 @@ export let storeValues: StoreValues;
   </div>
   <div class="flex-grow grid grid-cols-2 w-full content-start gap-2">
     {#each storeValues.players as player}
-      <button class="bc-button bc-button-blue">
-        {player}
+      <button class="bc-button bc-button-blue" on:click={() => togglePlayerSelection(player)}>
+        {player} (in? {storeValues.isPlayerInTeam(player)})
       </button>
     {/each}
   </div>
   {#if storeValues.isPlayerTheLeader}
-    <button class="bc-button bc-button-blue">I'm done</button>
+    <button class="bc-button bc-button-blue" on:click={confirmTeam}>I'm done</button>
   {/if}
 </div>

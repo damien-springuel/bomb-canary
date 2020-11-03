@@ -1,6 +1,9 @@
 import { 
   EventsReplayEnded, 
   EventsReplayStarted, 
+  LeaderConfirmedTeam, 
+  LeaderDeselectedMember, 
+  LeaderSelectedMember, 
   LeaderStartedToSelectMembers, 
   PartyCreated, 
   PlayerConnected, 
@@ -47,6 +50,15 @@ export class Handler {
     }
     else if (event.LeaderStartedToSelectMembers) {
       this.dispatcher.dispatch(new LeaderStartedToSelectMembers(event.LeaderStartedToSelectMembers.Leader));
+    }
+    else if (event.LeaderSelectedMember) {
+      this.dispatcher.dispatch(new LeaderSelectedMember(event.LeaderSelectedMember.SelectedMember));
+    }
+    else if (event.LeaderDeselectedMember) {
+      this.dispatcher.dispatch(new LeaderDeselectedMember(event.LeaderDeselectedMember.DeselectedMember));
+    }
+    else if (event.LeaderConfirmedSelection) {
+      this.dispatcher.dispatch(new LeaderConfirmedTeam());
     }
   }
 }

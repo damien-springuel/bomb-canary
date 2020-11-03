@@ -13,6 +13,8 @@ test(`Store - default values`, t => {
       players: [],
       leader: "",
       isPlayerTheLeader: false,
+      currentTeam: new Set<string>(),
+      isPlayerInTeam: undefined,
     }
   );
 });
@@ -144,4 +146,32 @@ test(`Store - isLeader`, t => {
   store.assignLeader("testName");
   storeValues = get(store);
   t.true(storeValues.isPlayerTheLeader);
+});
+
+test(`Store - selectPlayer`, t => {
+  const store = new Store();
+  store.selectPlayer("p1");
+  store.selectPlayer("p2");
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.currentTeam, new Set<string>(["p1", "p2"]));
+});
+
+test(`Store - deselectPlayer`, t => {
+  const store = new Store();
+  store.selectPlayer("p1");
+  store.selectPlayer("p2");
+  store.deselectPlayer("p1");
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.currentTeam, new Set<string>(["p2"]));
+});
+
+test(`Store - isPlayerInTeam`, t => {
+  const store = new Store();
+  store.selectPlayer("p1");
+  store.selectPlayer("p2");
+  store.deselectPlayer("p1");
+  let storeValues: StoreValues = get(store);
+  t.false(storeValues.isPlayerInTeam("p1"));
+  t.true(storeValues.isPlayerInTeam("p2"));
+  t.false(storeValues.isPlayerInTeam("p3"));
 });

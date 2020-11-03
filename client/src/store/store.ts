@@ -15,6 +15,8 @@ export interface StoreValues {
   players: string[]
   leader: string
   isPlayerTheLeader: boolean
+  currentTeam: Set<string>,
+  isPlayerInTeam: (player: string) => boolean,
 }
 
 function defaultValues(): StoreValues {
@@ -25,6 +27,8 @@ function defaultValues(): StoreValues {
     players: [],
     leader: "",
     isPlayerTheLeader: false,
+    currentTeam: new Set<string>(),
+    isPlayerInTeam: undefined,
   }
 }
 
@@ -49,6 +53,7 @@ export class Store implements Readable<StoreValues> {
 
   protected updateComputed(value: StoreValues): StoreValues {
     value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
+    value.isPlayerInTeam = player => value.currentTeam.has(player);
     return value;
   }
 
@@ -77,6 +82,8 @@ export class Store implements Readable<StoreValues> {
   readonly joinPlayer = joinPlayer;
   readonly definePlayer = definePlayer;
   readonly assignLeader = assignLeader;
+  readonly selectPlayer = selectPlayer;
+  readonly deselectPlayer = deselectPlayer;
 }
 
 function showLobby(this: Store) {
@@ -118,6 +125,20 @@ function joinPlayer(this: Store, name: string) {
 function assignLeader(this: Store, leader: string) {
   this.update(v => {
     v.leader = leader;
+    return v;
+  });
+}
+
+function selectPlayer(this: Store, player: string) {
+  this.update(v => {
+    v.currentTeam.add(player);
+    return v;
+  });
+}
+
+function deselectPlayer(this: Store, player: string) {
+  this.update(v => {
+    v.currentTeam.delete(player);
     return v;
   });
 }

@@ -1,6 +1,6 @@
 import test from "ava";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { EventsReplayEnded, EventsReplayStarted, LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
+import { EventsReplayEnded, EventsReplayStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {
@@ -78,4 +78,25 @@ test(`Handler - onEvent - LeaderStartedToSelectMembers`, t => {
   const handler = new Handler(dispatcher);
   handler.onEvent({LeaderStartedToSelectMembers: {Leader: "testName"}});
   t.deepEqual(dispatcher.receivedMessage, new LeaderStartedToSelectMembers("testName"));
+});
+
+test(`Handler - onEvent - LeaderSelectedMember`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({LeaderSelectedMember: {SelectedMember: "testName"}});
+  t.deepEqual(dispatcher.receivedMessage, new LeaderSelectedMember("testName"));
+});
+
+test(`Handler - onEvent - LeaderDeselectedMember`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({LeaderDeselectedMember: {DeselectedMember: "testName"}});
+  t.deepEqual(dispatcher.receivedMessage, new LeaderDeselectedMember("testName"));
+});
+
+test(`Handler - onEvent - LeaderConfirmedTeam`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({LeaderConfirmedSelection: {}});
+  t.deepEqual(dispatcher.receivedMessage, new LeaderConfirmedTeam());
 });

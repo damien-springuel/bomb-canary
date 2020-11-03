@@ -35,3 +35,13 @@ export class SpiesRevealed implements Message {
 export class LeaderStartedToSelectMembers implements Message {
   constructor(readonly leader: string) {}
 }
+
+export class LeaderSelectedMember implements Message {
+  constructor(readonly member: string) {}
+}
+
+export class LeaderDeselectedMember implements Message {
+  constructor(readonly member: string) {}
+}
+
+export class LeaderConfirmedTeam implements Message {}

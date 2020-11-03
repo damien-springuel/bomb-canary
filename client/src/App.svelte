@@ -22,7 +22,7 @@ onMount(() => dispatcher.dispatch(new AppLoaded()));
 {:else if storeValues.pageToShow == Page.PartyRoom}
   <PartyRoom dispatcher={dispatcher} storeValues={storeValues}/>
 {:else if storeValues.pageToShow == Page.Game}
-  <Game storeValues={storeValues}/>
+  <Game dispatcher={dispatcher} storeValues={storeValues}/>
 {:else}
   Bomb canary loading
 {/if}

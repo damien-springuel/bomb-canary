@@ -8,3 +8,11 @@ export class JoinParty implements Message {
 }
 
 export class StartGame implements Message {}
+
+export class LeaderSelectsMember implements Message {
+  constructor(readonly member: string){}
+}
+export class LeaderDeselectsMember implements Message {
+  constructor(readonly member: string){}
+}
+export class LeaderConfirmsTeam implements Message {}
