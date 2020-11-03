@@ -15,8 +15,11 @@ func Test_Replayer_NothingToReplay(t *testing.T) {
 	replayer := NewEventReplayer(mockEventSender)
 	replayer.Consume(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "testName"})
 
+	expectedReplayStarted, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: "testName"}})
+
 	g := NewWithT(t)
 	g.Expect(mockEventSender.allReceivedMessages).To(Equal([][]byte{
+		expectedReplayStarted,
 		expectedReplayEnded,
 	}))
 }
@@ -40,7 +43,9 @@ func Test_Replayer_Send(t *testing.T) {
 
 	replayer.Consume(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "testName"})
 
+	expectedReplayStarted, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: "testName"}})
 	g.Expect(mockEventSender.allReceivedMessages).To(Equal([][]byte{
+		expectedReplayStarted,
 		[]byte("m1"),
 		[]byte("m2"),
 		[]byte("m4"),
@@ -67,7 +72,9 @@ func Test_Replayer_SendToPlayer(t *testing.T) {
 
 	replayer.Consume(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "p1"})
 
+	expectedReplayStartedP1, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: "p1"}})
 	g.Expect(mockEventSender.allReceivedMessages).To(Equal([][]byte{
+		expectedReplayStartedP1,
 		[]byte("m1"),
 		[]byte("m4"),
 		expectedReplayEnded,
@@ -76,7 +83,9 @@ func Test_Replayer_SendToPlayer(t *testing.T) {
 
 	replayer.Consume(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "p2"})
 
+	expectedReplayStartedP2, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: "p2"}})
 	g.Expect(mockEventSender.allReceivedMessages).To(Equal([][]byte{
+		expectedReplayStartedP2,
 		[]byte("m2"),
 		expectedReplayEnded,
 	}))
@@ -101,7 +110,9 @@ func Test_Replayer_SendToAllButPlayer(t *testing.T) {
 
 	replayer.Consume(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "p1"})
 
+	expectedReplayStartedP1, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: "p1"}})
 	g.Expect(mockEventSender.allReceivedMessages).To(Equal([][]byte{
+		expectedReplayStartedP1,
 		[]byte("m2"),
 		expectedReplayEnded,
 	}))
@@ -109,7 +120,9 @@ func Test_Replayer_SendToAllButPlayer(t *testing.T) {
 
 	replayer.Consume(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "p2"})
 
+	expectedReplayStartedP2, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: "p2"}})
 	g.Expect(mockEventSender.allReceivedMessages).To(Equal([][]byte{
+		expectedReplayStartedP2,
 		[]byte("m1"),
 		[]byte("m4"),
 		expectedReplayEnded,
@@ -139,7 +152,9 @@ func Test_Replayer_MixedCase(t *testing.T) {
 
 	replayer.Consume(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "p1"})
 
+	expectedReplayStartedP1, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: "p1"}})
 	g.Expect(mockEventSender.allReceivedMessages).To(Equal([][]byte{
+		expectedReplayStartedP1,
 		[]byte("m1"),
 		[]byte("m3"),
 		[]byte("m4"),
@@ -150,7 +165,9 @@ func Test_Replayer_MixedCase(t *testing.T) {
 
 	replayer.Consume(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: "testCode"}}, Player: "p2"})
 
+	expectedReplayStartedP2, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: "p2"}})
 	g.Expect(mockEventSender.allReceivedMessages).To(Equal([][]byte{
+		expectedReplayStartedP2,
 		[]byte("m1"),
 		[]byte("m6"),
 		expectedReplayEnded,

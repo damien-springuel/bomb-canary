@@ -41,18 +41,27 @@ func (e eventReplayer) Consume(m messagebus.Message) {
 	if ok {
 		e.mut.RLock()
 		defer e.mut.RUnlock()
-		messages, exists := e.messagesByCode[code(connectEvent.Code)]
-		if exists {
-			for _, replayMessage := range messages {
-				if replayMessage.replayType == All ||
-					(replayMessage.replayType == Player && replayMessage.name == connectEvent.Player) ||
-					(replayMessage.replayType == AllButPlayer && replayMessage.name != connectEvent.Player) {
-					e.eventSender.SendToPlayer(connectEvent.Code, connectEvent.Player, replayMessage.message)
-				}
-			}
-		}
+
+		replayStartedMessage, _ := json.Marshal(clientEvent{EventsReplayStarted: &eventsReplayStarted{Player: connectEvent.Player}})
+		e.eventSender.SendToPlayer(connectEvent.Code, connectEvent.Player, replayStartedMessage)
+
+		e.sendReplayableMessages(connectEvent.Code, connectEvent.Player)
+
 		replayEndedMessage, _ := json.Marshal(clientEvent{EventsReplayEnded: &eventsReplayEnded{}})
 		e.eventSender.SendToPlayer(connectEvent.Code, connectEvent.Player, replayEndedMessage)
+	}
+}
+
+func (e eventReplayer) sendReplayableMessages(partyCode, playerName string) {
+	messages, exists := e.messagesByCode[code(partyCode)]
+	if exists {
+		for _, replayMessage := range messages {
+			if replayMessage.replayType == All ||
+				(replayMessage.replayType == Player && replayMessage.name == playerName) ||
+				(replayMessage.replayType == AllButPlayer && replayMessage.name != playerName) {
+				e.eventSender.SendToPlayer(partyCode, playerName, replayMessage.message)
+			}
+		}
 	}
 }
 
