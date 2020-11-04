@@ -14,7 +14,6 @@ let storeValues: StoreValues;
 $: storeValues = $store;
 
 onMount(() => dispatcher.dispatch(new AppLoaded()));
-// onMount(() => setTimeout(() => dispatcher.dispatch(new AppLoaded()), 1000));
 </script>
 
 {#if storeValues.pageToShow == Page.Lobby}

@@ -37,8 +37,8 @@ function confirmTeam(): void {
   </div>
   <div class="flex-grow grid grid-cols-2 w-full content-start gap-2">
     {#each storeValues.players as player}
-      <button class="bc-button bc-button-blue" on:click={() => togglePlayerSelection(player)}>
-        {player} (in? {storeValues.isPlayerInTeam(player)})
+      <button class="bc-button bc-button-blue" class:bc-button-green={storeValues.isPlayerInTeam(player)} on:click={() => togglePlayerSelection(player)}>
+        {player}
       </button>
     {/each}
   </div>
