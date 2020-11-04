@@ -102,9 +102,25 @@ func (s gameHub) handleJoinPartyCommand(currentGame gamerules.Game, message Mess
 }
 
 func (s gameHub) handleStartGameCommand(currentGame gamerules.Game, message Message) (updatedGame gamerules.Game, messagesToDispatch []Message) {
-	updatedGame, playerAllegiancesByName, err := currentGame.Start(s.allegianceGenerator)
+	updatedGame, playerAllegiancesByName, missionRequirementsByMission, err := currentGame.Start(s.allegianceGenerator)
 
 	if err == nil {
+
+		missionRequirements := make([]MissionRequirement, len(missionRequirementsByMission))
+		for i := range missionRequirements {
+			requirement := missionRequirementsByMission[gamerules.Mission(i+1)]
+			missionRequirements[i] = MissionRequirement{
+				NbPeopleOnMission:        requirement.NbOfPeopleToGo,
+				NbFailuresRequiredToFail: requirement.NbFailuresRequiredToFailMission,
+			}
+		}
+
+		messagesToDispatch = append(messagesToDispatch,
+			GameStarted{
+				Event:               Event{Party: Party{Code: message.GetPartyCode()}},
+				MissionRequirements: missionRequirements,
+			},
+		)
 
 		allegiances := make(map[string]Allegiance)
 		for name, allegiance := range playerAllegiancesByName {

@@ -114,6 +114,28 @@ func Test_ClientEventBroker_PlayerDisconnected(t *testing.T) {
 	))
 }
 
+func Test_ClientEventBroker_GameStarted(t *testing.T) {
+	eventSender := &mockEventSender{}
+	eventBroker := NewClientEventBroker(eventSender)
+	eventBroker.Consume(mb.GameStarted{Event: mb.Event{Party: mb.Party{Code: "testCode"}},
+		MissionRequirements: []mb.MissionRequirement{
+			{NbPeopleOnMission: 3, NbFailuresRequiredToFail: 2},
+			{NbPeopleOnMission: 5, NbFailuresRequiredToFail: 1},
+		}})
+
+	g := NewWithT(t)
+	g.Expect(*eventSender).To(Equal(
+		mockEventSender{
+			receivedCode: "testCode",
+			receivedMessage: toJsonBytes(clientEvent{GameStarted: &gameStarted{
+				MissionRequirements: []missionRequirement{
+					{NbPeopleOnMission: 3, NbFailuresRequiredToFail: 2},
+					{NbPeopleOnMission: 5, NbFailuresRequiredToFail: 1},
+				}}}),
+		},
+	))
+}
+
 func Test_ClientEventBroker_SpiesRevealed(t *testing.T) {
 	eventSender := &mockEventSender{shouldTrackAll: true}
 	eventBroker := NewClientEventBroker(eventSender)

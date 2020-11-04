@@ -27,6 +27,16 @@ type PlayerJoined struct {
 	Player string
 }
 
+type MissionRequirement struct {
+	NbPeopleOnMission        int
+	NbFailuresRequiredToFail int
+}
+
+type GameStarted struct {
+	Event
+	MissionRequirements []MissionRequirement
+}
+
 type AllegianceRevealed struct {
 	Event
 	AllegianceByPlayer map[string]Allegiance

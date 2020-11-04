@@ -71,7 +71,7 @@ func newlyStartedGame(hub gameHub, code string) gamerules.Game {
 	game, _ = game.AddPlayer("Charlie")
 	game, _ = game.AddPlayer("Dan")
 	game, _ = game.AddPlayer("Edith")
-	game, _, _ = game.Start(spiesFirstGenerator{})
+	game, _, _, _ = game.Start(spiesFirstGenerator{})
 	return game
 }
 
@@ -92,7 +92,7 @@ func newlyConfirmedTeam(hub gameHub, code string) gamerules.Game {
 	game, _ = game.AddPlayer("Charlie")
 	game, _ = game.AddPlayer("Dan")
 	game, _ = game.AddPlayer("Edith")
-	game, _, _ = game.Start(spiesFirstGenerator{})
+	game, _, _, _ = game.Start(spiesFirstGenerator{})
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
@@ -162,7 +162,7 @@ func fiveFailedVoteInARow(hub gameHub, code string) gamerules.Game {
 	game, _ = game.AddPlayer("Charlie")
 	game, _ = game.AddPlayer("Dan")
 	game, _ = game.AddPlayer("Edith")
-	game, _, _ = game.Start(spiesFirstGenerator{})
+	game, _, _, _ = game.Start(spiesFirstGenerator{})
 
 	// #1
 	game, _ = game.LeaderSelectsMember("Alice")
@@ -237,7 +237,7 @@ func newlyConductingMission(hub gameHub, code string) gamerules.Game {
 	game, _ = game.AddPlayer("Charlie")
 	game, _ = game.AddPlayer("Dan")
 	game, _ = game.AddPlayer("Edith")
-	game, _, _ = game.Start(spiesFirstGenerator{})
+	game, _, _, _ = game.Start(spiesFirstGenerator{})
 	game, _ = game.LeaderSelectsMember("Alice")
 	game, _ = game.LeaderSelectsMember("Bob")
 	game, _ = game.LeaderConfirmsTeamSelection()
@@ -299,7 +299,7 @@ func almostThreeSuccessfulMissions(hub gameHub, code string) gamerules.Game {
 	game, _ = game.AddPlayer("Charlie")
 	game, _ = game.AddPlayer("Dan")
 	game, _ = game.AddPlayer("Edith")
-	game, _, _ = game.Start(spiesFirstGenerator{})
+	game, _, _, _ = game.Start(spiesFirstGenerator{})
 
 	// #1
 	game, _ = game.LeaderSelectsMember("Alice")
@@ -389,7 +389,7 @@ func almostThreeFailedMissions(hub gameHub, code string) gamerules.Game {
 	game, _ = game.AddPlayer("Charlie")
 	game, _ = game.AddPlayer("Dan")
 	game, _ = game.AddPlayer("Edith")
-	game, _, _ = game.Start(spiesFirstGenerator{})
+	game, _, _, _ = game.Start(spiesFirstGenerator{})
 
 	// #1
 	game, _ = game.LeaderSelectsMember("Alice")
@@ -521,6 +521,13 @@ func Test_HandleStartGameCommand(t *testing.T) {
 		"Charlie": Resistance,
 		"Dan":     Resistance,
 		"Edith":   Resistance,
+	}}))
+	g.Expect(messageDispatcher.messageFromEnd(2)).To(Equal(GameStarted{Event: Event{Party: Party{Code: code}}, MissionRequirements: []MissionRequirement{
+		{NbPeopleOnMission: 2, NbFailuresRequiredToFail: 1},
+		{NbPeopleOnMission: 3, NbFailuresRequiredToFail: 1},
+		{NbPeopleOnMission: 2, NbFailuresRequiredToFail: 1},
+		{NbPeopleOnMission: 3, NbFailuresRequiredToFail: 1},
+		{NbPeopleOnMission: 3, NbFailuresRequiredToFail: 1},
 	}}))
 	g.Expect(hub.getGameForPartyCode(code)).To(Equal(expectedGame))
 }

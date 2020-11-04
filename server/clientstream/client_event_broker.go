@@ -54,6 +54,16 @@ func (c clientEventBroker) Consume(m messagebus.Message) {
 	case messagebus.PlayerJoined:
 		c.send(code, clientEvent{PlayerJoined: &playerJoined{Name: m.Player}})
 
+	case messagebus.GameStarted:
+		requirements := make([]missionRequirement, len(m.MissionRequirements))
+		for i := range requirements {
+			requirements[i] = missionRequirement{
+				NbPeopleOnMission:        m.MissionRequirements[i].NbPeopleOnMission,
+				NbFailuresRequiredToFail: m.MissionRequirements[i].NbFailuresRequiredToFail,
+			}
+		}
+		c.send(code, clientEvent{GameStarted: &gameStarted{MissionRequirements: requirements}})
+
 	case messagebus.AllegianceRevealed:
 		spies := make(map[string]struct{})
 		for name, allegiance := range m.AllegianceByPlayer {

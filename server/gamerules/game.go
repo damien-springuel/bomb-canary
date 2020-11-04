@@ -50,54 +50,54 @@ type AllegianceGenerator interface {
 	Generate(nbPlayers, nbSpies int) []Allegiance
 }
 
-type missionRequirement struct {
-	nbOfPeopleToGo                  int
-	nbFailuresRequiredToFailMission int
+type MissionRequirement struct {
+	NbOfPeopleToGo                  int
+	NbFailuresRequiredToFailMission int
 }
 
 var (
-	missionRequirementsByNumberOfPlayer = map[int]map[Mission]missionRequirement{
+	missionRequirementsByNumberOfPlayer = map[int]map[Mission]MissionRequirement{
 		5: {
-			First:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
-			Second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Third:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
-			Fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Fifth:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
+			First:  {NbOfPeopleToGo: 2, NbFailuresRequiredToFailMission: 1},
+			Second: {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Third:  {NbOfPeopleToGo: 2, NbFailuresRequiredToFailMission: 1},
+			Fourth: {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Fifth:  {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
 		},
 		6: {
-			First:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
-			Second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			Fourth: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			First:  {NbOfPeopleToGo: 2, NbFailuresRequiredToFailMission: 1},
+			Second: {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Third:  {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
+			Fourth: {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Fifth:  {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
 		},
 		7: {
-			First:  {nbOfPeopleToGo: 2, nbFailuresRequiredToFailMission: 1},
-			Second: {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Third:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Fourth: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 2},
-			Fifth:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
+			First:  {NbOfPeopleToGo: 2, NbFailuresRequiredToFailMission: 1},
+			Second: {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Third:  {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Fourth: {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 2},
+			Fifth:  {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
 		},
 		8: {
-			First:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			Third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			Fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
-			Fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
+			First:  {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Second: {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
+			Third:  {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
+			Fourth: {NbOfPeopleToGo: 5, NbFailuresRequiredToFailMission: 2},
+			Fifth:  {NbOfPeopleToGo: 5, NbFailuresRequiredToFailMission: 1},
 		},
 		9: {
-			First:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			Third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			Fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
-			Fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
+			First:  {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Second: {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
+			Third:  {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
+			Fourth: {NbOfPeopleToGo: 5, NbFailuresRequiredToFailMission: 2},
+			Fifth:  {NbOfPeopleToGo: 5, NbFailuresRequiredToFailMission: 1},
 		},
 		10: {
-			First:  {nbOfPeopleToGo: 3, nbFailuresRequiredToFailMission: 1},
-			Second: {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			Third:  {nbOfPeopleToGo: 4, nbFailuresRequiredToFailMission: 1},
-			Fourth: {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 2},
-			Fifth:  {nbOfPeopleToGo: 5, nbFailuresRequiredToFailMission: 1},
+			First:  {NbOfPeopleToGo: 3, NbFailuresRequiredToFailMission: 1},
+			Second: {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
+			Third:  {NbOfPeopleToGo: 4, NbFailuresRequiredToFailMission: 1},
+			Fourth: {NbOfPeopleToGo: 5, NbFailuresRequiredToFailMission: 2},
+			Fifth:  {NbOfPeopleToGo: 5, NbFailuresRequiredToFailMission: 1},
 		},
 	}
 
@@ -159,13 +159,13 @@ func (g Game) removePlayer(name string) (Game, error) {
 	return g, nil
 }
 
-func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, map[string]Allegiance, error) {
+func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, map[string]Allegiance, map[Mission]MissionRequirement, error) {
 	if g.state != NotStarted {
-		return g, nil, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, NotStarted, g.state)
+		return g, nil, nil, fmt.Errorf("%w: can only start the game during %s state, state was %s", errInvalidStateForAction, NotStarted, g.state)
 	}
 
 	if g.players.count() < minNumberOfPlayers {
-		return g, nil, errNotEnoughPlayers
+		return g, nil, nil, errNotEnoughPlayers
 	}
 
 	g.state = SelectingTeam
@@ -178,15 +178,23 @@ func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, map[string]A
 		playerAllegiance[g.players[i]] = a
 	}
 
-	return g, playerAllegiance, nil
+	return g, playerAllegiance, g.getMissionRequirements(), nil
+}
+
+func (g Game) getMissionRequirements() map[Mission]MissionRequirement {
+	requirements := make(map[Mission]MissionRequirement, len(missionRequirementsByNumberOfPlayer[g.players.count()]))
+	for mission, req := range missionRequirementsByNumberOfPlayer[g.players.count()] {
+		requirements[mission] = req
+	}
+	return requirements
 }
 
 func (g Game) nbPeopleThatHaveToGoOnMission() int {
-	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbOfPeopleToGo
+	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].NbOfPeopleToGo
 }
 
 func (g Game) nbFailuresRequiredToFailMission() int {
-	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].nbFailuresRequiredToFailMission
+	return missionRequirementsByNumberOfPlayer[g.players.count()][g.currentMission].NbFailuresRequiredToFailMission
 }
 
 func (g Game) LeaderSelectsMember(name string) (Game, error) {

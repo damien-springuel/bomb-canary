@@ -5,6 +5,7 @@ type clientEvent struct {
 	PlayerConnected              *playerConnected              `json:",omitempty"`
 	PlayerDisconnected           *playerDisconnected           `json:",omitempty"`
 	PlayerJoined                 *playerJoined                 `json:",omitempty"`
+	GameStarted                  *gameStarted                  `json:",omitempty"`
 	SpiesRevealed                *spiesRevealed                `json:",omitempty"`
 	LeaderStartedToSelectMembers *leaderStartedToSelectMembers `json:",omitempty"`
 	LeaderSelectedMember         *leaderSelectedMember         `json:",omitempty"`
@@ -34,6 +35,15 @@ type playerConnected struct {
 
 type playerDisconnected struct {
 	Name string
+}
+
+type missionRequirement struct {
+	NbPeopleOnMission        int
+	NbFailuresRequiredToFail int
+}
+
+type gameStarted struct {
+	MissionRequirements []missionRequirement
 }
 
 type spiesRevealed struct {
