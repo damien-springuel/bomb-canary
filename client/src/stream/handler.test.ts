@@ -1,6 +1,6 @@
 import test from "ava";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { EventsReplayEnded, EventsReplayStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
+import { EventsReplayEnded, EventsReplayStarted, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {
@@ -57,6 +57,13 @@ test(`Handler - onEvent - PlayerJoined`, t => {
   const handler = new Handler(dispatcher);
   handler.onEvent({PlayerJoined: {Name: "testName"}});
   t.deepEqual(dispatcher.receivedMessage, new PlayerJoined("testName"));
+});
+
+test(`Handler - onEvent - GameStarted`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({GameStarted: {MissionRequirements: [{NbPeopleOnMission: 3, NbFailuresRequiredToFail: 2}]}});
+  t.deepEqual(dispatcher.receivedMessage, new GameStarted([{nbPeopleOnMission: 3, nbFailuresRequiredToFail: 2}]));
 });
 
 test(`Handler - onEvent - SpiesRevealed`, t => {

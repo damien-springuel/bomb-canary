@@ -15,6 +15,13 @@ export interface ServerEvent {
     Name: string
   },
   
+  GameStarted?: {
+    MissionRequirements: {
+      NbPeopleOnMission: number,
+      NbFailuresRequiredToFail: number,
+    }[]
+  },
+  
   SpiesRevealed?: {
     Spies: {[name:string]:{}}
   },

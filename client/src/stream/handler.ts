@@ -1,6 +1,7 @@
 import { 
   EventsReplayEnded, 
   EventsReplayStarted, 
+  GameStarted, 
   LeaderConfirmedTeam, 
   LeaderDeselectedMember, 
   LeaderSelectedMember, 
@@ -44,6 +45,11 @@ export class Handler {
     }
     else if (event.PlayerJoined) {
       this.dispatcher.dispatch(new PlayerJoined(event.PlayerJoined.Name));
+    }
+    else if (event.GameStarted) {
+      const req = event.GameStarted.MissionRequirements
+        .map(r => ({nbPeopleOnMission: r.NbPeopleOnMission, nbFailuresRequiredToFail: r.NbFailuresRequiredToFail}))
+      this.dispatcher.dispatch(new GameStarted(req));
     }
     else if (event.SpiesRevealed) {
       this.dispatcher.dispatch(new SpiesRevealed(new Set<string>(Object.keys(event.SpiesRevealed.Spies || []))));

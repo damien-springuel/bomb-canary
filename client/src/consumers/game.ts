@@ -1,7 +1,8 @@
-import { LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers } from "../messages/events";
+import { GameStarted, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
 export interface GameStore {
+  setMissionRequirements(requirements: MissionRequirement[]): void
   assignLeader(leader: string): void
   selectPlayer(player: string): void
   deselectPlayer(player: string): void
@@ -20,6 +21,9 @@ export class GameManager {
     }
     else if(message instanceof LeaderDeselectedMember) {
       this.gameStore.deselectPlayer(message.member);
+    }
+    else if(message instanceof GameStarted) {
+      this.gameStore.setMissionRequirements(message.requirements);
     }
   }
 }

@@ -1,5 +1,6 @@
 import {Writable, Readable, get} from "svelte/store";
 import {writable} from "svelte/store";
+import type { MissionRequirement } from "../messages/events";
 
 export enum Page {
   Loading = "loading",
@@ -13,10 +14,14 @@ export interface StoreValues {
   partyCode: string
   player: string
   players: string[]
+  missionRequirements: MissionRequirement[]
+  currentMission: number,
   leader: string
   isPlayerTheLeader: boolean
   currentTeam: Set<string>,
   isPlayerInTeam: (player: string) => boolean,
+  isPlayerSelectableForTeam: (player: string) => boolean,
+  canConfirmTeam: boolean,
 }
 
 function defaultValues(): StoreValues {
@@ -25,10 +30,14 @@ function defaultValues(): StoreValues {
     partyCode: "",
     player: "",
     players: [],
+    missionRequirements: [],
+    currentMission: 1,
     leader: "",
     isPlayerTheLeader: false,
     currentTeam: new Set<string>(),
     isPlayerInTeam: undefined,
+    isPlayerSelectableForTeam: undefined,
+    canConfirmTeam: false,
   }
 }
 
@@ -54,6 +63,18 @@ export class Store implements Readable<StoreValues> {
   protected updateComputed(value: StoreValues): StoreValues {
     value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
     value.isPlayerInTeam = player => value.currentTeam.has(player);
+    
+    const currentMissionRequirement = value.missionRequirements[value.currentMission-1];
+    value.isPlayerSelectableForTeam = player => {
+      if (value.currentTeam.has(player)) {
+        return true;
+      }
+      if (value.currentTeam.size < currentMissionRequirement?.nbPeopleOnMission) {
+        return true;
+      }
+      return false;
+    }
+    value.canConfirmTeam = value.currentTeam.size === currentMissionRequirement?.nbPeopleOnMission
     return value;
   }
 
@@ -81,6 +102,7 @@ export class Store implements Readable<StoreValues> {
   readonly showGameRoom = showGameRoom;
   readonly joinPlayer = joinPlayer;
   readonly definePlayer = definePlayer;
+  readonly setMissionRequirements = setMissionRequirements;
   readonly assignLeader = assignLeader;
   readonly selectPlayer = selectPlayer;
   readonly deselectPlayer = deselectPlayer;
@@ -118,6 +140,14 @@ function definePlayer(this: Store, name: string) {
 function joinPlayer(this: Store, name: string) {
   this.update(v => {
     v.players.push(name);
+    return v;
+  });
+}
+
+function setMissionRequirements(this: Store, requirements: MissionRequirement[]) {
+  this.update(v => {
+    v.missionRequirements = requirements.slice();
+    v.currentMission = 1;
     return v;
   });
 }

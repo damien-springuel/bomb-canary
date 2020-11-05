@@ -1,6 +1,13 @@
 import test from "ava";
-import { LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers } from "../messages/events";
+import { GameStarted, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement } from "../messages/events";
 import { GameManager, GameStore } from "./game";
+
+test(`Game Manager - GameStarted`, t => {
+  let receivedReq: MissionRequirement[]
+  const gameMgr = new GameManager({setMissionRequirements: req => {receivedReq = req}} as GameStore);
+  gameMgr.consume(new GameStarted([{nbFailuresRequiredToFail: 1, nbPeopleOnMission: 3}]));
+  t.deepEqual(receivedReq, [{nbPeopleOnMission: 3, nbFailuresRequiredToFail: 1}]);
+});
 
 test(`Game Manager - LeaderStartedToSelectMembers`, t => {
   let receivedLeader: string

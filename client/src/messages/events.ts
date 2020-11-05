@@ -28,6 +28,15 @@ export class PlayerJoined implements Message {
   constructor(readonly name: string) {}
 }
 
+export interface MissionRequirement {
+  readonly nbPeopleOnMission: number, 
+  readonly nbFailuresRequiredToFail: number
+}
+
+export class GameStarted implements Message {
+  constructor(readonly requirements: MissionRequirement[]) {}
+}
+
 export class SpiesRevealed implements Message {
   constructor(readonly spies: Set<string>) {}
 }

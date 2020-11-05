@@ -11,10 +11,14 @@ test(`Store - default values`, t => {
       partyCode: "",
       player: "",
       players: [],
+      missionRequirements: [],
+      currentMission: 1,
       leader: "",
       isPlayerTheLeader: false,
       currentTeam: new Set<string>(),
       isPlayerInTeam: undefined,
+      isPlayerSelectableForTeam: undefined,
+      canConfirmTeam: false,
     }
   );
 });
@@ -129,6 +133,14 @@ test(`Store - joinPlayer`, t => {
   t.deepEqual(storeValues.players, ["testName1", "testName2"]);
 });
 
+test(`Store - setMissionRequirements`, t => {
+  const store = new Store();
+  store.setMissionRequirements([{nbFailuresRequiredToFail: 3, nbPeopleOnMission: 4}, {nbFailuresRequiredToFail: 2, nbPeopleOnMission:4}]);
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.missionRequirements, [{nbFailuresRequiredToFail: 3, nbPeopleOnMission: 4}, {nbFailuresRequiredToFail: 2, nbPeopleOnMission:4}]);
+  t.deepEqual(storeValues.currentMission, 1);
+});
+
 test(`Store - assignLeader`, t => {
   const store = new Store();
   store.assignLeader("testName1");
@@ -174,4 +186,30 @@ test(`Store - isPlayerInTeam`, t => {
   t.false(storeValues.isPlayerInTeam("p1"));
   t.true(storeValues.isPlayerInTeam("p2"));
   t.false(storeValues.isPlayerInTeam("p3"));
+});
+
+test(`Store - isPlayerSelectableForTeam`, t => {
+  const store = new Store();
+  store.setMissionRequirements([{nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1}]);
+  store.selectPlayer("p1");
+  store.selectPlayer("p2");
+  let storeValues: StoreValues = get(store);
+  t.false(storeValues.isPlayerSelectableForTeam("p3"));
+  t.true(storeValues.isPlayerSelectableForTeam("p1"));
+  
+  store.deselectPlayer("p1");
+  storeValues = get(store);
+  t.true(storeValues.isPlayerSelectableForTeam("p3"));
+});
+
+test(`Store - canConfirmTeam`, t => {
+  const store = new Store();
+  store.setMissionRequirements([{nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1}]);
+  store.selectPlayer("p1");
+  let storeValues: StoreValues = get(store);
+  t.false(storeValues.canConfirmTeam);
+  
+  store.selectPlayer("p2");
+  storeValues = get(store);
+  t.true(storeValues.canConfirmTeam);
 });

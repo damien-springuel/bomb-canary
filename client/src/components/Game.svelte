@@ -26,23 +26,36 @@ function confirmTeam(): void {
     Mission Track
   </h2>
   <div class="flex flex-row justify-around w-full text-gray-900 text-3xl">
-    <div class="rounded-full bg-blue-400 h-16 w-16 flex items-center justify-center">1</div>
-    <div class="rounded-full bg-blue-400 h-16 w-16 flex items-center justify-center">2</div>
-    <div class="rounded-full bg-blue-400 h-16 w-16 flex items-center justify-center">3</div>
-    <div class="rounded-full bg-blue-400 h-16 w-16 flex items-center justify-center">4</div>
-    <div class="rounded-full bg-blue-400 h-16 w-16 flex items-center justify-center">5</div>
+    {#each storeValues.missionRequirements as requirement}
+      <div class="rounded-full bg-blue-400 h-16 w-16 flex items-center justify-center">
+        {requirement.nbPeopleOnMission}
+      </div>
+    {/each}
   </div>
   <div class="text-xl">
     <span class="font-bold">{storeValues.leader}</span> is choosing current team.
   </div>
   <div class="flex-grow grid grid-cols-2 w-full content-start gap-2">
     {#each storeValues.players as player}
-      <button class="bc-button bc-button-blue" class:bc-button-green={storeValues.isPlayerInTeam(player)} on:click={() => togglePlayerSelection(player)}>
+      <button 
+        class="bc-button bc-button-blue" 
+        class:bc-button-green={storeValues.isPlayerInTeam(player)} 
+        on:click={() => togglePlayerSelection(player)}
+        disabled={!storeValues.isPlayerSelectableForTeam(player)}
+        class:bc-button-gray={!storeValues.isPlayerSelectableForTeam(player)}
+      >
         {player}
       </button>
     {/each}
   </div>
   {#if storeValues.isPlayerTheLeader}
-    <button class="bc-button bc-button-blue" on:click={confirmTeam}>I'm done</button>
+    <button 
+      class="bc-button bc-button-blue" 
+      on:click={confirmTeam}
+      disabled={!storeValues.canConfirmTeam}
+      class:bc-button-gray={!storeValues.canConfirmTeam}
+    >
+      I'm done
+    </button>
   {/if}
 </div>

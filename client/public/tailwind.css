@@ -21,6 +21,12 @@
   .bc-button-green:hover {
     @apply bg-green-300;
   }
+  .bc-button-gray {
+    @apply bg-gray-500 text-gray-700 
+  }
+  .bc-button-gray:hover {
+    @apply bg-gray-500 text-gray-700 
+  }
   .bc-input {
     @apply bg-blue-400 rounded-lg px-2 text-gray-900 outline-none
   }
