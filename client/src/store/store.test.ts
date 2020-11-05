@@ -1,5 +1,5 @@
 import test from "ava";
-import { Page, Store, StoreValues } from "./store";
+import { GamePhase, Page, Store, StoreValues } from "./store";
 import {get} from "svelte/store";
 
 test(`Store - default values`, t => {
@@ -13,12 +13,15 @@ test(`Store - default values`, t => {
       players: [],
       missionRequirements: [],
       currentMission: 1,
+      currentGamePhase: GamePhase.TeamSelection,
       leader: "",
       isPlayerTheLeader: false,
       currentTeam: new Set<string>(),
       isPlayerInTeam: undefined,
       isPlayerSelectableForTeam: undefined,
       canConfirmTeam: false,
+      peopleThatVotedOnTeam: new Set<string>(),
+      playerVote: null,
     }
   );
 });
@@ -212,4 +215,28 @@ test(`Store - canConfirmTeam`, t => {
   store.selectPlayer("p2");
   storeValues = get(store);
   t.true(storeValues.canConfirmTeam);
+});
+
+test(`Store - startTeamVote`, t => {
+  const store = new Store();
+  store.startTeamVote();
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.currentGamePhase, GamePhase.TeamVote);
+});
+
+test(`Store - makePlayerVote - not the player`, t => {
+  const store = new Store();
+  store.makePlayerVote("testName", true);
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.peopleThatVotedOnTeam, new Set<string>(["testName"]));
+  t.deepEqual(storeValues.playerVote, null);
+});
+
+test(`Store - makePlayerVote - the player`, t => {
+  const store = new Store();
+  store.definePlayer("testName");
+  store.makePlayerVote("testName", true);
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.peopleThatVotedOnTeam, new Set<string>(["testName"]));
+  t.deepEqual(storeValues.playerVote, true);
 });

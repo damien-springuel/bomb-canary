@@ -1,4 +1,5 @@
 import { 
+  AllPlayerVotedOnTeam,
   EventsReplayEnded, 
   EventsReplayStarted, 
   GameStarted, 
@@ -10,6 +11,7 @@ import {
   PlayerConnected, 
   PlayerDisconnected, 
   PlayerJoined, 
+  PlayerVotedOnTeam, 
   ServerConnectionClosed, 
   ServerConnectionErrorOccured, 
   SpiesRevealed 
@@ -65,6 +67,14 @@ export class Handler {
     }
     else if (event.LeaderConfirmedSelection) {
       this.dispatcher.dispatch(new LeaderConfirmedTeam());
+    }
+    else if (event.PlayerVotedOnTeam) {
+      const approved = typeof event.PlayerVotedOnTeam.Approved === 'boolean' ? event.PlayerVotedOnTeam.Approved : null
+      this.dispatcher.dispatch(new PlayerVotedOnTeam(event.PlayerVotedOnTeam.Player, approved));
+    }
+    else if (event.AllPlayerVotedOnTeam) {
+      const playerVote = new Map<string,boolean>(Object.keys(event.AllPlayerVotedOnTeam.PlayerVotes).map(k => [k, event.AllPlayerVotedOnTeam.PlayerVotes[k]]));
+      this.dispatcher.dispatch(new AllPlayerVotedOnTeam(event.AllPlayerVotedOnTeam.Approved, event.AllPlayerVotedOnTeam.VoteFailures, playerVote));
     }
   }
 }

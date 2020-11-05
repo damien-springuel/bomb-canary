@@ -1,6 +1,6 @@
 import test from "ava";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { EventsReplayEnded, EventsReplayStarted, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
+import { AllPlayerVotedOnTeam, EventsReplayEnded, EventsReplayStarted, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, PlayerVotedOnTeam, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {
@@ -106,4 +106,25 @@ test(`Handler - onEvent - LeaderConfirmedTeam`, t => {
   const handler = new Handler(dispatcher);
   handler.onEvent({LeaderConfirmedSelection: {}});
   t.deepEqual(dispatcher.receivedMessage, new LeaderConfirmedTeam());
+});
+
+test(`Handler - onEvent - PlayerVotedOnTeam - with 'Approved' field`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({PlayerVotedOnTeam: {Player: "testName", Approved: false}});
+  t.deepEqual(dispatcher.receivedMessage, new PlayerVotedOnTeam("testName", false));
+});
+
+test(`Handler - onEvent - PlayerVotedOnTeam - without 'Approved' field`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({PlayerVotedOnTeam: {Player: "testName"}});
+  t.deepEqual(dispatcher.receivedMessage, new PlayerVotedOnTeam("testName", null));
+});
+
+test(`Handler - onEvent - AllPlayerVoted`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({AllPlayerVotedOnTeam: {Approved: true, VoteFailures: 3, PlayerVotes: {"Alice": true, "Bob": false}}});
+  t.deepEqual(dispatcher.receivedMessage, new AllPlayerVotedOnTeam(true, 3, new Map<string, boolean>([["Alice", true], ["Bob", false]])));
 });

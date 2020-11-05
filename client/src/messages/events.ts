@@ -54,3 +54,11 @@ export class LeaderDeselectedMember implements Message {
 }
 
 export class LeaderConfirmedTeam implements Message {}
+
+export class PlayerVotedOnTeam implements Message{
+  constructor(readonly player: string, readonly approved: boolean | null){}
+}
+
+export class AllPlayerVotedOnTeam implements Message{
+  constructor(readonly approved: boolean, readonly voteFailures: number, readonly playerVotes: Map<string, boolean>){}
+}

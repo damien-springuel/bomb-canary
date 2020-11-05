@@ -9,6 +9,11 @@ export enum Page {
   Game = "game",
 }
 
+export enum GamePhase {
+  TeamSelection = "teamSelection",
+  TeamVote = "teamVote",
+}
+
 export interface StoreValues {
   pageToShow: Page
   partyCode: string
@@ -16,12 +21,15 @@ export interface StoreValues {
   players: string[]
   missionRequirements: MissionRequirement[]
   currentMission: number,
+  currentGamePhase: GamePhase,
   leader: string
   isPlayerTheLeader: boolean
   currentTeam: Set<string>,
   isPlayerInTeam: (player: string) => boolean,
   isPlayerSelectableForTeam: (player: string) => boolean,
   canConfirmTeam: boolean,
+  peopleThatVotedOnTeam: Set<string>,
+  playerVote: boolean | null
 }
 
 function defaultValues(): StoreValues {
@@ -32,17 +40,19 @@ function defaultValues(): StoreValues {
     players: [],
     missionRequirements: [],
     currentMission: 1,
+    currentGamePhase: GamePhase.TeamSelection,
     leader: "",
     isPlayerTheLeader: false,
     currentTeam: new Set<string>(),
     isPlayerInTeam: undefined,
     isPlayerSelectableForTeam: undefined,
     canConfirmTeam: false,
+    peopleThatVotedOnTeam: new Set<string>(),
+    playerVote: null,
   }
 }
 
 export class Store implements Readable<StoreValues> {
-
   protected replayingEvent: boolean = false;
   protected replayedValues: StoreValues = defaultValues();
   protected readonly writable: Writable<StoreValues> = writable(defaultValues());
@@ -106,6 +116,8 @@ export class Store implements Readable<StoreValues> {
   readonly assignLeader = assignLeader;
   readonly selectPlayer = selectPlayer;
   readonly deselectPlayer = deselectPlayer;
+  readonly startTeamVote = startTeamVote;
+  readonly makePlayerVote = makePlayerVote;
 }
 
 function showLobby(this: Store) {
@@ -169,6 +181,23 @@ function selectPlayer(this: Store, player: string) {
 function deselectPlayer(this: Store, player: string) {
   this.update(v => {
     v.currentTeam.delete(player);
+    return v;
+  });
+}
+
+function startTeamVote(this: Store): void {
+  this.update(v => {
+    v.currentGamePhase = GamePhase.TeamVote;
+    return v;
+  });
+}
+
+function makePlayerVote(this: Store, player: string, approval: boolean | null): void {
+  this.update(v => {
+    v.peopleThatVotedOnTeam.add(player);
+    if (player === v.player) {
+      v.playerVote = approval;
+    }
     return v;
   });
 }

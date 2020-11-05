@@ -1,5 +1,5 @@
 import test from "ava";
-import { GameStarted, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement } from "../messages/events";
+import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, PlayerVotedOnTeam } from "../messages/events";
 import { GameManager, GameStore } from "./game";
 
 test(`Game Manager - GameStarted`, t => {
@@ -28,4 +28,23 @@ test(`Game Manager - LeaderDeselectedMember`, t => {
   const gameMgr = new GameManager({deselectPlayer: member => {receivedMember = member}} as GameStore);
   gameMgr.consume(new LeaderDeselectedMember("member"));
   t.deepEqual(receivedMember, "member");
+});
+
+test(`Game Manager - LeaderConfirmedTeam`, t => {
+  let voteStarted = false;
+  const gameMgr = new GameManager({startTeamVote: () => {voteStarted = true}} as GameStore);
+  gameMgr.consume(new LeaderConfirmedTeam());
+  t.true(voteStarted);
+});
+
+test(`Game Manager - PlayerVotedOnTeam`, t => {
+  let receivedPlayer: string;
+  let receivedApproval: boolean;
+  const gameMgr = new GameManager({makePlayerVote: (player, approval) => {
+    receivedPlayer = player;
+    receivedApproval = approval;
+  }} as GameStore);
+  gameMgr.consume(new PlayerVotedOnTeam("testName", true));
+  t.deepEqual(receivedPlayer, "testName");
+  t.deepEqual(receivedApproval, true);
 });

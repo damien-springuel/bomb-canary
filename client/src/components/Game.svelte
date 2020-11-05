@@ -1,24 +1,12 @@
 <script lang="ts">
-import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../messages/commands";
-
 import type { Message } from "../messages/messagebus";
 import type { StoreValues } from "../store/store";
+import { GamePhase } from "../store/store";
+import TeamSelection from "./game-phases/TeamSelection.svelte";
+import TeamVote from "./game-phases/TeamVote.svelte";
 export let storeValues: StoreValues;
 export let dispatcher: {dispatch: (message: Message) => void};
 
-function togglePlayerSelection(member: string): void {
-  if (storeValues.isPlayerTheLeader) {
-    if (storeValues.isPlayerInTeam(member)) {
-      dispatcher.dispatch(new LeaderDeselectsMember(member));
-    } else {
-      dispatcher.dispatch(new LeaderSelectsMember(member));
-    }
-  }
-}
-
-function confirmTeam(): void {
-  dispatcher.dispatch(new LeaderConfirmsTeam());
-}
 </script>
 
 <div class="flex flex-col items-center h-full bg-gray-900 p-6 text-blue-500 space-y-4 text-2xl">
@@ -32,30 +20,9 @@ function confirmTeam(): void {
       </div>
     {/each}
   </div>
-  <div class="text-xl">
-    <span class="font-bold">{storeValues.leader}</span> is choosing current team.
-  </div>
-  <div class="flex-grow grid grid-cols-2 w-full content-start gap-2">
-    {#each storeValues.players as player}
-      <button 
-        class="bc-button bc-button-blue" 
-        class:bc-button-green={storeValues.isPlayerInTeam(player)} 
-        on:click={() => togglePlayerSelection(player)}
-        disabled={!storeValues.isPlayerSelectableForTeam(player)}
-        class:bc-button-gray={!storeValues.isPlayerSelectableForTeam(player)}
-      >
-        {player}
-      </button>
-    {/each}
-  </div>
-  {#if storeValues.isPlayerTheLeader}
-    <button 
-      class="bc-button bc-button-blue" 
-      on:click={confirmTeam}
-      disabled={!storeValues.canConfirmTeam}
-      class:bc-button-gray={!storeValues.canConfirmTeam}
-    >
-      I'm done
-    </button>
+  {#if storeValues.currentGamePhase === GamePhase.TeamSelection}
+    <TeamSelection dispatcher={dispatcher} storeValues={storeValues}/>
+  {:else if storeValues.currentGamePhase === GamePhase.TeamVote}
+    <TeamVote dispatcher={dispatcher} storeValues={storeValues}/>
   {/if}
 </div>
