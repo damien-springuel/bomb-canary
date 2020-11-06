@@ -17,7 +17,7 @@ test(`Store - default values`, t => {
       leader: "",
       isPlayerTheLeader: false,
       currentTeam: new Set<string>(),
-      isPlayerInTeam: undefined,
+      isGivenPlayerInTeam: undefined,
       isPlayerSelectableForTeam: undefined,
       canConfirmTeam: false,
       peopleThatVotedOnTeam: new Set<string>(),
@@ -181,15 +181,15 @@ test(`Store - deselectPlayer`, t => {
   t.deepEqual(storeValues.currentTeam, new Set<string>(["p2"]));
 });
 
-test(`Store - isPlayerInTeam`, t => {
+test(`Store - isGivenPlayerInTeam`, t => {
   const store = new Store();
   store.selectPlayer("p1");
   store.selectPlayer("p2");
   store.deselectPlayer("p1");
   let storeValues: StoreValues = get(store);
-  t.false(storeValues.isPlayerInTeam("p1"));
-  t.true(storeValues.isPlayerInTeam("p2"));
-  t.false(storeValues.isPlayerInTeam("p3"));
+  t.false(storeValues.isGivenPlayerInTeam("p1"));
+  t.true(storeValues.isGivenPlayerInTeam("p2"));
+  t.false(storeValues.isGivenPlayerInTeam("p3"));
 });
 
 test(`Store - isPlayerSelectableForTeam`, t => {
@@ -242,7 +242,7 @@ test(`Store - makePlayerVote - the player`, t => {
   t.deepEqual(storeValues.playerVote, true);
 });
 
-test(`Store - hasPlayerVoted`, t => {
+test(`Store - hasGivenPlayerVoted`, t => {
   const store = new Store();
   store.makePlayerVote("p1", false);
   let storeValues: StoreValues = get(store);

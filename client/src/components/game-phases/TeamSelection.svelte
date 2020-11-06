@@ -7,7 +7,7 @@
   
   function togglePlayerSelection(member: string): void {
     if (storeValues.isPlayerTheLeader) {
-      if (storeValues.isPlayerInTeam(member)) {
+      if (storeValues.isGivenPlayerInTeam(member)) {
         dispatcher.dispatch(new LeaderDeselectsMember(member));
       } else {
         dispatcher.dispatch(new LeaderSelectsMember(member));
@@ -28,7 +28,7 @@
       {#each storeValues.players as player}
         <button 
           class="bc-button bc-button-blue" 
-          class:bc-button-green={storeValues.isPlayerInTeam(player)} 
+          class:bc-button-green={storeValues.isGivenPlayerInTeam(player)} 
           on:click={() => togglePlayerSelection(player)}
           disabled={!storeValues.isPlayerSelectableForTeam(player)}
           class:bc-button-gray={!storeValues.isPlayerSelectableForTeam(player)}

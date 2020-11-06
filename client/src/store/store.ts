@@ -26,7 +26,7 @@ export interface StoreValues {
   leader: string
   isPlayerTheLeader: boolean
   currentTeam: Set<string>,
-  isPlayerInTeam: (player: string) => boolean,
+  isGivenPlayerInTeam: (player: string) => boolean,
   isPlayerSelectableForTeam: (player: string) => boolean,
   canConfirmTeam: boolean,
   peopleThatVotedOnTeam: Set<string>,
@@ -46,7 +46,7 @@ function defaultValues(): StoreValues {
     leader: "",
     isPlayerTheLeader: false,
     currentTeam: new Set<string>(),
-    isPlayerInTeam: undefined,
+    isGivenPlayerInTeam: undefined,
     isPlayerSelectableForTeam: undefined,
     canConfirmTeam: false,
     peopleThatVotedOnTeam: new Set<string>(),
@@ -75,7 +75,7 @@ export class Store implements Readable<StoreValues> {
 
   protected updateComputed(value: StoreValues): StoreValues {
     value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
-    value.isPlayerInTeam = player => value.currentTeam.has(player);
+    value.isGivenPlayerInTeam = player => value.currentTeam.has(player);
     
     const currentMissionRequirement = value.missionRequirements[value.currentMission-1];
     value.isPlayerSelectableForTeam = player => {
