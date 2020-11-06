@@ -33,8 +33,8 @@ import { ApproveTeam, RejectTeam } from "../../messages/commands";
         class="bc-button bc-button-green" 
         on:click={approve}
         class:text-gray-700={storeValues.hasGivenPlayerVoted(storeValues.player)}
-        class:bg-gray-500={storeValues.playerVote !== true}
-        class:hover:bg-gray-500={storeValues.playerVote !== true}
+        class:bg-gray-500={storeValues.playerVote !== true && storeValues.playerVote !== null}
+        class:hover:bg-gray-500={storeValues.playerVote !== true && storeValues.playerVote !== null}
         disabled={storeValues.hasGivenPlayerVoted(storeValues.player)}
       >
         Approve
@@ -43,8 +43,8 @@ import { ApproveTeam, RejectTeam } from "../../messages/commands";
         class="bc-button bc-button-red" 
         on:click={reject}
         class:text-gray-700={storeValues.hasGivenPlayerVoted(storeValues.player)}
-        class:bg-gray-500={storeValues.playerVote !== false}
-        class:hover:bg-gray-500={storeValues.playerVote !== false}
+        class:bg-gray-500={storeValues.playerVote !== false && storeValues.playerVote !== null}
+        class:hover:bg-gray-500={storeValues.playerVote !== false && storeValues.playerVote !== null}
         disabled={storeValues.hasGivenPlayerVoted(storeValues.player)}
       >
         Reject
