@@ -84,6 +84,15 @@ func started5PlayerGame(ctx context.Context) context.Context {
 	return ctx
 }
 
+func fivePlayerGameFirstVote(ctx context.Context) context.Context {
+	ctx = started5PlayerGame(ctx)
+	session := ctx.Value("sessionAlice").(string)
+	bcclient.LeaderSelectsMember(session, "Alice")
+	bcclient.LeaderSelectsMember(session, "Bob")
+	bcclient.LeaderConfirmsTeam(session)
+	return ctx
+}
+
 func New() *Emulator {
 	presetsPage := page{
 		title: "Presets",
@@ -99,6 +108,10 @@ func New() *Emulator {
 			{
 				description: "Started 5-player game",
 				action:      started5PlayerGame,
+			},
+			{
+				description: "5-player game first vote",
+				action:      fivePlayerGameFirstVote,
 			},
 		},
 	}
@@ -189,6 +202,51 @@ func New() *Emulator {
 					})
 					return context.WithValue(ctx, "actionDesc", "is being deselected?")
 				}, "is the leader?"),
+			},
+			{
+				description: "Leader Confirms Team",
+				action: createActionWithName(func(ctx context.Context) context.Context {
+					name := ctx.Value("name").(string)
+					session := ctx.Value("session" + name).(string)
+					bcclient.LeaderConfirmsTeam(session)
+					return ctx
+				}, "is confirming the team?"),
+			},
+			{
+				description: "Approve Team",
+				action: createActionWithName(func(ctx context.Context) context.Context {
+					name := ctx.Value("name").(string)
+					session := ctx.Value("session" + name).(string)
+					bcclient.ApproveTeam(session)
+					return ctx
+				}, "is approving the team?"),
+			},
+			{
+				description: "Reject Team",
+				action: createActionWithName(func(ctx context.Context) context.Context {
+					name := ctx.Value("name").(string)
+					session := ctx.Value("session" + name).(string)
+					bcclient.RejectTeam(session)
+					return ctx
+				}, "is rejecting the team?"),
+			},
+			{
+				description: "Succeed Mission",
+				action: createActionWithName(func(ctx context.Context) context.Context {
+					name := ctx.Value("name").(string)
+					session := ctx.Value("session" + name).(string)
+					bcclient.SucceedMission(session)
+					return ctx
+				}, "is succeeding the mission?"),
+			},
+			{
+				description: "Fail Mission",
+				action: createActionWithName(func(ctx context.Context) context.Context {
+					name := ctx.Value("name").(string)
+					session := ctx.Value("session" + name).(string)
+					bcclient.FailMission(session)
+					return ctx
+				}, "is failing the mission?"),
 			},
 		},
 	}

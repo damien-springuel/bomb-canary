@@ -103,3 +103,23 @@ func LeaderSelectsMember(session, name string) {
 func LeaderDeselectsMember(session, name string) {
 	makePlayerActionRequest("actions/leader-deselects-member", leaderSelectionRequest{Member: name}, session)
 }
+
+func LeaderConfirmsTeam(session string) {
+	makePlayerActionRequest("actions/leader-confirms-team", nil, session)
+}
+
+func ApproveTeam(session string) {
+	makePlayerActionRequest("actions/approve-team", nil, session)
+}
+
+func RejectTeam(session string) {
+	makePlayerActionRequest("actions/reject-team", nil, session)
+}
+
+func SucceedMission(session string) {
+	makePlayerActionRequest("actions/succeed-mission", nil, session)
+}
+
+func FailMission(session string) {
+	makePlayerActionRequest("actions/fail-mission", nil, session)
+}
