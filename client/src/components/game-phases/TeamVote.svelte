@@ -1,15 +1,17 @@
 <script lang="ts">
+import { ApproveTeam, RejectTeam } from "../../messages/commands";
+
   import type { Message } from "../../messages/messagebus";
   import type { StoreValues } from "../../store/store";
   export let storeValues: StoreValues;
-  export let dispatcher: {dispatch: (message: Message) => void};
+  export let dispatcher: {dispatch(message: Message): void};
 
   function approve(){
-    console.log(`approve team`);
+    dispatcher.dispatch(new ApproveTeam());
   }
 
   function reject() {
-    console.log(`reject team`);
+    dispatcher.dispatch(new RejectTeam());
   }
 
   </script>
@@ -18,11 +20,12 @@
     <div class="text-3xl">
       Team
     </div>
-    <div class="flex flex-row flex-wrap justify-around gap-x-2 w-full">
-      {#each Array.from(storeValues.currentTeam.values()) as member}
-        <div class="text-blue-500">
-          {member}
-        </div>
+    <div class="flex flex-row flex-wrap justify-center gap-x-2 w-full text-blue-500">
+      {#each Array.from(storeValues.currentTeam.values()) as member, i}
+        {#if i !== 0}
+          <div>|</div>
+        {/if}
+        <div>{member}</div>
       {/each}
     </div>
     <div class="flex flex-row justify-center w-full gap-x-2 mt-4">

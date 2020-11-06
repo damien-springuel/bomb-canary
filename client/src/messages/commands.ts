@@ -12,7 +12,13 @@ export class StartGame implements Message {}
 export class LeaderSelectsMember implements Message {
   constructor(readonly member: string){}
 }
+
 export class LeaderDeselectsMember implements Message {
   constructor(readonly member: string){}
 }
+
 export class LeaderConfirmsTeam implements Message {}
+
+export class ApproveTeam implements Message {}
+
+export class RejectTeam implements Message {}
