@@ -12,6 +12,7 @@ export enum Page {
 export enum GamePhase {
   TeamSelection = "teamSelection",
   TeamVote = "teamVote",
+  Mission = "mission",
 }
 
 export interface StoreValues {
@@ -121,6 +122,7 @@ export class Store implements Readable<StoreValues> {
   readonly deselectPlayer = deselectPlayer;
   readonly startTeamVote = startTeamVote;
   readonly makePlayerVote = makePlayerVote;
+  readonly startMission = startMission;
 }
 
 function showLobby(this: Store) {
@@ -201,6 +203,13 @@ function makePlayerVote(this: Store, player: string, approval: boolean | null): 
     if (player === v.player) {
       v.playerVote = approval;
     }
+    return v;
+  });
+}
+
+function startMission(this: Store): void {
+  this.update(v => {
+    v.currentGamePhase = GamePhase.Mission;
     return v;
   });
 }

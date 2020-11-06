@@ -2,6 +2,7 @@
 import type { Message } from "../messages/messagebus";
 import type { StoreValues } from "../store/store";
 import { GamePhase } from "../store/store";
+import Mission from "./game-phases/Mission.svelte";
 import TeamSelection from "./game-phases/TeamSelection.svelte";
 import TeamVote from "./game-phases/TeamVote.svelte";
 export let storeValues: StoreValues;
@@ -24,5 +25,7 @@ export let dispatcher: {dispatch: (message: Message) => void};
     <TeamSelection dispatcher={dispatcher} storeValues={storeValues}/>
   {:else if storeValues.currentGamePhase === GamePhase.TeamVote}
     <TeamVote dispatcher={dispatcher} storeValues={storeValues}/>
+  {:else if storeValues.currentGamePhase === GamePhase.Mission}
+    <Mission dispatcher={dispatcher} storeValues={storeValues}/>
   {/if}
 </div>

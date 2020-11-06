@@ -1,6 +1,6 @@
 import test from "ava";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { AllPlayerVotedOnTeam, EventsReplayEnded, EventsReplayStarted, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, PlayerVotedOnTeam, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
+import { AllPlayerVotedOnTeam, EventsReplayEnded, EventsReplayStarted, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionStarted, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, PlayerVotedOnTeam, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {
@@ -127,4 +127,11 @@ test(`Handler - onEvent - AllPlayerVoted`, t => {
   const handler = new Handler(dispatcher);
   handler.onEvent({AllPlayerVotedOnTeam: {Approved: true, VoteFailures: 3, PlayerVotes: {"Alice": true, "Bob": false}}});
   t.deepEqual(dispatcher.receivedMessage, new AllPlayerVotedOnTeam(true, 3, new Map<string, boolean>([["Alice", true], ["Bob", false]])));
+});
+
+test(`Handler - onEvent - MissionStarted`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({MissionStarted: {}});
+  t.deepEqual(dispatcher.receivedMessage, new MissionStarted());
 });

@@ -249,3 +249,10 @@ test(`Store - hasPlayerVoted`, t => {
   t.true(storeValues.hasGivenPlayerVoted("p1"));
   t.false(storeValues.hasGivenPlayerVoted("p2"));
 });
+
+test(`Store - startMission`, t => {
+  const store = new Store();
+  store.startMission();
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.currentGamePhase, GamePhase.Mission);
+});

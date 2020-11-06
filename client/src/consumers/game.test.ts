@@ -1,5 +1,5 @@
 import test from "ava";
-import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, PlayerVotedOnTeam } from "../messages/events";
+import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, MissionStarted, PlayerVotedOnTeam } from "../messages/events";
 import { GameManager, GameStore } from "./game";
 
 test(`Game Manager - GameStarted`, t => {
@@ -47,4 +47,11 @@ test(`Game Manager - PlayerVotedOnTeam`, t => {
   gameMgr.consume(new PlayerVotedOnTeam("testName", true));
   t.deepEqual(receivedPlayer, "testName");
   t.deepEqual(receivedApproval, true);
+});
+
+test(`Game Manager - MissionStarted`, t => {
+  let missionStarted: boolean = false;
+  const gameMgr = new GameManager({startMission: () => {missionStarted = true}} as GameStore);
+  gameMgr.consume(new MissionStarted());
+  t.true(missionStarted);
 });
