@@ -22,6 +22,7 @@ test(`Store - default values`, t => {
       canConfirmTeam: false,
       peopleThatVotedOnTeam: new Set<string>(),
       playerVote: null,
+      hasGivenPlayerVoted: undefined,
     }
   );
 });
@@ -239,4 +240,12 @@ test(`Store - makePlayerVote - the player`, t => {
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.peopleThatVotedOnTeam, new Set<string>(["testName"]));
   t.deepEqual(storeValues.playerVote, true);
+});
+
+test(`Store - hasPlayerVoted`, t => {
+  const store = new Store();
+  store.makePlayerVote("p1", false);
+  let storeValues: StoreValues = get(store);
+  t.true(storeValues.hasGivenPlayerVoted("p1"));
+  t.false(storeValues.hasGivenPlayerVoted("p2"));
 });

@@ -30,6 +30,7 @@ export interface StoreValues {
   canConfirmTeam: boolean,
   peopleThatVotedOnTeam: Set<string>,
   playerVote: boolean | null
+  hasGivenPlayerVoted: (player: string) => boolean,
 }
 
 function defaultValues(): StoreValues {
@@ -49,6 +50,7 @@ function defaultValues(): StoreValues {
     canConfirmTeam: false,
     peopleThatVotedOnTeam: new Set<string>(),
     playerVote: null,
+    hasGivenPlayerVoted: undefined,
   }
 }
 
@@ -85,6 +87,7 @@ export class Store implements Readable<StoreValues> {
       return false;
     }
     value.canConfirmTeam = value.currentTeam.size === currentMissionRequirement?.nbPeopleOnMission
+    value.hasGivenPlayerVoted = player => value.peopleThatVotedOnTeam.has(player);
     return value;
   }
 
