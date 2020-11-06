@@ -23,6 +23,7 @@ test(`Store - default values`, t => {
       peopleThatVotedOnTeam: new Set<string>(),
       playerVote: null,
       hasGivenPlayerVoted: undefined,
+      isPlayerInMission: false,
     }
   );
 });
@@ -255,4 +256,16 @@ test(`Store - startMission`, t => {
   store.startMission();
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.currentGamePhase, GamePhase.Mission);
+});
+
+test(`Store - isPlayerInMission`, t => {
+  const store = new Store();
+  store.definePlayer("p1");
+  store.selectPlayer("p1");
+  let storeValues: StoreValues = get(store);
+  t.true(storeValues.isPlayerInMission);
+
+  store.deselectPlayer("p1");
+  storeValues = get(store);
+  t.false(storeValues.isPlayerInMission);
 });

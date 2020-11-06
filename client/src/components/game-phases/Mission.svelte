@@ -25,21 +25,23 @@
         </div>
       {/each}
     </div>
-    <div class="flex-grow content-center flex flex-col justify-center">
-      <div class="text-4xl text-center">You are part of the mission!</div>
-      <div class="grid grid-cols-2 justify-center w-full gap-x-2 mt-4">
-        <button 
-          class="bc-button bc-button-green" 
-          on:click={succeed}
-        >
-          Succeed
-        </button>
-        <button 
-          class="bc-button bc-button-red" 
-          on:click={fail}
-        >
-          Fail
-        </button>
+    {#if storeValues.isPlayerInMission}
+      <div class="flex-grow content-center flex flex-col justify-center">
+        <div class="text-4xl text-center">You are part of the mission!</div>
+        <div class="grid grid-cols-2 justify-center w-full gap-x-2 mt-4">
+          <button 
+            class="bc-button bc-button-green" 
+            on:click={succeed}
+          >
+            Succeed
+          </button>
+          <button 
+            class="bc-button bc-button-red" 
+            on:click={fail}
+          >
+            Fail
+          </button>
+        </div>
       </div>
-    </div>
+    {/if}
   </div>
