@@ -1,5 +1,5 @@
 import type { HttpPost } from "../http/post";
-import { ApproveTeam, LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember, RejectTeam, StartGame } from "../messages/commands";
+import { ApproveTeam, FailMission, LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember, RejectTeam, StartGame, SucceedMission } from "../messages/commands";
 import type { Message } from "../messages/messagebus";
 
 export class PlayerActions {
@@ -25,6 +25,12 @@ export class PlayerActions {
     }
     else if (message instanceof RejectTeam) {
       this.http.post("/actions/reject-team");
+    }
+    else if (message instanceof SucceedMission) {
+      this.http.post("/actions/succeed-mission");
+    }
+    else if (message instanceof FailMission) {
+      this.http.post("/actions/fail-mission");
     }
   }
 }

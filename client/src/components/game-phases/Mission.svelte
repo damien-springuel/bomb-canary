@@ -1,15 +1,17 @@
 <script lang="ts">
+import { FailMission, SucceedMission } from "../../messages/commands";
+
   import type { Message } from "../../messages/messagebus";
   import type { StoreValues } from "../../store/store";
   export let storeValues: StoreValues;
   export let dispatcher: {dispatch(message: Message): void};
 
   function succeed(){
-    console.log(`Succeed mission`);
+    dispatcher.dispatch(new SucceedMission());
   }
 
   function fail() {
-    console.log(`Fail mission`);
+    dispatcher.dispatch(new FailMission());
   }
 
   </script>

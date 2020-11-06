@@ -1,6 +1,6 @@
 import test from "ava";
 import { HttpPostMock } from "../http/post.test-utils";
-import { ApproveTeam, LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember, RejectTeam, StartGame } from "../messages/commands";
+import { ApproveTeam, FailMission, LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember, RejectTeam, StartGame, SucceedMission } from "../messages/commands";
 import { PlayerActions } from "./player-actions";
 
 test(`Player Actions - Start Game`, t => {
@@ -45,4 +45,18 @@ test(`Player Actions - Reject Team`, t => {
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new RejectTeam());
   t.deepEqual(httpPost.givenUrl, "/actions/reject-team");
+});
+
+test(`Player Actions - Succeed Mission`, t => {
+  const httpPost = new HttpPostMock();
+  const playerActions = new PlayerActions(httpPost);
+  playerActions.consume(new SucceedMission());
+  t.deepEqual(httpPost.givenUrl, "/actions/succeed-mission");
+});
+
+test(`Player Actions - Fail Mission`, t => {
+  const httpPost = new HttpPostMock();
+  const playerActions = new PlayerActions(httpPost);
+  playerActions.consume(new FailMission());
+  t.deepEqual(httpPost.givenUrl, "/actions/fail-mission");
 });

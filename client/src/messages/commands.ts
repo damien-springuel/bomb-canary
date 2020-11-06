@@ -22,3 +22,7 @@ export class LeaderConfirmsTeam implements Message {}
 export class ApproveTeam implements Message {}
 
 export class RejectTeam implements Message {}
+
+export class SucceedMission implements Message {}
+
+export class FailMission implements Message {}
