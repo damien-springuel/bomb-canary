@@ -15,6 +15,11 @@ export enum GamePhase {
   Mission = "mission",
 }
 
+export interface MissionResult {
+  readonly success: boolean
+  readonly nbFails: number
+}
+
 export interface StoreValues {
   pageToShow: Page
   partyCode: string
@@ -36,6 +41,7 @@ export interface StoreValues {
   peopleThatWorkedOnMission: Set<string>,
   playerMissionSuccess: boolean | null
   hasGivenPlayerWorkedOnMission: (player: string) => boolean,
+  missionResults: MissionResult[]
 }
 
 function defaultValues(): StoreValues {
@@ -60,6 +66,7 @@ function defaultValues(): StoreValues {
     peopleThatWorkedOnMission: new Set<string>(),
     playerMissionSuccess: null,
     hasGivenPlayerWorkedOnMission: undefined,
+    missionResults: [],
   }
 }
 
@@ -127,6 +134,7 @@ export class Store implements Readable<StoreValues> {
   readonly joinPlayer = joinPlayer;
   readonly definePlayer = definePlayer;
   readonly setMissionRequirements = setMissionRequirements;
+  readonly startTeamSelection = startTeamSelection;
   readonly assignLeader = assignLeader;
   readonly selectPlayer = selectPlayer;
   readonly deselectPlayer = deselectPlayer;
@@ -134,6 +142,7 @@ export class Store implements Readable<StoreValues> {
   readonly makePlayerVote = makePlayerVote;
   readonly startMission = startMission;
   readonly makePlayerWorkOnMission = makePlayerWorkOnMission;
+  readonly saveMissionResult = saveMissionResult;
 }
 
 function showLobby(this: Store) {
@@ -176,6 +185,13 @@ function setMissionRequirements(this: Store, requirements: MissionRequirement[])
   this.update(v => {
     v.missionRequirements = requirements.slice();
     v.currentMission = 1;
+    return v;
+  });
+}
+
+function startTeamSelection(this: Store): void {
+  this.update(v => {
+    v.currentGamePhase = GamePhase.TeamSelection;
     return v;
   });
 }
@@ -231,6 +247,19 @@ function makePlayerWorkOnMission(this: Store, player: string, success: boolean |
     if (player === v.player) {
       v.playerMissionSuccess = success;
     }
+    return v;
+  });
+}
+
+function saveMissionResult(this: Store, success: boolean, nbFails: number): void {
+  this.update(v => {
+    v.missionResults.push({success, nbFails});
+    v.currentMission += 1;
+    v.currentTeam.clear();
+    v.peopleThatVotedOnTeam.clear();
+    v.playerVote = null;
+    v.peopleThatWorkedOnMission.clear();
+    v.playerMissionSuccess = null;
     return v;
   });
 }

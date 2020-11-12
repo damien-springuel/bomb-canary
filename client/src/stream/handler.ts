@@ -7,6 +7,7 @@ import {
   LeaderDeselectedMember, 
   LeaderSelectedMember, 
   LeaderStartedToSelectMembers, 
+  MissionCompleted, 
   MissionStarted, 
   PartyCreated, 
   PlayerConnected, 
@@ -84,6 +85,9 @@ export class Handler {
     else if (event.PlayerWorkedOnMission) {
       const success = typeof event.PlayerWorkedOnMission.Success === 'boolean' ? event.PlayerWorkedOnMission.Success : null
       this.dispatcher.dispatch(new PlayerWorkedOnMission(event.PlayerWorkedOnMission.Player, success));
+    }
+    else if (event.MissionCompleted) {
+      this.dispatcher.dispatch(new MissionCompleted(event.MissionCompleted.Success, event.MissionCompleted.NbFails));
     }
   }
 }

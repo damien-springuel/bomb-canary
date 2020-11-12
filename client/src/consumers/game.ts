@@ -1,8 +1,9 @@
-import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission } from "../messages/events";
+import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionCompleted, MissionRequirement, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
 export interface GameStore {
   setMissionRequirements(requirements: MissionRequirement[]): void
+  startTeamSelection(): void
   assignLeader(leader: string): void
   selectPlayer(player: string): void
   deselectPlayer(player: string): void
@@ -10,6 +11,7 @@ export interface GameStore {
   makePlayerVote(player: string, approval: boolean | null): void
   startMission(): void
   makePlayerWorkOnMission(player: string, success: boolean | null): void
+  saveMissionResult(success: boolean, nbFails: number): void
 }
 
 export class GameManager {
@@ -18,6 +20,7 @@ export class GameManager {
 
   consume(message: Message): void {
     if (message instanceof LeaderStartedToSelectMembers) {
+      this.gameStore.startTeamSelection();
       this.gameStore.assignLeader(message.leader);
     } 
     else if(message instanceof LeaderSelectedMember) {
@@ -40,6 +43,9 @@ export class GameManager {
     }
     else if(message instanceof PlayerWorkedOnMission) {
       this.gameStore.makePlayerWorkOnMission(message.player, message.success);
+    }
+    else if(message instanceof MissionCompleted) {
+      this.gameStore.saveMissionResult(message.success, message.nbFails);
     }
   }
 }

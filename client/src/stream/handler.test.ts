@@ -1,6 +1,6 @@
 import test from "ava";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { AllPlayerVotedOnTeam, EventsReplayEnded, EventsReplayStarted, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionStarted, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, PlayerVotedOnTeam, PlayerWorkedOnMission, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
+import { AllPlayerVotedOnTeam, EventsReplayEnded, EventsReplayStarted, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionCompleted, MissionStarted, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, PlayerVotedOnTeam, PlayerWorkedOnMission, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {
@@ -148,4 +148,11 @@ test(`Handler - onEvent - PlayerWorkedOnMission - without success field`, t => {
   const handler = new Handler(dispatcher);
   handler.onEvent({PlayerWorkedOnMission: {Player: "testName"}});
   t.deepEqual(dispatcher.receivedMessage, new PlayerWorkedOnMission("testName", null));
+});
+
+test(`Handler - onEvent - MissionCompleted`, t => {
+  const dispatcher: DispatcherMock = new DispatcherMock();
+  const handler = new Handler(dispatcher);
+  handler.onEvent({MissionCompleted: {Success: false, NbFails: 1}});
+  t.deepEqual(dispatcher.receivedMessage, new MissionCompleted(false, 1));
 });

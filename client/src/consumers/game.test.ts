@@ -1,5 +1,5 @@
 import test from "ava";
-import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission } from "../messages/events";
+import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionCompleted, MissionRequirement, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission } from "../messages/events";
 import { GameManager, GameStore } from "./game";
 
 test(`Game Manager - GameStarted`, t => {
@@ -11,8 +11,10 @@ test(`Game Manager - GameStarted`, t => {
 
 test(`Game Manager - LeaderStartedToSelectMembers`, t => {
   let receivedLeader: string
-  const gameMgr = new GameManager({assignLeader: leader => {receivedLeader = leader}} as GameStore);
+  let teamSelectionStarted = false;
+  const gameMgr = new GameManager({assignLeader: leader => {receivedLeader = leader}, startTeamSelection: () => {teamSelectionStarted = true}} as GameStore);
   gameMgr.consume(new LeaderStartedToSelectMembers("testLeader"));
+  t.true(teamSelectionStarted);
   t.deepEqual(receivedLeader, "testLeader");
 });
 
@@ -56,7 +58,6 @@ test(`Game Manager - MissionStarted`, t => {
   t.true(missionStarted);
 });
 
-
 test(`Game Manager - PlayerWorkedOnMission`, t => {
   let receivedPlayer: string;
   let receivedSuccess: boolean;
@@ -68,3 +69,16 @@ test(`Game Manager - PlayerWorkedOnMission`, t => {
   t.deepEqual(receivedPlayer, "testName");
   t.deepEqual(receivedSuccess, true);
 });
+
+test(`Game Manager - SaveMissionResult`, t => {
+  let receivedSuccess: boolean;
+  let receivedNbFails: number;
+  const gameMgr = new GameManager({saveMissionResult: (success, nbFails) => {
+    receivedSuccess = success;
+    receivedNbFails = nbFails;
+  }} as GameStore);
+  gameMgr.consume(new MissionCompleted(false, 2));
+  t.false(receivedSuccess);
+  t.deepEqual(receivedNbFails, 2);
+});
+

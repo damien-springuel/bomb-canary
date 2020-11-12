@@ -68,3 +68,7 @@ export class MissionStarted implements Message {}
 export class PlayerWorkedOnMission implements Message {
   constructor(readonly player: string, readonly success: boolean | null){}
 }
+
+export class MissionCompleted implements Message {
+  constructor(readonly success: boolean, readonly nbFails: number){}
+}
