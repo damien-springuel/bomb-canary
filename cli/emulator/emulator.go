@@ -93,6 +93,16 @@ func fivePlayerGameFirstVote(ctx context.Context) context.Context {
 	return ctx
 }
 
+func fivePlayerGameFirstMission(ctx context.Context) context.Context {
+	ctx = fivePlayerGameFirstVote(ctx)
+	bcclient.ApproveTeam(ctx.Value("sessionAlice").(string))
+	bcclient.ApproveTeam(ctx.Value("sessionBob").(string))
+	bcclient.ApproveTeam(ctx.Value("sessionCharlie").(string))
+	bcclient.ApproveTeam(ctx.Value("sessionDan").(string))
+	bcclient.ApproveTeam(ctx.Value("sessionEdith").(string))
+	return ctx
+}
+
 func New() *Emulator {
 	presetsPage := page{
 		title: "Presets",
@@ -112,6 +122,10 @@ func New() *Emulator {
 			{
 				description: "5-player game first vote",
 				action:      fivePlayerGameFirstVote,
+			},
+			{
+				description: "5-player game first mission",
+				action:      fivePlayerGameFirstMission,
 			},
 		},
 	}
@@ -143,24 +157,6 @@ func New() *Emulator {
 	actionPage := page{
 		title: "Action",
 		rows: []choice{
-			{
-				description: "Create Game",
-				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					code, session := bcclient.CreateGame(name)
-					ctx = context.WithValue(ctx, "code", code)
-					return context.WithValue(ctx, "session"+name, session)
-				}, "is creating the game?"),
-			},
-			{
-				description: "Join Game",
-				action: createActionWithName(func(ctx context.Context) context.Context {
-					code := ctx.Value("code").(string)
-					name := ctx.Value("name").(string)
-					session := bcclient.JoinGame(code, name)
-					return context.WithValue(ctx, "session"+name, session)
-				}, "is joining the game?"),
-			},
 			{
 				description: "Start Game",
 				action: createActionWithName(func(ctx context.Context) context.Context {
