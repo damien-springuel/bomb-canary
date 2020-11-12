@@ -64,3 +64,7 @@ export class AllPlayerVotedOnTeam implements Message{
 }
 
 export class MissionStarted implements Message {}
+
+export class PlayerWorkedOnMission implements Message {
+  constructor(readonly player: string, readonly success: boolean | null){}
+}

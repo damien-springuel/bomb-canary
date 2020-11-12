@@ -22,7 +22,11 @@ import { FailMission, SucceedMission } from "../../messages/commands";
     </div>
     <div class="grid grid-cols-2 w-full content-start gap-2 text-lg text-center">
       {#each Array.from(storeValues.currentTeam.values()) as member}
-        <div class="border border-blue-500 rounded-lg p-1" >
+        <div 
+          class="border border-blue-500 rounded-lg p-1" 
+          class:bg-blue-500={storeValues.hasGivenPlayerWorkedOnMission(member)}
+          class:text-gray-900={storeValues.hasGivenPlayerWorkedOnMission(member)}
+        >
           {member}
         </div>
       {/each}

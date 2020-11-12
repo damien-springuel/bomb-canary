@@ -24,6 +24,9 @@ test(`Store - default values`, t => {
       playerVote: null,
       hasGivenPlayerVoted: undefined,
       isPlayerInMission: false,
+      peopleThatWorkedOnMission: new Set<string>(),
+      playerMissionSuccess: null,
+      hasGivenPlayerWorkedOnMission: undefined,
     }
   );
 });
@@ -268,4 +271,30 @@ test(`Store - isPlayerInMission`, t => {
   store.deselectPlayer("p1");
   storeValues = get(store);
   t.false(storeValues.isPlayerInMission);
+});
+
+test(`Store - makePlayerWorkOnMission - the player`, t => {
+  const store = new Store();
+  store.definePlayer("p1");
+  store.makePlayerWorkOnMission("p1", true);
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.peopleThatWorkedOnMission, new Set<string>(["p1"]));
+  t.deepEqual(storeValues.playerMissionSuccess, true);
+});
+
+test(`Store - makePlayerWorkOnMission - not the player`, t => {
+  const store = new Store();
+  store.definePlayer("p1");
+  store.makePlayerWorkOnMission("p2", true);
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.peopleThatWorkedOnMission, new Set<string>(["p2"]));
+  t.deepEqual(storeValues.playerMissionSuccess, null);
+});
+
+test(`Store - hasGivenPlayerWorkedOnMission`, t => {
+  const store = new Store();
+  store.makePlayerWorkOnMission("p1", true);
+  let storeValues: StoreValues = get(store);
+  t.true(storeValues.hasGivenPlayerWorkedOnMission("p1"));
+  t.false(storeValues.hasGivenPlayerWorkedOnMission("p2"));
 });

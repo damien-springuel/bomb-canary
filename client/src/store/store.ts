@@ -33,6 +33,9 @@ export interface StoreValues {
   playerVote: boolean | null
   hasGivenPlayerVoted: (player: string) => boolean,
   isPlayerInMission: boolean;
+  peopleThatWorkedOnMission: Set<string>,
+  playerMissionSuccess: boolean | null
+  hasGivenPlayerWorkedOnMission: (player: string) => boolean,
 }
 
 function defaultValues(): StoreValues {
@@ -54,6 +57,9 @@ function defaultValues(): StoreValues {
     playerVote: null,
     hasGivenPlayerVoted: undefined,
     isPlayerInMission: false,
+    peopleThatWorkedOnMission: new Set<string>(),
+    playerMissionSuccess: null,
+    hasGivenPlayerWorkedOnMission: undefined,
   }
 }
 
@@ -92,6 +98,7 @@ export class Store implements Readable<StoreValues> {
     value.canConfirmTeam = value.currentTeam.size === currentMissionRequirement?.nbPeopleOnMission
     value.hasGivenPlayerVoted = player => value.peopleThatVotedOnTeam.has(player);
     value.isPlayerInMission = value.currentTeam.has(value.player);
+    value.hasGivenPlayerWorkedOnMission = player => value.peopleThatWorkedOnMission.has(player);
     return value;
   }
 
@@ -126,6 +133,7 @@ export class Store implements Readable<StoreValues> {
   readonly startTeamVote = startTeamVote;
   readonly makePlayerVote = makePlayerVote;
   readonly startMission = startMission;
+  readonly makePlayerWorkOnMission = makePlayerWorkOnMission;
 }
 
 function showLobby(this: Store) {
@@ -213,6 +221,16 @@ function makePlayerVote(this: Store, player: string, approval: boolean | null): 
 function startMission(this: Store): void {
   this.update(v => {
     v.currentGamePhase = GamePhase.Mission;
+    return v;
+  });
+}
+
+function makePlayerWorkOnMission(this: Store, player: string, success: boolean | null): void {
+  this.update(v => {
+    v.peopleThatWorkedOnMission.add(player);
+    if (player === v.player) {
+      v.playerMissionSuccess = success;
+    }
     return v;
   });
 }

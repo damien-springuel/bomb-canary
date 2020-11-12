@@ -1,5 +1,5 @@
 import test from "ava";
-import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, MissionStarted, PlayerVotedOnTeam } from "../messages/events";
+import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission } from "../messages/events";
 import { GameManager, GameStore } from "./game";
 
 test(`Game Manager - GameStarted`, t => {
@@ -54,4 +54,17 @@ test(`Game Manager - MissionStarted`, t => {
   const gameMgr = new GameManager({startMission: () => {missionStarted = true}} as GameStore);
   gameMgr.consume(new MissionStarted());
   t.true(missionStarted);
+});
+
+
+test(`Game Manager - PlayerWorkedOnMission`, t => {
+  let receivedPlayer: string;
+  let receivedSuccess: boolean;
+  const gameMgr = new GameManager({makePlayerWorkOnMission: (player, approval) => {
+    receivedPlayer = player;
+    receivedSuccess = approval;
+  }} as GameStore);
+  gameMgr.consume(new PlayerWorkedOnMission("testName", true));
+  t.deepEqual(receivedPlayer, "testName");
+  t.deepEqual(receivedSuccess, true);
 });

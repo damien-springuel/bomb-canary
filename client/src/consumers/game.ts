@@ -1,4 +1,4 @@
-import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, MissionStarted, PlayerVotedOnTeam } from "../messages/events";
+import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionRequirement, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
 export interface GameStore {
@@ -9,6 +9,7 @@ export interface GameStore {
   startTeamVote(): void
   makePlayerVote(player: string, approval: boolean | null): void
   startMission(): void
+  makePlayerWorkOnMission(player: string, success: boolean | null): void
 }
 
 export class GameManager {
@@ -36,6 +37,9 @@ export class GameManager {
     }
     else if(message instanceof MissionStarted) {
       this.gameStore.startMission();
+    }
+    else if(message instanceof PlayerWorkedOnMission) {
+      this.gameStore.makePlayerWorkOnMission(message.player, message.success);
     }
   }
 }

@@ -13,6 +13,7 @@ import {
   PlayerDisconnected, 
   PlayerJoined, 
   PlayerVotedOnTeam, 
+  PlayerWorkedOnMission, 
   ServerConnectionClosed, 
   ServerConnectionErrorOccured, 
   SpiesRevealed 
@@ -79,6 +80,10 @@ export class Handler {
     }
     else if (event.MissionStarted) {
       this.dispatcher.dispatch(new MissionStarted());
+    }
+    else if (event.PlayerWorkedOnMission) {
+      const success = typeof event.PlayerWorkedOnMission.Success === 'boolean' ? event.PlayerWorkedOnMission.Success : null
+      this.dispatcher.dispatch(new PlayerWorkedOnMission(event.PlayerWorkedOnMission.Player, success));
     }
   }
 }
