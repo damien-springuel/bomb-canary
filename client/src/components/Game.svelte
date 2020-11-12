@@ -14,10 +14,23 @@ export let dispatcher: {dispatch: (message: Message) => void};
   <h2 class="text-5xl">
     Mission Track
   </h2>
-  <div class="flex flex-row justify-around w-full text-gray-900 text-3xl">
-    {#each storeValues.missionRequirements as requirement}
-      <div class="rounded-full bg-blue-400 h-16 w-16 flex items-center justify-center">
+  <div class="flex flex-row justify-around w-full text-3xl">
+    {#each storeValues.missionRequirements as requirement, i}
+      <div 
+        class="rounded-full border border-blue-400 h-16 w-16 flex items-center justify-center"
+        class:border-none={storeValues.isMissionSuccessful(i+1) != null}
+        class:text-gray-900={storeValues.isMissionSuccessful(i+1) != null || storeValues.isCurrentMission(i+1)}
+        class:bg-blue-400={storeValues.isCurrentMission(i+1)}
+        class:bg-green-400={storeValues.isMissionSuccessful(i+1) === true}
+        class:bg-red-400={storeValues.isMissionSuccessful(i+1) === false}
+      >
+      {#if storeValues.isMissionSuccessful(i+1) === null}
         {requirement.nbPeopleOnMission}
+      {:else if storeValues.isMissionSuccessful(i+1) === true}
+        <span class="text-5xl">&#x2713;</span>
+      {:else if storeValues.isMissionSuccessful(i+1) === false}
+        <span class="text-5xl">&#x2715;</span>
+      {/if}
       </div>
     {/each}
   </div>

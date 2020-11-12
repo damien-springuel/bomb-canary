@@ -27,6 +27,7 @@ export interface StoreValues {
   players: string[]
   missionRequirements: MissionRequirement[]
   currentMission: number,
+  isCurrentMission: (mission: number) => boolean,
   currentGamePhase: GamePhase,
   leader: string
   isPlayerTheLeader: boolean
@@ -42,6 +43,7 @@ export interface StoreValues {
   playerMissionSuccess: boolean | null
   hasGivenPlayerWorkedOnMission: (player: string) => boolean,
   missionResults: MissionResult[]
+  isMissionSuccessful: (mission: number) => boolean | null,
 }
 
 function defaultValues(): StoreValues {
@@ -52,6 +54,7 @@ function defaultValues(): StoreValues {
     players: [],
     missionRequirements: [],
     currentMission: 1,
+    isCurrentMission: undefined,
     currentGamePhase: GamePhase.TeamSelection,
     leader: "",
     isPlayerTheLeader: false,
@@ -67,6 +70,7 @@ function defaultValues(): StoreValues {
     playerMissionSuccess: null,
     hasGivenPlayerWorkedOnMission: undefined,
     missionResults: [],
+    isMissionSuccessful: undefined,
   }
 }
 
@@ -92,6 +96,7 @@ export class Store implements Readable<StoreValues> {
     value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
     value.isGivenPlayerInTeam = player => value.currentTeam.has(player);
     
+    value.isCurrentMission = mission => mission === value.currentMission;
     const currentMissionRequirement = value.missionRequirements[value.currentMission-1];
     value.isPlayerSelectableForTeam = player => {
       if (value.currentTeam.has(player)) {
@@ -106,6 +111,13 @@ export class Store implements Readable<StoreValues> {
     value.hasGivenPlayerVoted = player => value.peopleThatVotedOnTeam.has(player);
     value.isPlayerInMission = value.currentTeam.has(value.player);
     value.hasGivenPlayerWorkedOnMission = player => value.peopleThatWorkedOnMission.has(player);
+    
+    value.isMissionSuccessful = mission => {
+      if(mission > value.missionResults.length) {
+        return null
+      }
+      return value.missionResults[mission - 1].success;
+    }
     return value;
   }
 
