@@ -204,6 +204,11 @@ function setMissionRequirements(this: Store, requirements: MissionRequirement[])
 function startTeamSelection(this: Store): void {
   this.update(v => {
     v.currentGamePhase = GamePhase.TeamSelection;
+    v.currentTeam.clear();
+    v.peopleThatVotedOnTeam.clear();
+    v.playerVote = null;
+    v.peopleThatWorkedOnMission.clear();
+    v.playerMissionSuccess = null;
     return v;
   });
 }
@@ -267,11 +272,6 @@ function saveMissionResult(this: Store, success: boolean, nbFails: number): void
   this.update(v => {
     v.missionResults.push({success, nbFails});
     v.currentMission += 1;
-    v.currentTeam.clear();
-    v.peopleThatVotedOnTeam.clear();
-    v.playerVote = null;
-    v.peopleThatWorkedOnMission.clear();
-    v.playerMissionSuccess = null;
     return v;
   });
 }

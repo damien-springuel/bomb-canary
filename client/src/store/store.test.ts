@@ -162,9 +162,17 @@ test(`Store - isCurrentMission`, t => {
 
 test(`Store - startTeamSelection`, t => {
   const store = new Store();
+  store.definePlayer("testName");
+  store.selectPlayer("testName");
+  store.makePlayerVote("testName", true);
+  store.makePlayerWorkOnMission("testName", true);
   store.startTeamSelection();
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.currentGamePhase, GamePhase.TeamSelection);
+  t.deepEqual(storeValues.peopleThatVotedOnTeam, new Set<string>());
+  t.deepEqual(storeValues.playerVote, null);
+  t.deepEqual(storeValues.peopleThatWorkedOnMission, new Set<string>());
+  t.deepEqual(storeValues.playerMissionSuccess, null);
 });
 
 test(`Store - assignLeader`, t => {
@@ -319,18 +327,10 @@ test(`Store - hasGivenPlayerWorkedOnMission`, t => {
 
 test(`Store - saveMissionResult`, t => {
   const store = new Store();
-  store.definePlayer("testName");
-  store.selectPlayer("testName");
-  store.makePlayerVote("testName", true);
-  store.makePlayerWorkOnMission("testName", true);
   store.saveMissionResult(true, 2);
   let storeValues: StoreValues = get(store);
   t.deepEqual(storeValues.missionResults, [{success: true, nbFails: 2}]);
   t.deepEqual(storeValues.currentMission, 2);
-  t.deepEqual(storeValues.peopleThatVotedOnTeam, new Set<string>());
-  t.deepEqual(storeValues.playerVote, null);
-  t.deepEqual(storeValues.peopleThatWorkedOnMission, new Set<string>());
-  t.deepEqual(storeValues.playerMissionSuccess, null);
 });
 
 test(`Store - isMissionSuccessful`, t => {
