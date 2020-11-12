@@ -149,7 +149,7 @@ func fiveFailedVoteInARow(hub gameHub, code string) gamerules.Game {
 
 	// #5 minus Edith's vote
 	hub.Consume(LeaderSelectsMember{Command: Command{Party: Party{Code: code}}, Leader: "Edith", MemberToSelect: "Alice"})
-	hub.Consume(LeaderSelectsMember{Command: Command{Party: Party{Code: code}}, Leader: "Edith", MemberToSelect: "Edith"})
+	hub.Consume(LeaderSelectsMember{Command: Command{Party: Party{Code: code}}, Leader: "Edith", MemberToSelect: "Bob"})
 	hub.Consume(LeaderConfirmsTeamSelection{Command: Command{Party: Party{Code: code}}, Leader: "Edith"})
 	hub.Consume(RejectTeam{Command: Command{Party: Party{Code: code}}, Player: "Alice"})
 	hub.Consume(RejectTeam{Command: Command{Party: Party{Code: code}}, Player: "Bob"})

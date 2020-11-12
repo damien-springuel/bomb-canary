@@ -267,6 +267,7 @@ func (g Game) voteBy(name string, voter func(name string) (votes, error)) (Game,
 		} else {
 			g.state = SelectingTeam
 			g.voteFailures += 1
+			g.currentTeam = nil
 
 			if g.voteFailures == maxVoteFailures {
 				g.state = GameOver

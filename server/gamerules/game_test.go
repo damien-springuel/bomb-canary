@@ -454,6 +454,7 @@ func Test_ApproveRejectTeam_ShouldMoveToSelectingTeamIfVoteDoesntHaveMajority_An
 	g.Expect(newGame.Leader()).To(Equal("Bob"))
 	g.Expect(resultingVotes).To(Equal(map[string]bool{"Alice": true, "Bob": true, "Charlie": false, "Dan": false, "Edith": false}))
 	g.Expect(newGame.teamVotes).To(BeNil())
+	g.Expect(newGame.currentTeam).To(BeNil())
 }
 
 func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *testing.T) {
@@ -512,6 +513,7 @@ func Test_ApproveRejectTeam_ShouldMoveToGameOverIfVoteFailed5TimesInARow(t *test
 	g.Expect(newGame.Winner()).To(Equal(Spy))
 	g.Expect(resultingVotes).To(Equal(map[string]bool{"Alice": true, "Bob": true, "Charlie": false, "Dan": false, "Edith": false}))
 	g.Expect(newGame.teamVotes).To(BeNil())
+	g.Expect(newGame.currentTeam).To(BeNil())
 }
 
 func Test_ApproveRejectTeam_VoteFailureShouldResetAfterASuccessfulVote(t *testing.T) {
