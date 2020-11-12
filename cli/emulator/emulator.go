@@ -103,6 +103,40 @@ func fivePlayerGameFirstMission(ctx context.Context) context.Context {
 	return ctx
 }
 
+func fivePlayerGameOneSuccessOneFailure(ctx context.Context) context.Context {
+	ctx = started5PlayerGame(ctx)
+	alice := ctx.Value("sessionAlice").(string)
+	bob := ctx.Value("sessionBob").(string)
+	charlie := ctx.Value("sessionCharlie").(string)
+	dan := ctx.Value("sessionDan").(string)
+	edith := ctx.Value("sessionEdith").(string)
+
+	bcclient.LeaderSelectsMember(alice, "Alice")
+	bcclient.LeaderSelectsMember(alice, "Bob")
+	bcclient.LeaderConfirmsTeam(alice)
+	bcclient.ApproveTeam(alice)
+	bcclient.ApproveTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.ApproveTeam(dan)
+	bcclient.ApproveTeam(edith)
+	bcclient.SucceedMission(alice)
+	bcclient.SucceedMission(bob)
+
+	bcclient.LeaderSelectsMember(bob, "Alice")
+	bcclient.LeaderSelectsMember(bob, "Bob")
+	bcclient.LeaderSelectsMember(bob, "Charlie")
+	bcclient.LeaderConfirmsTeam(bob)
+	bcclient.ApproveTeam(alice)
+	bcclient.ApproveTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.ApproveTeam(dan)
+	bcclient.ApproveTeam(edith)
+	bcclient.FailMission(alice)
+	bcclient.FailMission(bob)
+	bcclient.FailMission(charlie)
+	return ctx
+}
+
 func New() *Emulator {
 	presetsPage := page{
 		title: "Presets",
@@ -126,6 +160,10 @@ func New() *Emulator {
 			{
 				description: "5-player game first mission",
 				action:      fivePlayerGameFirstMission,
+			},
+			{
+				description: "5-player 1 success, 1 failure",
+				action:      fivePlayerGameOneSuccessOneFailure,
 			},
 		},
 	}
