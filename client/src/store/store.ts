@@ -20,6 +20,15 @@ export interface MissionResult {
   readonly nbFails: number
 }
 
+export interface TeamVote {
+  readonly approved: boolean
+  readonly playerVotes: Map<string, boolean>
+}
+
+export interface TeamVotes {
+  readonly votes: TeamVote[]
+}
+
 export interface StoreValues {
   pageToShow: Page
   partyCode: string
@@ -38,7 +47,9 @@ export interface StoreValues {
   peopleThatVotedOnTeam: Set<string>,
   playerVote: boolean | null
   hasGivenPlayerVoted: (player: string) => boolean,
-  isPlayerInMission: boolean;
+  currentTeamVoteNb: number,
+  teamVoteResults: TeamVotes[],
+  isPlayerInMission: boolean,
   peopleThatWorkedOnMission: Set<string>,
   playerMissionSuccess: boolean | null
   hasGivenPlayerWorkedOnMission: (player: string) => boolean,
@@ -65,6 +76,8 @@ function defaultValues(): StoreValues {
     peopleThatVotedOnTeam: new Set<string>(),
     playerVote: null,
     hasGivenPlayerVoted: undefined,
+    currentTeamVoteNb: 1,
+    teamVoteResults: [{votes: []}, {votes: []}, {votes: []}, {votes: []}, {votes: []}],
     isPlayerInMission: false,
     peopleThatWorkedOnMission: new Set<string>(),
     playerMissionSuccess: null,
@@ -109,6 +122,7 @@ export class Store implements Readable<StoreValues> {
     }
     value.canConfirmTeam = value.currentTeam.size === currentMissionRequirement?.nbPeopleOnMission
     value.hasGivenPlayerVoted = player => value.peopleThatVotedOnTeam.has(player);
+    value.currentTeamVoteNb = value.teamVoteResults[value.currentMission-1].votes.length + 1;
     value.isPlayerInMission = value.currentTeam.has(value.player);
     value.hasGivenPlayerWorkedOnMission = player => value.peopleThatWorkedOnMission.has(player);
     
@@ -152,6 +166,7 @@ export class Store implements Readable<StoreValues> {
   readonly deselectPlayer = deselectPlayer;
   readonly startTeamVote = startTeamVote;
   readonly makePlayerVote = makePlayerVote;
+  readonly saveTeamVoteResult = saveTeamVoteResult;
   readonly startMission = startMission;
   readonly makePlayerWorkOnMission = makePlayerWorkOnMission;
   readonly saveMissionResult = saveMissionResult;
@@ -196,7 +211,6 @@ function joinPlayer(this: Store, name: string) {
 function setMissionRequirements(this: Store, requirements: MissionRequirement[]) {
   this.update(v => {
     v.missionRequirements = requirements.slice();
-    v.currentMission = 1;
     return v;
   });
 }
@@ -247,6 +261,13 @@ function makePlayerVote(this: Store, player: string, approval: boolean | null): 
     if (player === v.player) {
       v.playerVote = approval;
     }
+    return v;
+  });
+}
+
+function saveTeamVoteResult(this: Store, approved: boolean, playerVotes: Map<string, boolean>): void {
+  this.update(v => {
+    v.teamVoteResults[v.currentMission-1].votes.push({approved: approved, playerVotes: playerVotes});
     return v;
   });
 }

@@ -77,7 +77,7 @@ export class Handler {
     }
     else if (event.AllPlayerVotedOnTeam) {
       const playerVote = new Map<string,boolean>(Object.keys(event.AllPlayerVotedOnTeam.PlayerVotes).map(k => [k, event.AllPlayerVotedOnTeam.PlayerVotes[k]]));
-      this.dispatcher.dispatch(new AllPlayerVotedOnTeam(event.AllPlayerVotedOnTeam.Approved, event.AllPlayerVotedOnTeam.VoteFailures, playerVote));
+      this.dispatcher.dispatch(new AllPlayerVotedOnTeam(event.AllPlayerVotedOnTeam.Approved, playerVote));
     }
     else if (event.MissionStarted) {
       this.dispatcher.dispatch(new MissionStarted());

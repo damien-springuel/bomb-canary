@@ -1,5 +1,5 @@
 import test from "ava";
-import { GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionCompleted, MissionRequirement, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission } from "../messages/events";
+import { AllPlayerVotedOnTeam, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionCompleted, MissionRequirement, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission } from "../messages/events";
 import { GameManager, GameStore } from "./game";
 
 test(`Game Manager - GameStarted`, t => {
@@ -49,6 +49,18 @@ test(`Game Manager - PlayerVotedOnTeam`, t => {
   gameMgr.consume(new PlayerVotedOnTeam("testName", true));
   t.deepEqual(receivedPlayer, "testName");
   t.deepEqual(receivedApproval, true);
+});
+
+test(`Game Manager - AllPlayerVotedOnTeam`, t => {
+  let receivedApproved: boolean;
+  let receivedPlayerVotes: Map<string, boolean>;
+  const gameMgr = new GameManager({saveTeamVoteResult: (approved, playerVotes) => {
+    receivedApproved = approved;
+    receivedPlayerVotes = playerVotes;
+  }} as GameStore);
+  gameMgr.consume(new AllPlayerVotedOnTeam(true, new Map<string, boolean>([["p1", true], ["p2", true], ["p3", false]])));
+  t.true(receivedApproved);
+  t.deepEqual(receivedPlayerVotes, new Map<string, boolean>([["p1", true], ["p2", true], ["p3", false]]));
 });
 
 test(`Game Manager - MissionStarted`, t => {

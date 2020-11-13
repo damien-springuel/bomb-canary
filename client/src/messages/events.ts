@@ -60,7 +60,7 @@ export class PlayerVotedOnTeam implements Message{
 }
 
 export class AllPlayerVotedOnTeam implements Message{
-  constructor(readonly approved: boolean, readonly voteFailures: number, readonly playerVotes: Map<string, boolean>){}
+  constructor(readonly approved: boolean, readonly playerVotes: Map<string, boolean>){}
 }
 
 export class MissionStarted implements Message {}

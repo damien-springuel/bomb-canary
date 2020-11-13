@@ -24,6 +24,8 @@ test(`Store - default values`, t => {
       peopleThatVotedOnTeam: new Set<string>(),
       playerVote: null,
       hasGivenPlayerVoted: undefined,
+      currentTeamVoteNb: 1,
+      teamVoteResults: [{votes: []}, {votes: []}, {votes: []}, {votes: []}, {votes: []}],
       isPlayerInMission: false,
       peopleThatWorkedOnMission: new Set<string>(),
       playerMissionSuccess: null,
@@ -272,12 +274,73 @@ test(`Store - makePlayerVote - the player`, t => {
   t.deepEqual(storeValues.playerVote, true);
 });
 
+test(`Store - saveTeamVoteResult`, t => {
+  const store = new Store();
+  store.saveTeamVoteResult(true, new Map<string, boolean>([["p1", true], ["p2", false]]));
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.teamVoteResults, [
+    {votes: [{approved: true, playerVotes: new Map<string, boolean>([["p1", true], ["p2", false]])}]}, 
+    {votes: []}, 
+    {votes: []}, 
+    {votes: []}, 
+    {votes: []}
+  ]);
+});
+
+test(`Store - saveTeamVoteResult - multiple results`, t => {
+  const store = new Store();
+  store.saveTeamVoteResult(true, new Map<string, boolean>([["p1", true], ["p2", false]]));
+  store.saveTeamVoteResult(false, new Map<string, boolean>([["p1", false], ["p2", false]]));
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.teamVoteResults, [
+    {votes: [
+      {approved: true, playerVotes: new Map<string, boolean>([["p1", true], ["p2", false]])},
+      {approved: false, playerVotes: new Map<string, boolean>([["p1", false], ["p2", false]])},
+    ]}, 
+    {votes: []}, 
+    {votes: []}, 
+    {votes: []}, 
+    {votes: []}
+  ]);
+});
+
+test(`Store - saveTeamVoteResult - multiple results in multiple missions`, t => {
+  const store = new Store();
+  store.saveTeamVoteResult(true, new Map<string, boolean>([["p1", true], ["p2", false]]));
+  store.saveTeamVoteResult(false, new Map<string, boolean>([["p1", false], ["p2", false]]));
+  store.saveMissionResult(false, 2);
+  store.saveTeamVoteResult(true, new Map<string, boolean>([["p1", true], ["p2", true]]));
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.teamVoteResults, [
+    {votes: [
+      {approved: true, playerVotes: new Map<string, boolean>([["p1", true], ["p2", false]])},
+      {approved: false, playerVotes: new Map<string, boolean>([["p1", false], ["p2", false]])},
+    ]}, 
+    {votes: [
+      {approved: true, playerVotes: new Map<string, boolean>([["p1", true], ["p2", true]])}
+    ]}, 
+    {votes: []}, 
+    {votes: []}, 
+    {votes: []}
+  ]);
+});
+
 test(`Store - hasGivenPlayerVoted`, t => {
   const store = new Store();
   store.makePlayerVote("p1", false);
   let storeValues: StoreValues = get(store);
   t.true(storeValues.hasGivenPlayerVoted("p1"));
   t.false(storeValues.hasGivenPlayerVoted("p2"));
+});
+
+test(`Store - currentTeamVoteNb`, t => {
+  const store = new Store();
+  store.saveTeamVoteResult(true, new Map<string, boolean>([["p1", true], ["p2", false]]));
+  store.saveTeamVoteResult(false, new Map<string, boolean>([["p1", false], ["p2", false]]));
+  store.saveMissionResult(false, 2);
+  store.saveTeamVoteResult(true, new Map<string, boolean>([["p1", true], ["p2", true]]));
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.currentTeamVoteNb, 2);
 });
 
 test(`Store - startMission`, t => {

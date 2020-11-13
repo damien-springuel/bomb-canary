@@ -126,7 +126,7 @@ test(`Handler - onEvent - AllPlayerVoted`, t => {
   const dispatcher: DispatcherMock = new DispatcherMock();
   const handler = new Handler(dispatcher);
   handler.onEvent({AllPlayerVotedOnTeam: {Approved: true, VoteFailures: 3, PlayerVotes: {"Alice": true, "Bob": false}}});
-  t.deepEqual(dispatcher.receivedMessage, new AllPlayerVotedOnTeam(true, 3, new Map<string, boolean>([["Alice", true], ["Bob", false]])));
+  t.deepEqual(dispatcher.receivedMessage, new AllPlayerVotedOnTeam(true, new Map<string, boolean>([["Alice", true], ["Bob", false]])));
 });
 
 test(`Handler - onEvent - MissionStarted`, t => {
