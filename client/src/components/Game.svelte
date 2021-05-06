@@ -1,4 +1,7 @@
 <script lang="ts">
+import { fly } from 'svelte/transition';
+import { cubicIn, cubicOut } from 'svelte/easing';
+import { CloseIdentity, ViewIdentity } from "../messages/commands";
 import type { Message } from "../messages/messagebus";
 import type { StoreValues } from "../store/store";
 import { GamePhase } from "../store/store";
@@ -7,13 +10,19 @@ import TeamSelection from "./game-phases/TeamSelection.svelte";
 import TeamVote from "./game-phases/TeamVote.svelte";
 export let storeValues: StoreValues;
 export let dispatcher: {dispatch: (message: Message) => void};
-
+function viewIdentity() {
+  dispatcher.dispatch(new ViewIdentity());
+}
+function closeIdentity() {
+  dispatcher.dispatch(new CloseIdentity());
+}
 </script>
 
 <div class="flex flex-col items-center h-full bg-gray-900 p-6 text-blue-500 space-y-4 text-2xl">
-  <h2 class="text-5xl">
+  <button class="bc-button bc-button-blue" on:click={viewIdentity}>Identity</button>
+  <div class="text-5xl">
     Mission Track
-  </h2>
+  </div>
   <div class="flex flex-row justify-around w-full text-3xl">
     {#each storeValues.missionRequirements as requirement, i}
       <div 
@@ -42,3 +51,12 @@ export let dispatcher: {dispatch: (message: Message) => void};
     <Mission dispatcher={dispatcher} storeValues={storeValues}/>
   {/if}
 </div>
+{#if storeValues.isShowingIdentity}
+  <div 
+    in:fly={{duration: 225, y: document.body.clientHeight, easing: cubicOut, opacity: 1}} 
+    out:fly={{duration: 195, y: document.body.clientHeight, easing: cubicIn, opacity: 1}} 
+    class="fixed inset-0 z-10 bg-gray-800 text-blue-500 text-5xl">
+    <div class="absolute top-0 right-0" on:click={closeIdentity}>X</div>
+    <div class="w-full text-center">Showing identity!!</div>
+  </div>
+{/if}

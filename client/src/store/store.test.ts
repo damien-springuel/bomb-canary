@@ -32,6 +32,7 @@ test(`Store - default values`, t => {
       hasGivenPlayerWorkedOnMission: undefined,
       missionResults: [],
       isMissionSuccessful: undefined,
+      isShowingIdentity: false,
     }
   );
 });
@@ -404,4 +405,15 @@ test(`Store - isMissionSuccessful`, t => {
   t.true(storeValues.isMissionSuccessful(1));
   t.false(storeValues.isMissionSuccessful(2));
   t.deepEqual(storeValues.isMissionSuccessful(3), null);
+});
+
+test(`Store - isShowingIdentity`, t => {
+  const store = new Store();
+  store.showIdentity();
+  let storeValues: StoreValues = get(store);
+  t.true(storeValues.isShowingIdentity);
+
+  store.hideIdentity();
+  storeValues = get(store);
+  t.false(storeValues.isShowingIdentity);
 });

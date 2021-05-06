@@ -26,3 +26,7 @@ export class RejectTeam implements Message {}
 export class SucceedMission implements Message {}
 
 export class FailMission implements Message {}
+
+export class ViewIdentity implements Message {}
+
+export class CloseIdentity implements Message {}

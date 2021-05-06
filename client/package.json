@@ -32,14 +32,14 @@
     "axios": "^0.20.0"
   },
   "ava": {
-		"extensions": [
-		  "ts"
-		],
-		"require": [
-		  "ts-node/register"
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
     ],
     "files": [
       "!src/**/*.test-utils.ts"
     ]
-	}
+  }
 }

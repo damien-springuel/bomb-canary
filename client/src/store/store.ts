@@ -55,6 +55,7 @@ export interface StoreValues {
   hasGivenPlayerWorkedOnMission: (player: string) => boolean,
   missionResults: MissionResult[]
   isMissionSuccessful: (mission: number) => boolean | null,
+  isShowingIdentity: boolean
 }
 
 function defaultValues(): StoreValues {
@@ -84,6 +85,7 @@ function defaultValues(): StoreValues {
     hasGivenPlayerWorkedOnMission: undefined,
     missionResults: [],
     isMissionSuccessful: undefined,
+    isShowingIdentity: false,
   }
 }
 
@@ -170,6 +172,8 @@ export class Store implements Readable<StoreValues> {
   readonly startMission = startMission;
   readonly makePlayerWorkOnMission = makePlayerWorkOnMission;
   readonly saveMissionResult = saveMissionResult;
+  readonly showIdentity = showIdentity;
+  readonly hideIdentity = hideIdentity;
 }
 
 function showLobby(this: Store) {
@@ -295,4 +299,18 @@ function saveMissionResult(this: Store, success: boolean, nbFails: number): void
     v.currentMission += 1;
     return v;
   });
+}
+
+function showIdentity(this: Store) {
+  this.update(v => {
+    v.isShowingIdentity = true;
+    return v
+  })
+}
+
+function hideIdentity(this: Store) {
+  this.update(v => {
+    v.isShowingIdentity = false;
+    return v
+  })
 }
