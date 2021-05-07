@@ -18,12 +18,7 @@ test(`PlayerManager - events replay started`, t => {
 
 test(`PlayerManager - spies revealed`, t => {
   let rememberedSpies: Set<string>;
-  let identityShown = false;
-  const playerMgr = new PlayerManager({
-    rememberSpies: s => {rememberedSpies = s}, 
-    showIdentity: ()=> {identityShown=true}
-  } as PlayerStore);
+  const playerMgr = new PlayerManager({rememberSpies: s => {rememberedSpies = s}} as PlayerStore);
   playerMgr.consume(new SpiesRevealed(new Set<string>(["a", "b"])));
   t.deepEqual(rememberedSpies, new Set<string>(["a", "b"]));
-  t.true(identityShown);
 });

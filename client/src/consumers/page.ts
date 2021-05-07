@@ -23,6 +23,7 @@ export class PageManager {
     }
     else if(message instanceof SpiesRevealed) {
       this.store.showGameRoom();
+      this.store.showIdentity();
     }
     else if(message instanceof ViewIdentity) {
       this.store.showIdentity();

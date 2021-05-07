@@ -19,9 +19,14 @@ test(`Page Manager - show party room on party created`, t => {
 
 test(`Page Manager - show game room on spies revealed`, t => {
   let gameShown = false;
-  const pageMgr = new PageManager({showGameRoom: () => {gameShown = true}} as RoomStore);
+  let identityShown = false;
+  const pageMgr = new PageManager({
+    showGameRoom: () => {gameShown = true},
+    showIdentity: () => {identityShown = true}
+  } as RoomStore);
   pageMgr.consume(new SpiesRevealed(null));
   t.true(gameShown);
+  t.true(identityShown);
 });
 
 test(`Page Manager - show identity on view identity`, t => {

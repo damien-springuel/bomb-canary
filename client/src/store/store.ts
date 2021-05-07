@@ -109,6 +109,12 @@ export class Store implements Readable<StoreValues> {
     }
   }
 
+  protected updateNoReplay(updater: (value: StoreValues) => StoreValues) {
+    if (!this.replayingEvent) {
+      this.writable.update(v => this.updateComputed(updater(v)));
+    }
+  }
+
   protected updateComputed(value: StoreValues): StoreValues {
     value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
     value.isGivenPlayerInTeam = player => value.currentTeam.has(player);
@@ -305,14 +311,14 @@ function saveMissionResult(this: Store, success: boolean, nbFails: number): void
 }
 
 function showIdentity(this: Store) {
-  this.update(v => {
+  this.updateNoReplay(v => {
     v.isShowingIdentity = true;
     return v
   })
 }
 
 function hideIdentity(this: Store) {
-  this.update(v => {
+  this.updateNoReplay(v => {
     v.isShowingIdentity = false;
     return v
   })

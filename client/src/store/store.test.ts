@@ -419,6 +419,17 @@ test(`Store - isShowingIdentity`, t => {
   t.false(storeValues.isShowingIdentity);
 });
 
+test(`Store - showIdentity isn't replayed`, t => {
+  const store = new Store();
+  
+  store.startReplay();
+  store.showIdentity();
+  store.endReplay();
+
+  let storeValues: StoreValues = get(store);
+  t.false(storeValues.isShowingIdentity);
+});
+
 test(`Store - rememberSpies`, t => {
   const store = new Store();
   store.rememberSpies(new Set<string>(["spy 1", "spy 2"]));
