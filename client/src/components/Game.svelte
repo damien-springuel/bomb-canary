@@ -1,14 +1,15 @@
 <script lang="ts">
 import { ViewIdentity } from "../messages/commands";
-import type { Message } from "../messages/messagebus";
 import type { StoreValues } from "../store/store";
-import { GamePhase } from "../store/store";
+import { GamePhase, Dialog as DialogValues } from "../store/store";
 import Mission from "./game-phases/Mission.svelte";
 import TeamSelection from "./game-phases/TeamSelection.svelte";
 import TeamVote from "./game-phases/TeamVote.svelte";
 import Identity from './Identity.svelte';
+import Dialog from './Dialog.svelte';
+import type { Dispatcher } from "../messages/dispatcher";
 export let storeValues: StoreValues;
-export let dispatcher: {dispatch: (message: Message) => void};
+export let dispatcher: Dispatcher;
 
 function viewIdentity() {
   dispatcher.dispatch(new ViewIdentity());
@@ -48,6 +49,8 @@ function viewIdentity() {
     <Mission dispatcher={dispatcher} storeValues={storeValues}/>
   {/if}
 </div>
-{#if storeValues.isShowingIdentity}
-  <Identity dispatcher={dispatcher} storeValues={storeValues}/>
+{#if storeValues.dialogShown == DialogValues.Identity}
+  <Dialog dispatcher={dispatcher}>
+    <Identity storeValues={storeValues}/>
+  </Dialog>
 {/if}

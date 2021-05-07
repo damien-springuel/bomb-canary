@@ -1,13 +1,7 @@
-import { CloseIdentity } from "../messages/commands";
-import type { Dispatcher } from "../messages/dispatcher";
 import type { StoreValues } from "../store/store";
 
 export class IdentityService{
-  constructor(readonly dispatcher: Dispatcher, readonly storeValues: StoreValues){}
-
-  closeIdentity(): void {
-    this.dispatcher.dispatch(new CloseIdentity());
-  }
+  constructor(readonly storeValues: StoreValues){}
 
   isPlayerIsASpy(): boolean {
     return this.storeValues.revealedSpies.has(this.storeValues.player);

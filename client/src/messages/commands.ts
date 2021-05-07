@@ -29,4 +29,4 @@ export class FailMission implements Message {}
 
 export class ViewIdentity implements Message {}
 
-export class CloseIdentity implements Message {}
+export class CloseDialog implements Message {}

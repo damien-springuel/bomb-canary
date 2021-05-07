@@ -15,6 +15,10 @@ export enum GamePhase {
   Mission = "mission",
 }
 
+export enum Dialog {
+  Identity = "identity",
+}
+
 export interface MissionResult {
   readonly success: boolean
   readonly nbFails: number
@@ -55,7 +59,7 @@ export interface StoreValues {
   hasGivenPlayerWorkedOnMission: (player: string) => boolean,
   missionResults: MissionResult[]
   isMissionSuccessful: (mission: number) => boolean | null,
-  isShowingIdentity: boolean,
+  dialogShown: Dialog,
   revealedSpies: Set<string>
 }
 
@@ -86,7 +90,7 @@ function defaultValues(): StoreValues {
     hasGivenPlayerWorkedOnMission: undefined,
     missionResults: [],
     isMissionSuccessful: undefined,
-    isShowingIdentity: false,
+    dialogShown: null,
     revealedSpies: new Set<string>(),
   }
 }
@@ -181,7 +185,7 @@ export class Store implements Readable<StoreValues> {
   readonly makePlayerWorkOnMission = makePlayerWorkOnMission;
   readonly saveMissionResult = saveMissionResult;
   readonly showIdentity = showIdentity;
-  readonly hideIdentity = hideIdentity;
+  readonly closeDialog = closeDialog;
   readonly rememberSpies = rememberSpies;
 }
 
@@ -312,14 +316,14 @@ function saveMissionResult(this: Store, success: boolean, nbFails: number): void
 
 function showIdentity(this: Store) {
   this.updateNoReplay(v => {
-    v.isShowingIdentity = true;
+    v.dialogShown = Dialog.Identity;
     return v
   })
 }
 
-function hideIdentity(this: Store) {
-  this.updateNoReplay(v => {
-    v.isShowingIdentity = false;
+function closeDialog(this: Store) {
+  this.update(v => {
+    v.dialogShown = null;
     return v
   })
 }

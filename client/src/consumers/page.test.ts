@@ -1,5 +1,5 @@
 import test from "ava";
-import { CloseIdentity, ViewIdentity } from "../messages/commands";
+import { CloseDialog, ViewIdentity } from "../messages/commands";
 import { PartyCreated, ServerConnectionClosed, SpiesRevealed } from "../messages/events";
 import { PageManager, RoomStore } from "./page";
 
@@ -36,9 +36,9 @@ test(`Page Manager - show identity on view identity`, t => {
   t.true(identityShown);
 });
 
-test(`Page Manager - close identity on close identity`, t => {
-  let identityClosed = false;
-  const pageMgr = new PageManager({hideIdentity: () => {identityClosed = true}} as RoomStore);
-  pageMgr.consume(new CloseIdentity());
-  t.true(identityClosed);
+test(`Page Manager - close dialog on close dialog`, t => {
+  let dialogClosed = false;
+  const pageMgr = new PageManager({closeDialog: () => {dialogClosed = true}} as RoomStore);
+  pageMgr.consume(new CloseDialog());
+  t.true(dialogClosed);
 });

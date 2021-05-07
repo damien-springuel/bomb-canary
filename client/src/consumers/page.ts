@@ -1,4 +1,4 @@
-import { CloseIdentity, ViewIdentity } from "../messages/commands";
+import { CloseDialog, ViewIdentity } from "../messages/commands";
 import { PartyCreated, ServerConnectionClosed, SpiesRevealed } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
@@ -7,7 +7,7 @@ export interface RoomStore {
   showPartyRoom(code: string): void,
   showGameRoom(): void,
   showIdentity(): void,
-  hideIdentity(): void,
+  closeDialog(): void,
 }
 
 export class PageManager {
@@ -28,8 +28,8 @@ export class PageManager {
     else if(message instanceof ViewIdentity) {
       this.store.showIdentity();
     }
-    else if(message instanceof CloseIdentity) {
-      this.store.hideIdentity();
+    else if(message instanceof CloseDialog) {
+      this.store.closeDialog();
     }
   }
 }

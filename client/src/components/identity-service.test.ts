@@ -1,20 +1,11 @@
 import test from "ava";
-import { CloseIdentity } from "../messages/commands";
-import type { Message } from "../messages/messagebus";
 import type { StoreValues } from "../store/store";
 import { IdentityService } from "./identity-service";
 
-test(`Identity Service - close identity`, t => {
-  let lastMessage: Message;
-  const dispatcher = {dispatch: (m: Message) => {lastMessage = m}};
-  const service = new IdentityService(dispatcher, null);
-  service.closeIdentity();
-  t.deepEqual(lastMessage, new CloseIdentity());
-});
 
 test(`Identity Service - isPlayerIsASpy`, t => {
   const storeValues: StoreValues = {revealedSpies: new Set<string>(["a", "b"]), player: "b"} as StoreValues
-  const service = new IdentityService(null, storeValues);
+  const service = new IdentityService(storeValues);
   service.isPlayerIsASpy();
   t.true(service.isPlayerIsASpy());
 
@@ -24,7 +15,7 @@ test(`Identity Service - isPlayerIsASpy`, t => {
 
 test(`Identity Service - otherSpies`, t => {
   const storeValues: StoreValues = {revealedSpies: new Set<string>(["a", "b", "c"]), player: "b"} as StoreValues
-  const service = new IdentityService(null, storeValues);
+  const service = new IdentityService(storeValues);
   t.deepEqual(service.otherSpies(), ["a", "c"]);
   
   storeValues.revealedSpies = new Set<string>();

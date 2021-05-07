@@ -1,5 +1,5 @@
 import test from "ava";
-import { GamePhase, Page, Store, StoreValues } from "./store";
+import { Dialog, GamePhase, Page, Store, StoreValues } from "./store";
 import {get} from "svelte/store";
 
 test(`Store - default values`, t => {
@@ -32,7 +32,7 @@ test(`Store - default values`, t => {
       hasGivenPlayerWorkedOnMission: undefined,
       missionResults: [],
       isMissionSuccessful: undefined,
-      isShowingIdentity: false,
+      dialogShown: null,
       revealedSpies: new Set<string>(),
     }
   );
@@ -408,15 +408,19 @@ test(`Store - isMissionSuccessful`, t => {
   t.deepEqual(storeValues.isMissionSuccessful(3), null);
 });
 
-test(`Store - isShowingIdentity`, t => {
+test(`Store - close Dialog`, t => {
+  const store = new Store();
+  store.showIdentity();
+  store.closeDialog();
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.dialogShown, null);
+});
+
+test(`Store - showIdentity`, t => {
   const store = new Store();
   store.showIdentity();
   let storeValues: StoreValues = get(store);
-  t.true(storeValues.isShowingIdentity);
-
-  store.hideIdentity();
-  storeValues = get(store);
-  t.false(storeValues.isShowingIdentity);
+  t.deepEqual(storeValues.dialogShown, Dialog.Identity);
 });
 
 test(`Store - showIdentity isn't replayed`, t => {
@@ -427,7 +431,7 @@ test(`Store - showIdentity isn't replayed`, t => {
   store.endReplay();
 
   let storeValues: StoreValues = get(store);
-  t.false(storeValues.isShowingIdentity);
+  t.deepEqual(storeValues.dialogShown, null);
 });
 
 test(`Store - rememberSpies`, t => {
