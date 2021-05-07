@@ -1,9 +1,10 @@
-import { EventsReplayStarted, PlayerJoined } from "../messages/events";
+import { EventsReplayStarted, PlayerJoined, SpiesRevealed } from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
 export interface PlayerStore {
   definePlayer(name: string): void
   joinPlayer(name: string): void
+  rememberSpies(spies: Set<string>): void
 }
 
 export class PlayerManager {
@@ -16,6 +17,9 @@ export class PlayerManager {
     }
     else if (message instanceof EventsReplayStarted) {
       this.playerStore.definePlayer(message.playerName);
+    }
+    else if (message instanceof SpiesRevealed) {
+      this.playerStore.rememberSpies(message.spies);
     }
   }
 }

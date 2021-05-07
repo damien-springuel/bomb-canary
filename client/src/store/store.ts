@@ -55,7 +55,8 @@ export interface StoreValues {
   hasGivenPlayerWorkedOnMission: (player: string) => boolean,
   missionResults: MissionResult[]
   isMissionSuccessful: (mission: number) => boolean | null,
-  isShowingIdentity: boolean
+  isShowingIdentity: boolean,
+  revealedSpies: Set<string>
 }
 
 function defaultValues(): StoreValues {
@@ -86,6 +87,7 @@ function defaultValues(): StoreValues {
     missionResults: [],
     isMissionSuccessful: undefined,
     isShowingIdentity: false,
+    revealedSpies: new Set<string>(),
   }
 }
 
@@ -174,6 +176,7 @@ export class Store implements Readable<StoreValues> {
   readonly saveMissionResult = saveMissionResult;
   readonly showIdentity = showIdentity;
   readonly hideIdentity = hideIdentity;
+  readonly rememberSpies = rememberSpies;
 }
 
 function showLobby(this: Store) {
@@ -311,6 +314,13 @@ function showIdentity(this: Store) {
 function hideIdentity(this: Store) {
   this.update(v => {
     v.isShowingIdentity = false;
+    return v
+  })
+}
+
+function rememberSpies(this: Store, spies: Set<string>) {
+  this.update(v => {
+    v.revealedSpies = spies;
     return v
   })
 }

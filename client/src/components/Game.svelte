@@ -1,20 +1,17 @@
 <script lang="ts">
-import { fly } from 'svelte/transition';
-import { cubicIn, cubicOut } from 'svelte/easing';
-import { CloseIdentity, ViewIdentity } from "../messages/commands";
+import { ViewIdentity } from "../messages/commands";
 import type { Message } from "../messages/messagebus";
 import type { StoreValues } from "../store/store";
 import { GamePhase } from "../store/store";
 import Mission from "./game-phases/Mission.svelte";
 import TeamSelection from "./game-phases/TeamSelection.svelte";
 import TeamVote from "./game-phases/TeamVote.svelte";
+import Identity from './Identity.svelte';
 export let storeValues: StoreValues;
 export let dispatcher: {dispatch: (message: Message) => void};
+
 function viewIdentity() {
   dispatcher.dispatch(new ViewIdentity());
-}
-function closeIdentity() {
-  dispatcher.dispatch(new CloseIdentity());
 }
 </script>
 
@@ -52,11 +49,5 @@ function closeIdentity() {
   {/if}
 </div>
 {#if storeValues.isShowingIdentity}
-  <div 
-    in:fly={{duration: 225, y: document.body.clientHeight, easing: cubicOut, opacity: 1}} 
-    out:fly={{duration: 195, y: document.body.clientHeight, easing: cubicIn, opacity: 1}} 
-    class="fixed inset-0 z-10 bg-gray-800 text-blue-500 text-5xl">
-    <div class="absolute top-0 right-0" on:click={closeIdentity}>X</div>
-    <div class="w-full text-center">Showing identity!!</div>
-  </div>
+  <Identity dispatcher={dispatcher} storeValues={storeValues}/>
 {/if}

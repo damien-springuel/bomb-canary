@@ -1,5 +1,5 @@
 import test from "ava";
-import { EventsReplayStarted, PlayerJoined } from "../messages/events";
+import { EventsReplayStarted, PlayerJoined, SpiesRevealed } from "../messages/events";
 import { PlayerManager, PlayerStore } from "./player";
 
 test(`PlayerManager - player joined`, t => {
@@ -14,4 +14,11 @@ test(`PlayerManager - events replay started`, t => {
   const playerMgr = new PlayerManager({definePlayer: p => {definedPlayer = p}} as PlayerStore);
   playerMgr.consume(new EventsReplayStarted("testName"));
   t.deepEqual(definedPlayer, "testName");
+});
+
+test(`PlayerManager - spies revealed`, t => {
+  let rememberedSpies: Set<string>
+  const playerMgr = new PlayerManager({rememberSpies: s => {rememberedSpies = s}} as PlayerStore);
+  playerMgr.consume(new SpiesRevealed(new Set<string>(["a", "b"])));
+  t.deepEqual(rememberedSpies, new Set<string>(["a", "b"]));
 });

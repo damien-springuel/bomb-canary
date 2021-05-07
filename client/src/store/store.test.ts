@@ -33,6 +33,7 @@ test(`Store - default values`, t => {
       missionResults: [],
       isMissionSuccessful: undefined,
       isShowingIdentity: false,
+      revealedSpies: new Set<string>(),
     }
   );
 });
@@ -416,4 +417,11 @@ test(`Store - isShowingIdentity`, t => {
   store.hideIdentity();
   storeValues = get(store);
   t.false(storeValues.isShowingIdentity);
+});
+
+test(`Store - rememberSpies`, t => {
+  const store = new Store();
+  store.rememberSpies(new Set<string>(["spy 1", "spy 2"]));
+  let storeValues: StoreValues = get(store);
+  t.deepEqual(storeValues.revealedSpies, new Set<string>(["spy 1", "spy 2"]));
 });
