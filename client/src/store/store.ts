@@ -1,4 +1,4 @@
-import {Writable, Readable, get} from "svelte/store";
+import {get, type Readable, type Writable} from "svelte/store";
 import {writable} from "svelte/store";
 import type { MissionRequirement } from "../messages/events";
 

@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .bc-button {
+    @apply rounded-full px-6 py-4
+  }
+  .bc-button:focus {
+    @apply outline-none;
+  }
+  .bc-button-blue {
+    @apply bg-blue-500 text-gray-900 
+  }
+  .bc-button-blue:hover {
+    @apply bg-blue-300;
+  }
+  .bc-button-green {
+    @apply bg-green-500 text-gray-900 
+  }
+  .bc-button-green:hover {
+    @apply bg-green-300;
+  }
+  .bc-button-red {
+    @apply bg-red-500 text-gray-900 
+  }
+  .bc-button-red:hover {
+    @apply bg-red-300;
+  }
+  .bc-button-gray {
+    @apply bg-gray-500 text-gray-700 
+  }
+  .bc-button-gray:hover {
+    @apply bg-gray-500 text-gray-700 
+  }
+  .bc-input {
+    @apply bg-blue-400 rounded-lg px-2 text-gray-900 outline-none
+  }
+  .bc-input::placeholder {
+    @apply text-gray-700
+  }
+  .bc-input:focus {
+    @apply bg-blue-200
+  }
+  .bc-input:hover {
+    @apply bg-blue-300
+  }
+}
