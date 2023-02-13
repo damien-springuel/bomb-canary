@@ -1,4 +1,5 @@
 <script lang="ts">
+import "../tailwind.css"
 import type { Message } from "./messages/messagebus";
 import type { Store, StoreValues } from "./store/store";
 import { Page } from "./store/store";
