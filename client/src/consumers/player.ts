@@ -5,7 +5,6 @@ export interface PlayerStore {
   definePlayer(name: string): void
   joinPlayer(name: string): void
   rememberSpies(spies: Set<string>): void
-  showIdentity(): void
 }
 
 export class PlayerManager {
