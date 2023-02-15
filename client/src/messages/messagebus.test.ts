@@ -1,5 +1,5 @@
-import test from "ava";
-import { Message, MessageBus } from "./messagebus";
+import { expect, test } from "vitest";
+import { type Message, MessageBus } from "./messagebus";
 
 test(`Dispatch message to all consumers`, t => {
   const mb = new MessageBus();
@@ -20,7 +20,7 @@ test(`Dispatch message to all consumers`, t => {
   mb.dispatch("m2");
   mb.dispatch("m3");
 
-  t.deepEqual(c1, ["m1", "m2", "m3"]);
-  t.deepEqual(c2, ["m1", "m2", "m3"]);
-  t.deepEqual(c3, ["m1", "m2", "m3"]);
+  expect(c1).to.deep.equal(["m1", "m2", "m3"]);
+  expect(c2).to.deep.equal(["m1", "m2", "m3"]);
+  expect(c3).to.deep.equal(["m1", "m2", "m3"]);
 });

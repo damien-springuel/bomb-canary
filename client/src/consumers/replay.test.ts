@@ -1,31 +1,31 @@
-import test from "ava";
+import { expect, test } from "vitest";
 import { EventsReplayEnded, EventsReplayStarted, ServerConnectionClosed, ServerConnectionErrorOccured } from "../messages/events";
-import { ReplayManager, ReplayStore } from "./replay";
+import { ReplayManager, type ReplayStore } from "./replay";
 
-test(`ReplayManager - EventsReplayStarted`, t => {
+test(`ReplayManager - EventsReplayStarted`, () => {
   let startReplayCalled = false;
   const eventReplayer = new ReplayManager({startReplay: () => {startReplayCalled = true;}} as ReplayStore);
   eventReplayer.consume(new EventsReplayStarted(null));
-  t.true(startReplayCalled);
+  expect(startReplayCalled).to.be.true;
 });
 
-test(`ReplayManager - EventsReplayEnded`, t => {
+test(`ReplayManager - EventsReplayEnded`, () => {
   let endReplayCalled = false;
   const eventReplayer = new ReplayManager({endReplay: () => {endReplayCalled = true;}} as ReplayStore);
   eventReplayer.consume(new EventsReplayEnded());
-  t.true(endReplayCalled);
+  expect(endReplayCalled).to.be.true;
 });
 
-test(`ReplayManager - ServerConnectionClosed`, t => {
+test(`ReplayManager - ServerConnectionClosed`, () => {
   let endReplayCalled = false;
   const eventReplayer = new ReplayManager({endReplay: () => {endReplayCalled = true;}} as ReplayStore);
   eventReplayer.consume(new ServerConnectionClosed());
-  t.true(endReplayCalled);
+  expect(endReplayCalled).to.be.true;
 });
 
-test(`ReplayManager - ServerConnectionErrorOccured`, t => {
+test(`ReplayManager - ServerConnectionErrorOccured`, () => {
   let endReplayCalled = false;
   const eventReplayer = new ReplayManager({endReplay: () => {endReplayCalled = true;}} as ReplayStore);
   eventReplayer.consume(new ServerConnectionErrorOccured());
-  t.true(endReplayCalled);
+  expect(endReplayCalled).to.be.true;
 });

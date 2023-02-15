@@ -1,4 +1,4 @@
-import test from "ava";
+import { expect, test } from "vitest";
 import type { ServerEvent } from "./server-event";
 import { Creator } from "./creator";
 
@@ -33,21 +33,21 @@ function setup(): {websocket: WebsocketMock, handler: EventHandlerMock} {
   return {websocket, handler};
 }
 
-test(`Creator - on close`, t => {
+test(`Creator - on close`, () => {
   let {websocket, handler} = setup();
   websocket.onclose({} as CloseEvent);
-  t.true(handler.onCloseCalled);
+  expect(handler.onCloseCalled).to.be.true;
 });
 
-test(`Creator - on error`, t => {
+test(`Creator - on error`, () => {
   let {websocket, handler} = setup();
   websocket.onerror({} as Event);
-  t.true(handler.onErrorCalled);
+  expect(handler.onErrorCalled).to.be.true;
 });
 
-test(`Creator - on message`, t => {
+test(`Creator - on message`, () => {
   let {websocket, handler} = setup();
   const testServerEvent = {test: `event`} as ServerEvent
   websocket.onmessage({data: JSON.stringify(testServerEvent)} as MessageEvent);
-  t.deepEqual(handler.receivedEvent, testServerEvent);
+  expect(handler.receivedEvent).to.deep.equal(testServerEvent)
 });

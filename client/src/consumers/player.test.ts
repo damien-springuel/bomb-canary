@@ -1,24 +1,24 @@
-import test from "ava";
+import { expect, test } from "vitest";
 import { EventsReplayStarted, PlayerJoined, SpiesRevealed } from "../messages/events";
-import { PlayerManager, PlayerStore } from "./player";
+import { PlayerManager, type PlayerStore } from "./player";
 
-test(`PlayerManager - player joined`, t => {
+test(`PlayerManager - player joined`, () => {
   let playerJoined: string
   const playerMgr = new PlayerManager({joinPlayer: p => {playerJoined = p}} as PlayerStore);
   playerMgr.consume(new PlayerJoined("testName"));
-  t.deepEqual(playerJoined, "testName");
+  expect(playerJoined).to.equal("testName");
 });
 
-test(`PlayerManager - events replay started`, t => {
+test(`PlayerManager - events replay started`, () => {
   let definedPlayer: string
   const playerMgr = new PlayerManager({definePlayer: p => {definedPlayer = p}} as PlayerStore);
   playerMgr.consume(new EventsReplayStarted("testName"));
-  t.deepEqual(definedPlayer, "testName");
+  expect(definedPlayer).to.equal("testName");
 });
 
-test(`PlayerManager - spies revealed`, t => {
+test(`PlayerManager - spies revealed`, () => {
   let rememberedSpies: Set<string>;
   const playerMgr = new PlayerManager({rememberSpies: s => {rememberedSpies = s}} as PlayerStore);
   playerMgr.consume(new SpiesRevealed(new Set<string>(["a", "b"])));
-  t.deepEqual(rememberedSpies, new Set<string>(["a", "b"]));
+  expect(rememberedSpies).to.deep.equal(new Set<string>(["a", "b"]));
 });

@@ -1,4 +1,4 @@
-import test from "ava";
+import { expect, test } from "vitest";
 import type { AxiosResponse } from "axios";
 import { HttpPostMock } from "../http/post.test-utils";
 import { CreateParty, JoinParty } from "../messages/commands";
@@ -6,7 +6,7 @@ import { AsyncDispatcherMock } from "../messages/dispatcher.test-utils";
 import { CreatePartySucceeded, JoinPartySucceeded} from "../messages/events";
 import { Party } from "./party";
 
-test(`Create Party`, async t => {
+test(`Create Party`, async () => {
   const http = new HttpPostMock(Promise.resolve({data:{}} as AxiosResponse<{}>));
   const dispatcher = new AsyncDispatcherMock();
   
@@ -15,12 +15,12 @@ test(`Create Party`, async t => {
   
   await dispatcher.isDone;
   
-  t.deepEqual(http.givenUrl, "/party/create");
-  t.deepEqual(http.givenData, {name: "testName"});
-  t.deepEqual(dispatcher.receivedMessage, new CreatePartySucceeded());
+  expect(http.givenUrl).to.equal("/party/create");
+  expect(http.givenData).to.deep.equal({name: "testName"});
+  expect(dispatcher.receivedMessage).to.deep.equal( new CreatePartySucceeded());
 });
 
-test(`Join Party`, async t => {
+test(`Join Party`, async () => {
   const http = new HttpPostMock(Promise.resolve({data:{}} as AxiosResponse<{}>));
   const dispatcher = new AsyncDispatcherMock();
   
@@ -29,7 +29,7 @@ test(`Join Party`, async t => {
   
   await dispatcher.isDone;
   
-  t.deepEqual(http.givenUrl, "/party/join");
-  t.deepEqual(http.givenData, {name: "testName", code: "testCode"});
-  t.deepEqual(dispatcher.receivedMessage, new JoinPartySucceeded());
+  expect(http.givenUrl).to.equal("/party/join");
+  expect(http.givenData).to.deep.equal({name: "testName", code: "testCode"});
+  expect(dispatcher.receivedMessage).to.deep.equal( new JoinPartySucceeded());
 });
