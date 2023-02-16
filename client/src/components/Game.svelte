@@ -54,6 +54,6 @@ function viewIdentity() {
 </div>
 {#if storeValues.dialogShown == DialogValues.Identity}
   <Dialog dispatcher={dispatcher}>
-    <Identity storeValues={storeValues}/>
+    <Identity identityValues={storeValues}/>
   </Dialog>
 {/if}
