@@ -12,6 +12,7 @@ import (
 )
 
 type pageType string
+type emKey string
 
 const (
 	presets pageType = "presets"
@@ -36,49 +37,83 @@ type page struct {
 
 func createSetNameAction(name string) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		ctx = context.WithValue(ctx, "name", name)
+		ctx = context.WithValue(ctx, emKey("name"), name)
 		action := ctx.Value("action").(func(context.Context) context.Context)
 		ctx = action(ctx)
 		nextPage := ctx.Value("nextPage")
 		if nextPage == nil {
 			nextPage = actions
-			ctx = context.WithValue(ctx, "actionDesc", "")
+			ctx = context.WithValue(ctx, emKey("actionDesc"), "")
 		}
-		return context.WithValue(ctx, "currentPage", nextPage.(pageType))
+		return context.WithValue(ctx, emKey("currentPage"), nextPage.(pageType))
 	}
 }
 
 func createActionWithName(a func(ctx context.Context) context.Context, actionDesc string) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		ctx = context.WithValue(ctx, "action", a)
-		ctx = context.WithValue(ctx, "actionDesc", actionDesc)
-		return context.WithValue(ctx, "currentPage", people)
+		ctx = context.WithValue(ctx, emKey("action"), a)
+		ctx = context.WithValue(ctx, emKey("actionDesc"), actionDesc)
+		return context.WithValue(ctx, emKey("currentPage"), people)
 	}
 }
 
 func blankPreset(ctx context.Context) context.Context {
-	return context.WithValue(ctx, "currentPage", actions)
+	return context.WithValue(ctx, emKey("currentPage"), actions)
 }
 
 func createdAndJoined5Players(ctx context.Context) context.Context {
 	ctx = blankPreset(ctx)
-	ctx = context.WithValue(ctx, "currentPage", actions)
+	ctx = context.WithValue(ctx, emKey("currentPage"), actions)
 	code, session := bcclient.CreateGame("Alice")
-	ctx = context.WithValue(ctx, "code", code)
-	ctx = context.WithValue(ctx, "sessionAlice", session)
+	ctx = context.WithValue(ctx, emKey("code"), code)
+	ctx = context.WithValue(ctx, emKey("sessionAlice"), session)
 	session = bcclient.JoinGame(code, "Bob")
-	ctx = context.WithValue(ctx, "sessionBob", session)
+	ctx = context.WithValue(ctx, emKey("sessionBob"), session)
 	session = bcclient.JoinGame(code, "Charlie")
-	ctx = context.WithValue(ctx, "sessionCharlie", session)
+	ctx = context.WithValue(ctx, emKey("sessionCharlie"), session)
 	session = bcclient.JoinGame(code, "Dan")
-	ctx = context.WithValue(ctx, "sessionDan", session)
+	ctx = context.WithValue(ctx, emKey("sessionDan"), session)
 	session = bcclient.JoinGame(code, "Edith")
-	ctx = context.WithValue(ctx, "sessionEdith", session)
+	ctx = context.WithValue(ctx, emKey("sessionEdith"), session)
+	return ctx
+}
+
+func createdAndJoined10Players(ctx context.Context) context.Context {
+	ctx = blankPreset(ctx)
+	ctx = context.WithValue(ctx, emKey("currentPage"), actions)
+	code, session := bcclient.CreateGame("Alice")
+	ctx = context.WithValue(ctx, emKey("code"), code)
+	ctx = context.WithValue(ctx, emKey("sessionAlice"), session)
+	session = bcclient.JoinGame(code, "Bob")
+	ctx = context.WithValue(ctx, emKey("sessionBob"), session)
+	session = bcclient.JoinGame(code, "Charlie")
+	ctx = context.WithValue(ctx, emKey("sessionCharlie"), session)
+	session = bcclient.JoinGame(code, "Dan")
+	ctx = context.WithValue(ctx, emKey("sessionDan"), session)
+	session = bcclient.JoinGame(code, "Edith")
+	ctx = context.WithValue(ctx, emKey("sessionEdith"), session)
+	session = bcclient.JoinGame(code, "Frank")
+	ctx = context.WithValue(ctx, emKey("sessionFrank"), session)
+	session = bcclient.JoinGame(code, "Gus")
+	ctx = context.WithValue(ctx, emKey("sessionGus"), session)
+	session = bcclient.JoinGame(code, "Henry")
+	ctx = context.WithValue(ctx, emKey("sessionHenry"), session)
+	session = bcclient.JoinGame(code, "Ian")
+	ctx = context.WithValue(ctx, emKey("sessionIan"), session)
+	session = bcclient.JoinGame(code, "Jay")
+	ctx = context.WithValue(ctx, emKey("sessionJay"), session)
 	return ctx
 }
 
 func started5PlayerGame(ctx context.Context) context.Context {
 	ctx = createdAndJoined5Players(ctx)
+	session := ctx.Value("sessionAlice").(string)
+	bcclient.StartGame(session)
+	return ctx
+}
+
+func started10PlayerGame(ctx context.Context) context.Context {
+	ctx = createdAndJoined10Players(ctx)
 	session := ctx.Value("sessionAlice").(string)
 	bcclient.StartGame(session)
 	return ctx
@@ -165,6 +200,10 @@ func New() *Emulator {
 				description: "5-player 1 success, 1 failure",
 				action:      fivePlayerGameOneSuccessOneFailure,
 			},
+			{
+				description: "Started 10-player game",
+				action:      started10PlayerGame,
+			},
 		},
 	}
 	peoplePage := page{
@@ -208,33 +247,33 @@ func New() *Emulator {
 				description: "Leader Selects Member",
 				action: createActionWithName(func(ctx context.Context) context.Context {
 					name := ctx.Value("name").(string)
-					ctx = context.WithValue(ctx, "leader", name)
-					ctx = context.WithValue(ctx, "nextPage", people)
-					ctx = context.WithValue(ctx, "action", func(ctx context.Context) context.Context {
+					ctx = context.WithValue(ctx, emKey("leader"), name)
+					ctx = context.WithValue(ctx, emKey("nextPage"), people)
+					ctx = context.WithValue(ctx, emKey("action"), func(ctx context.Context) context.Context {
 						leader := ctx.Value("leader").(string)
 						session := ctx.Value("session" + leader).(string)
 						name := ctx.Value("name").(string)
 						bcclient.LeaderSelectsMember(session, name)
-						return context.WithValue(ctx, "nextPage", nil)
+						return context.WithValue(ctx, emKey("nextPage"), nil)
 					})
-					ctx = context.WithValue(ctx, "actionDesc", "is being selected?")
-					return context.WithValue(ctx, "currentPage", people)
+					ctx = context.WithValue(ctx, emKey("actionDesc"), "is being selected?")
+					return context.WithValue(ctx, emKey("currentPage"), people)
 				}, "is the leader?"),
 			},
 			{
 				description: "Leader Deselects Member",
 				action: createActionWithName(func(ctx context.Context) context.Context {
 					name := ctx.Value("name").(string)
-					ctx = context.WithValue(ctx, "leader", name)
-					ctx = context.WithValue(ctx, "nextPage", people)
-					ctx = context.WithValue(ctx, "action", func(ctx context.Context) context.Context {
+					ctx = context.WithValue(ctx, emKey("leader"), name)
+					ctx = context.WithValue(ctx, emKey("nextPage"), people)
+					ctx = context.WithValue(ctx, emKey("action"), func(ctx context.Context) context.Context {
 						leader := ctx.Value("leader").(string)
 						session := ctx.Value("session" + leader).(string)
 						name := ctx.Value("name").(string)
 						bcclient.LeaderDeselectsMember(session, name)
-						return context.WithValue(ctx, "nextPage", nil)
+						return context.WithValue(ctx, emKey("nextPage"), nil)
 					})
-					return context.WithValue(ctx, "actionDesc", "is being deselected?")
+					return context.WithValue(ctx, emKey("actionDesc"), "is being deselected?")
 				}, "is the leader?"),
 			},
 			{
@@ -293,7 +332,7 @@ func New() *Emulator {
 			people:  peoplePage,
 			presets: presetsPage,
 		},
-		ctx: context.WithValue(context.Background(), "currentPage", presets),
+		ctx: context.WithValue(context.Background(), emKey("currentPage"), presets),
 	}
 }
 
