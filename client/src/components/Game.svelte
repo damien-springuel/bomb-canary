@@ -8,8 +8,11 @@ import TeamVote from "./game-phases/TeamVote.svelte";
 import Identity from './Identity.svelte';
 import Dialog from './Dialog.svelte';
 import type { Dispatcher } from "../messages/dispatcher";
+import { GameService } from "./game-service";
+
 export let storeValues: StoreValues;
 export let dispatcher: Dispatcher;
+$: service = new GameService(storeValues);
 
 function viewIdentity() {
   dispatcher.dispatch(new ViewIdentity());
@@ -22,20 +25,20 @@ function viewIdentity() {
     Mission Track
   </div>
   <div class="flex flex-row justify-around w-full text-3xl">
-    {#each storeValues.missionRequirements as requirement, i}
+    {#each service.missions as m}
       <div 
         class="rounded-full border border-blue-400 h-16 w-16 flex items-center justify-center"
-        class:border-none={storeValues.isMissionSuccessful(i+1) != null}
-        class:text-gray-900={storeValues.isMissionSuccessful(i+1) != null || storeValues.isCurrentMission(i+1)}
-        class:bg-blue-400={storeValues.isCurrentMission(i+1)}
-        class:bg-green-400={storeValues.isMissionSuccessful(i+1) === true}
-        class:bg-red-400={storeValues.isMissionSuccessful(i+1) === false}
+        class:border-none={service.shouldMissionTagHaveNoBorder(m)}
+        class:text-gray-900={service.shouldMissionTagTextBeGray(m)}
+        class:bg-blue-400={service.isCurrentMission(m)}
+        class:bg-green-400={service.shouldMissionTagShowSuccess(m)}
+        class:bg-red-400={service.shouldMissionTagShowFailure(m)}
       >
-      {#if storeValues.isMissionSuccessful(i+1) === null}
-        {requirement.nbPeopleOnMission}
-      {:else if storeValues.isMissionSuccessful(i+1) === true}
+      {#if service.shouldMissionTagShowNbOfPeopleOnMission(m)}
+        {service.getNumberPeopleOnMission(m)}
+      {:else if service.shouldMissionTagShowSuccess(m)}
         <span class="text-5xl">&#x2713;</span>
-      {:else if storeValues.isMissionSuccessful(i+1) === false}
+      {:else if service.shouldMissionTagShowFailure(m)}
         <span class="text-5xl">&#x2715;</span>
       {/if}
       </div>

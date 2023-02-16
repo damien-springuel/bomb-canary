@@ -40,7 +40,6 @@ export interface StoreValues {
   players: string[]
   missionRequirements: MissionRequirement[]
   currentMission: number,
-  isCurrentMission: (mission: number) => boolean,
   currentGamePhase: GamePhase,
   leader: string
   isPlayerTheLeader: boolean
@@ -58,7 +57,6 @@ export interface StoreValues {
   playerMissionSuccess: boolean | null
   hasGivenPlayerWorkedOnMission: (player: string) => boolean,
   missionResults: MissionResult[]
-  isMissionSuccessful: (mission: number) => boolean | null,
   dialogShown: Dialog,
   revealedSpies: Set<string>
 }
@@ -70,8 +68,7 @@ function defaultValues(): StoreValues {
     player: "",
     players: [],
     missionRequirements: [],
-    currentMission: 1,
-    isCurrentMission: undefined,
+    currentMission: 0,
     currentGamePhase: GamePhase.TeamSelection,
     leader: "",
     isPlayerTheLeader: false,
@@ -89,7 +86,6 @@ function defaultValues(): StoreValues {
     playerMissionSuccess: null,
     hasGivenPlayerWorkedOnMission: undefined,
     missionResults: [],
-    isMissionSuccessful: undefined,
     dialogShown: null,
     revealedSpies: new Set<string>(),
   }
@@ -123,8 +119,7 @@ export class Store implements Readable<StoreValues> {
     value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
     value.isGivenPlayerInTeam = player => value.currentTeam.has(player);
     
-    value.isCurrentMission = mission => mission === value.currentMission;
-    const currentMissionRequirement = value.missionRequirements[value.currentMission-1];
+    const currentMissionRequirement = value.missionRequirements[value.currentMission];
     value.isPlayerSelectableForTeam = player => {
       if (value.currentTeam.has(player)) {
         return true;
@@ -136,16 +131,10 @@ export class Store implements Readable<StoreValues> {
     }
     value.canConfirmTeam = value.currentTeam.size === currentMissionRequirement?.nbPeopleOnMission
     value.hasGivenPlayerVoted = player => value.peopleThatVotedOnTeam.has(player);
-    value.currentTeamVoteNb = value.teamVoteResults[value.currentMission-1].votes.length + 1;
+    value.currentTeamVoteNb = value.teamVoteResults[value.currentMission].votes.length + 1;
     value.isPlayerInMission = value.currentTeam.has(value.player);
     value.hasGivenPlayerWorkedOnMission = player => value.peopleThatWorkedOnMission.has(player);
     
-    value.isMissionSuccessful = mission => {
-      if(mission > value.missionResults.length) {
-        return null
-      }
-      return value.missionResults[mission - 1].success;
-    }
     return value;
   }
 
@@ -284,7 +273,7 @@ function makePlayerVote(this: Store, player: string, approval: boolean | null): 
 
 function saveTeamVoteResult(this: Store, approved: boolean, playerVotes: Map<string, boolean>): void {
   this.update(v => {
-    v.teamVoteResults[v.currentMission-1].votes.push({approved: approved, playerVotes: playerVotes});
+    v.teamVoteResults[v.currentMission].votes.push({approved: approved, playerVotes: playerVotes});
     return v;
   });
 }

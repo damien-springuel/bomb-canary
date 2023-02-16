@@ -12,8 +12,7 @@ test(`Store - default values`, t => {
       player: "",
       players: [],
       missionRequirements: [],
-      currentMission: 1,
-      isCurrentMission: undefined,
+      currentMission: 0,
       currentGamePhase: GamePhase.TeamSelection,
       leader: "",
       isPlayerTheLeader: false,
@@ -31,7 +30,6 @@ test(`Store - default values`, t => {
       playerMissionSuccess: null,
       hasGivenPlayerWorkedOnMission: undefined,
       missionResults: [],
-      isMissionSuccessful: undefined,
       dialogShown: null,
       revealedSpies: new Set<string>(),
     }
@@ -153,15 +151,7 @@ test(`Store - setMissionRequirements`, t => {
   store.setMissionRequirements([{nbFailuresRequiredToFail: 3, nbPeopleOnMission: 4}, {nbFailuresRequiredToFail: 2, nbPeopleOnMission:4}]);
   let storeValues: StoreValues = get(store);
   expect(storeValues.missionRequirements).to.deep.equal([{nbFailuresRequiredToFail: 3, nbPeopleOnMission: 4}, {nbFailuresRequiredToFail: 2, nbPeopleOnMission:4}]);
-  expect(storeValues.currentMission).to.equal(1);
-});
-
-test(`Store - isCurrentMission`, t => {
-  const store = new Store();
-  store.setMissionRequirements([{nbFailuresRequiredToFail: 3, nbPeopleOnMission: 4}, {nbFailuresRequiredToFail: 2, nbPeopleOnMission:4}]);
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.isCurrentMission(1)).to.be.true;
-  expect(storeValues.isCurrentMission(2)).to.be.false;
+  expect(storeValues.currentMission).to.equal(0);
 });
 
 test(`Store - startTeamSelection`, t => {
@@ -395,17 +385,7 @@ test(`Store - saveMissionResult`, t => {
   store.saveMissionResult(true, 2);
   let storeValues: StoreValues = get(store);
   expect(storeValues.missionResults).to.deep.equal([{success: true, nbFails: 2}]);
-  expect(storeValues.currentMission).to.equal(2);
-});
-
-test(`Store - isMissionSuccessful`, t => {
-  const store = new Store();
-  store.saveMissionResult(true, 2);
-  store.saveMissionResult(false, 2);
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.isMissionSuccessful(1)).to.be.true;
-  expect(storeValues.isMissionSuccessful(2)).to.be.false;
-  expect(storeValues.isMissionSuccessful(3)).to.be.null;
+  expect(storeValues.currentMission).to.equal(1); // second mission, since mission are zero-based
 });
 
 test(`Store - close Dialog`, t => {
