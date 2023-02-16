@@ -18,7 +18,7 @@ $: service = new MissionTrackerService(missionTrackerValues);
       class:bg-red-400={service.shouldMissionTagShowFailure(m)}
     >
     {#if service.shouldMissionTagShowNbOfPeopleOnMission(m)}
-      {service.getNumberPeopleOnMission(m)}
+      {service.getNumberPeopleOnMission(m)} {#if service.doesMissionNeedMoreThanOneFail(m)}*{/if}
     {:else if service.shouldMissionTagShowSuccess(m)}
       <span class="text-5xl">&#x2713;</span>
     {:else if service.shouldMissionTagShowFailure(m)}

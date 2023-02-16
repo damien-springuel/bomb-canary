@@ -51,4 +51,8 @@ export class MissionTrackerService {
   get missions(): number[] {
     return [0,1,2,3,4];
   }
+
+  doesMissionNeedMoreThanOneFail(mission: number): boolean {
+    return this.values.missionRequirements[mission].nbFailuresRequiredToFail > 1;
+  }
 }

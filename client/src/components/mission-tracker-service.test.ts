@@ -86,3 +86,20 @@ test("Get missions", ()=> {
     missionRequirements:[]});
   expect(gameService.missions).to.deep.equal([0,1,2,3,4]);
 });
+
+test("Mission has more than one fail required", ()=> {
+  const gameService: MissionTrackerService = new MissionTrackerService({
+    missionResults: [
+      {nbFails: 1, success: false}, 
+      {nbFails: 0, success: true}], 
+    missionRequirements:[
+      {nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1},
+      {nbPeopleOnMission: 3, nbFailuresRequiredToFail: 2},
+      {nbPeopleOnMission: 4, nbFailuresRequiredToFail: 1},
+      {nbPeopleOnMission: 5, nbFailuresRequiredToFail: 4},
+    ]});
+  expect(gameService.doesMissionNeedMoreThanOneFail(0)).to.be.false;
+  expect(gameService.doesMissionNeedMoreThanOneFail(1)).to.be.true;
+  expect(gameService.doesMissionNeedMoreThanOneFail(2)).to.be.false;
+  expect(gameService.doesMissionNeedMoreThanOneFail(3)).to.be.true;
+});
