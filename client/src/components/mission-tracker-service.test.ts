@@ -1,14 +1,14 @@
 import { expect, test } from "vitest";
-import { GameService } from "./game-service";
+import { MissionTrackerService } from "./mission-tracker-service";
 
 test("Is Current Mission", () => {
-  const gameService: GameService = new GameService({missionResults: [], missionRequirements:[]});
+  const gameService: MissionTrackerService = new MissionTrackerService({missionResults: [], missionRequirements:[]});
   expect(gameService.isCurrentMission(0)).to.be.true;
   expect(gameService.isCurrentMission(1)).to.be.false;
 });
 
 test("Should mission tag have no border", ()=> {
-  const gameService: GameService = new GameService({
+  const gameService: MissionTrackerService = new MissionTrackerService({
     missionResults: [
       {nbFails: 1, success: false}, 
     ], missionRequirements:[]});
@@ -18,7 +18,7 @@ test("Should mission tag have no border", ()=> {
 });
 
 test("Should mission tag text be gray", ()=> {
-  const gameService: GameService = new GameService({
+  const gameService: MissionTrackerService = new MissionTrackerService({
     missionResults: [
       {nbFails: 1, success: false}, 
     ], missionRequirements:[]});
@@ -28,7 +28,7 @@ test("Should mission tag text be gray", ()=> {
 });
 
 test("Should mission tag show success", ()=> {
-  const gameService: GameService = new GameService({
+  const gameService: MissionTrackerService = new MissionTrackerService({
     missionResults: [
       {nbFails: 1, success: false}, 
       {nbFails: 0, success: true}, 
@@ -40,7 +40,7 @@ test("Should mission tag show success", ()=> {
 });
 
 test("Should mission tag show failure", ()=> {
-  const gameService: GameService = new GameService({
+  const gameService: MissionTrackerService = new MissionTrackerService({
     missionResults: [
       {nbFails: 1, success: false}, 
       {nbFails: 0, success: true}, 
@@ -52,7 +52,7 @@ test("Should mission tag show failure", ()=> {
 });
 
 test("Should mission tag show nb of people on mission", ()=> {
-  const gameService: GameService = new GameService({
+  const gameService: MissionTrackerService = new MissionTrackerService({
     missionResults: [
       {nbFails: 1, success: false}, 
       {nbFails: 0, success: true}, 
@@ -64,7 +64,7 @@ test("Should mission tag show nb of people on mission", ()=> {
 });
 
 test("Get number of people on mission", ()=> {
-  const gameService: GameService = new GameService({
+  const gameService: MissionTrackerService = new MissionTrackerService({
     missionResults: [
       {nbFails: 1, success: false}, 
       {nbFails: 0, success: true}], 
@@ -81,7 +81,7 @@ test("Get number of people on mission", ()=> {
 });
 
 test("Get missions", ()=> {
-  const gameService: GameService = new GameService({
+  const gameService: MissionTrackerService = new MissionTrackerService({
     missionResults: [], 
     missionRequirements:[]});
   expect(gameService.missions).to.deep.equal([0,1,2,3,4]);

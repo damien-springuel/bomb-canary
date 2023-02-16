@@ -8,16 +8,16 @@ export interface MissionRequirement {
   readonly nbFailuresRequiredToFail: number
 }
 
-export interface GameValues {
+export interface MissionTrackerValues {
   missionRequirements: MissionRequirement[],
   missionResults: MissionResult[],
 }
 
-export class GameService {
-  constructor(readonly gameValues: GameValues){}
+export class MissionTrackerService {
+  constructor(readonly values: MissionTrackerValues){}
   
   private get currentMission():number {
-    return this.gameValues.missionResults.length;
+    return this.values.missionResults.length;
   }
 
   isCurrentMission(mission: number): boolean{
@@ -33,11 +33,11 @@ export class GameService {
   }
 
   shouldMissionTagShowSuccess(mission: number): boolean {
-    return mission < this.currentMission && this.gameValues.missionResults[mission].success;
+    return mission < this.currentMission && this.values.missionResults[mission].success;
   }
 
   shouldMissionTagShowFailure(mission: number): boolean {
-    return mission < this.currentMission && !this.gameValues.missionResults[mission].success;
+    return mission < this.currentMission && !this.values.missionResults[mission].success;
   }
 
   shouldMissionTagShowNbOfPeopleOnMission(mission: number): boolean {
@@ -45,7 +45,7 @@ export class GameService {
   }
 
   getNumberPeopleOnMission(mission: number): number {
-    return this.gameValues.missionRequirements[mission].nbPeopleOnMission;
+    return this.values.missionRequirements[mission].nbPeopleOnMission;
   }
 
   get missions(): number[] {
