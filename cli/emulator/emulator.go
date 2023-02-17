@@ -35,93 +35,173 @@ type page struct {
 	rows  []choice
 }
 
+func getValueFromContext(ctx context.Context, key string) any {
+	return ctx.Value(emKey(key))
+}
+
+func setValueToContext(ctx context.Context, key string, value any) context.Context {
+	return context.WithValue(ctx, emKey(key), value)
+}
+
+func getCurrentPageFromContext(ctx context.Context) pageType {
+	return getPageFromContext(ctx, "currentPage")
+}
+
+func setCurrentPageToContext(ctx context.Context, currentPage pageType) context.Context {
+	return setValueToContext(ctx, "currentPage", currentPage)
+}
+
+func getNextPageToContext(ctx context.Context) pageType {
+	return getPageFromContext(ctx, "nextPage")
+}
+
+func setNextPageToContext(ctx context.Context, nextPage pageType) context.Context {
+	return setValueToContext(ctx, "nextPage", nextPage)
+}
+func setNilNextPageToContext(ctx context.Context) context.Context {
+	return setNextPageToContext(ctx, "")
+}
+
+func getPageFromContext(ctx context.Context, page string) pageType {
+	return getValueFromContext(ctx, page).(pageType)
+}
+
+func getActionFromContext(ctx context.Context) func(context.Context) context.Context {
+	return getValueFromContext(ctx, "action").(func(context.Context) context.Context)
+}
+
+func setActionToContext(ctx context.Context, action func(context.Context) context.Context) context.Context {
+	return setValueToContext(ctx, "action", action)
+}
+
+func getActionDescFromContext(ctx context.Context) string {
+	desc, ok := getValueFromContext(ctx, "actionDesc").(string)
+	if !ok {
+		return ""
+	}
+	return desc
+}
+func setActionDescToContext(ctx context.Context, actionDesc string) context.Context {
+	return setValueToContext(ctx, "actionDesc", actionDesc)
+}
+
+func setEmptyActionDescToContext(ctx context.Context) context.Context {
+	return setValueToContext(ctx, "actionDesc", "")
+}
+
+func getSessionFromContext(ctx context.Context, name string) string {
+	return getValueFromContext(ctx, "session"+name).(string)
+}
+
+func setSessionToContext(ctx context.Context, name string, session string) context.Context {
+	return setValueToContext(ctx, "session"+name, session)
+}
+
+func getNameFromContext(ctx context.Context) string {
+	return getValueFromContext(ctx, "name").(string)
+}
+
+func setNameToContext(ctx context.Context, name string) context.Context {
+	return setValueToContext(ctx, "name", name)
+}
+
+func getLeaderFromContext(ctx context.Context) string {
+	return getValueFromContext(ctx, "leader").(string)
+}
+
+func setLeaderToContext(ctx context.Context, leader string) context.Context {
+	return setValueToContext(ctx, "leader", leader)
+}
+
+func setCodeToContext(ctx context.Context, code string) context.Context {
+	return setValueToContext(ctx, "code", code)
+}
+
 func createSetNameAction(name string) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		ctx = context.WithValue(ctx, emKey("name"), name)
-		action := ctx.Value("action").(func(context.Context) context.Context)
+		ctx = setNameToContext(ctx, name)
+		action := getActionFromContext(ctx)
 		ctx = action(ctx)
-		nextPage := ctx.Value("nextPage")
-		if nextPage == nil {
+		nextPage := getNextPageToContext(ctx)
+		if nextPage == "" {
 			nextPage = actions
-			ctx = context.WithValue(ctx, emKey("actionDesc"), "")
+			ctx = setEmptyActionDescToContext(ctx)
 		}
-		return context.WithValue(ctx, emKey("currentPage"), nextPage.(pageType))
+		return setCurrentPageToContext(ctx, nextPage)
 	}
 }
 
 func createActionWithName(a func(ctx context.Context) context.Context, actionDesc string) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
-		ctx = context.WithValue(ctx, emKey("action"), a)
-		ctx = context.WithValue(ctx, emKey("actionDesc"), actionDesc)
-		return context.WithValue(ctx, emKey("currentPage"), people)
+		ctx = setActionToContext(ctx, a)
+		ctx = setActionDescToContext(ctx, actionDesc)
+		return setCurrentPageToContext(ctx, people)
 	}
 }
 
 func blankPreset(ctx context.Context) context.Context {
-	return context.WithValue(ctx, emKey("currentPage"), actions)
+	return setCurrentPageToContext(ctx, actions)
 }
 
 func createdAndJoined5Players(ctx context.Context) context.Context {
-	ctx = blankPreset(ctx)
-	ctx = context.WithValue(ctx, emKey("currentPage"), actions)
+	ctx = setCurrentPageToContext(ctx, actions)
 	code, session := bcclient.CreateGame("Alice")
-	ctx = context.WithValue(ctx, emKey("code"), code)
-	ctx = context.WithValue(ctx, emKey("sessionAlice"), session)
+	ctx = setCodeToContext(ctx, code)
+	ctx = setSessionToContext(ctx, "Alice", session)
 	session = bcclient.JoinGame(code, "Bob")
-	ctx = context.WithValue(ctx, emKey("sessionBob"), session)
+	ctx = setSessionToContext(ctx, "Bob", session)
 	session = bcclient.JoinGame(code, "Charlie")
-	ctx = context.WithValue(ctx, emKey("sessionCharlie"), session)
+	ctx = setSessionToContext(ctx, "Charlie", session)
 	session = bcclient.JoinGame(code, "Dan")
-	ctx = context.WithValue(ctx, emKey("sessionDan"), session)
+	ctx = setSessionToContext(ctx, "Dan", session)
 	session = bcclient.JoinGame(code, "Edith")
-	ctx = context.WithValue(ctx, emKey("sessionEdith"), session)
+	ctx = setSessionToContext(ctx, "Edith", session)
 	return ctx
 }
 
 func createdAndJoined10Players(ctx context.Context) context.Context {
-	ctx = blankPreset(ctx)
-	ctx = context.WithValue(ctx, emKey("currentPage"), actions)
+	ctx = setCurrentPageToContext(ctx, actions)
 	code, session := bcclient.CreateGame("Alice")
-	ctx = context.WithValue(ctx, emKey("code"), code)
-	ctx = context.WithValue(ctx, emKey("sessionAlice"), session)
+	ctx = setCodeToContext(ctx, code)
+	ctx = setSessionToContext(ctx, "Alice", session)
 	session = bcclient.JoinGame(code, "Bob")
-	ctx = context.WithValue(ctx, emKey("sessionBob"), session)
+	ctx = setSessionToContext(ctx, "Bob", session)
 	session = bcclient.JoinGame(code, "Charlie")
-	ctx = context.WithValue(ctx, emKey("sessionCharlie"), session)
+	ctx = setSessionToContext(ctx, "Charlie", session)
 	session = bcclient.JoinGame(code, "Dan")
-	ctx = context.WithValue(ctx, emKey("sessionDan"), session)
+	ctx = setSessionToContext(ctx, "Dan", session)
 	session = bcclient.JoinGame(code, "Edith")
-	ctx = context.WithValue(ctx, emKey("sessionEdith"), session)
+	ctx = setSessionToContext(ctx, "Edith", session)
 	session = bcclient.JoinGame(code, "Frank")
-	ctx = context.WithValue(ctx, emKey("sessionFrank"), session)
+	ctx = setSessionToContext(ctx, "Frank", session)
 	session = bcclient.JoinGame(code, "Gus")
-	ctx = context.WithValue(ctx, emKey("sessionGus"), session)
+	ctx = setSessionToContext(ctx, "Gus", session)
 	session = bcclient.JoinGame(code, "Henry")
-	ctx = context.WithValue(ctx, emKey("sessionHenry"), session)
+	ctx = setSessionToContext(ctx, "Henry", session)
 	session = bcclient.JoinGame(code, "Ian")
-	ctx = context.WithValue(ctx, emKey("sessionIan"), session)
+	ctx = setSessionToContext(ctx, "Ian", session)
 	session = bcclient.JoinGame(code, "Jay")
-	ctx = context.WithValue(ctx, emKey("sessionJay"), session)
+	ctx = setSessionToContext(ctx, "Jay", session)
 	return ctx
 }
 
 func started5PlayerGame(ctx context.Context) context.Context {
 	ctx = createdAndJoined5Players(ctx)
-	session := ctx.Value("sessionAlice").(string)
+	session := getSessionFromContext(ctx, "Alice")
 	bcclient.StartGame(session)
 	return ctx
 }
 
 func started10PlayerGame(ctx context.Context) context.Context {
 	ctx = createdAndJoined10Players(ctx)
-	session := ctx.Value("sessionAlice").(string)
+	session := getSessionFromContext(ctx, "Alice")
 	bcclient.StartGame(session)
 	return ctx
 }
 
 func fivePlayerGameFirstVote(ctx context.Context) context.Context {
 	ctx = started5PlayerGame(ctx)
-	session := ctx.Value("sessionAlice").(string)
+	session := getSessionFromContext(ctx, "Alice")
 	bcclient.LeaderSelectsMember(session, "Alice")
 	bcclient.LeaderSelectsMember(session, "Bob")
 	bcclient.LeaderConfirmsTeam(session)
@@ -130,21 +210,21 @@ func fivePlayerGameFirstVote(ctx context.Context) context.Context {
 
 func fivePlayerGameFirstMission(ctx context.Context) context.Context {
 	ctx = fivePlayerGameFirstVote(ctx)
-	bcclient.ApproveTeam(ctx.Value("sessionAlice").(string))
-	bcclient.ApproveTeam(ctx.Value("sessionBob").(string))
-	bcclient.ApproveTeam(ctx.Value("sessionCharlie").(string))
-	bcclient.ApproveTeam(ctx.Value("sessionDan").(string))
-	bcclient.ApproveTeam(ctx.Value("sessionEdith").(string))
+	bcclient.ApproveTeam(getSessionFromContext(ctx, "Alice"))
+	bcclient.ApproveTeam(getSessionFromContext(ctx, "Bob"))
+	bcclient.ApproveTeam(getSessionFromContext(ctx, "Charlie"))
+	bcclient.ApproveTeam(getSessionFromContext(ctx, "Dan"))
+	bcclient.ApproveTeam(getSessionFromContext(ctx, "Edith"))
 	return ctx
 }
 
 func fivePlayerGameOneSuccessOneFailure(ctx context.Context) context.Context {
 	ctx = started5PlayerGame(ctx)
-	alice := ctx.Value("sessionAlice").(string)
-	bob := ctx.Value("sessionBob").(string)
-	charlie := ctx.Value("sessionCharlie").(string)
-	dan := ctx.Value("sessionDan").(string)
-	edith := ctx.Value("sessionEdith").(string)
+	alice := getSessionFromContext(ctx, "Alice")
+	bob := getSessionFromContext(ctx, "Bob")
+	charlie := getSessionFromContext(ctx, "Charlie")
+	dan := getSessionFromContext(ctx, "Dan")
+	edith := getSessionFromContext(ctx, "Edith")
 
 	bcclient.LeaderSelectsMember(alice, "Alice")
 	bcclient.LeaderSelectsMember(alice, "Bob")
@@ -169,6 +249,82 @@ func fivePlayerGameOneSuccessOneFailure(ctx context.Context) context.Context {
 	bcclient.FailMission(alice)
 	bcclient.FailMission(bob)
 	bcclient.FailMission(charlie)
+	return ctx
+}
+
+func tenPlayerGameFourTeamVoteFailures(ctx context.Context) context.Context {
+	ctx = started10PlayerGame(ctx)
+	alice := getSessionFromContext(ctx, "Alice")
+	bob := getSessionFromContext(ctx, "Bob")
+	charlie := getSessionFromContext(ctx, "Charlie")
+	dan := getSessionFromContext(ctx, "Dan")
+	edith := getSessionFromContext(ctx, "Edith")
+	frank := getSessionFromContext(ctx, "Frank")
+	gus := getSessionFromContext(ctx, "Gus")
+	henry := getSessionFromContext(ctx, "Henry")
+	ian := getSessionFromContext(ctx, "Ian")
+	jay := getSessionFromContext(ctx, "Jay")
+
+	bcclient.LeaderSelectsMember(alice, "Alice")
+	bcclient.LeaderSelectsMember(alice, "Bob")
+	bcclient.LeaderSelectsMember(alice, "Charlie")
+	bcclient.LeaderConfirmsTeam(alice)
+	bcclient.RejectTeam(alice)
+	bcclient.RejectTeam(bob)
+	bcclient.RejectTeam(charlie)
+	bcclient.RejectTeam(dan)
+	bcclient.RejectTeam(edith)
+	bcclient.RejectTeam(frank)
+	bcclient.RejectTeam(gus)
+	bcclient.RejectTeam(henry)
+	bcclient.RejectTeam(ian)
+	bcclient.RejectTeam(jay)
+
+	bcclient.LeaderSelectsMember(bob, "Dan")
+	bcclient.LeaderSelectsMember(bob, "Gus")
+	bcclient.LeaderSelectsMember(bob, "Jay")
+	bcclient.LeaderConfirmsTeam(bob)
+	bcclient.RejectTeam(alice)
+	bcclient.RejectTeam(bob)
+	bcclient.RejectTeam(charlie)
+	bcclient.ApproveTeam(dan)
+	bcclient.RejectTeam(edith)
+	bcclient.RejectTeam(frank)
+	bcclient.RejectTeam(gus)
+	bcclient.RejectTeam(henry)
+	bcclient.ApproveTeam(ian)
+	bcclient.ApproveTeam(jay)
+
+	bcclient.LeaderSelectsMember(charlie, "Edith")
+	bcclient.LeaderSelectsMember(charlie, "Alice")
+	bcclient.LeaderSelectsMember(charlie, "Frank")
+	bcclient.LeaderConfirmsTeam(charlie)
+	bcclient.ApproveTeam(alice)
+	bcclient.RejectTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.RejectTeam(dan)
+	bcclient.ApproveTeam(edith)
+	bcclient.ApproveTeam(frank)
+	bcclient.RejectTeam(gus)
+	bcclient.ApproveTeam(henry)
+	bcclient.RejectTeam(ian)
+	bcclient.RejectTeam(jay)
+
+	bcclient.LeaderSelectsMember(dan, "Ian")
+	bcclient.LeaderSelectsMember(dan, "Henry")
+	bcclient.LeaderSelectsMember(dan, "Gus")
+	bcclient.LeaderConfirmsTeam(dan)
+	bcclient.ApproveTeam(alice)
+	bcclient.RejectTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.RejectTeam(dan)
+	bcclient.RejectTeam(edith)
+	bcclient.RejectTeam(frank)
+	bcclient.RejectTeam(gus)
+	bcclient.RejectTeam(henry)
+	bcclient.RejectTeam(ian)
+	bcclient.ApproveTeam(jay)
+
 	return ctx
 }
 
@@ -204,6 +360,10 @@ func New() *Emulator {
 				description: "Started 10-player game",
 				action:      started10PlayerGame,
 			},
+			{
+				description: "10 player game with 4 team vote failures",
+				action:      tenPlayerGameFourTeamVoteFailures,
+			},
 		},
 	}
 	peoplePage := page{
@@ -237,8 +397,8 @@ func New() *Emulator {
 			{
 				description: "Start Game",
 				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					session := ctx.Value("session" + name).(string)
+					name := getNameFromContext(ctx)
+					session := getSessionFromContext(ctx, name)
 					bcclient.StartGame(session)
 					return ctx
 				}, "is starting the game?"),
@@ -246,41 +406,42 @@ func New() *Emulator {
 			{
 				description: "Leader Selects Member",
 				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					ctx = context.WithValue(ctx, emKey("leader"), name)
-					ctx = context.WithValue(ctx, emKey("nextPage"), people)
-					ctx = context.WithValue(ctx, emKey("action"), func(ctx context.Context) context.Context {
-						leader := ctx.Value("leader").(string)
-						session := ctx.Value("session" + leader).(string)
-						name := ctx.Value("name").(string)
+					name := getNameFromContext(ctx)
+					ctx = setLeaderToContext(ctx, name)
+					ctx = setNextPageToContext(ctx, people)
+					ctx = setActionToContext(ctx, func(ctx context.Context) context.Context {
+						leader := getLeaderFromContext(ctx)
+						session := getSessionFromContext(ctx, leader)
+						name := getNameFromContext(ctx)
 						bcclient.LeaderSelectsMember(session, name)
-						return context.WithValue(ctx, emKey("nextPage"), nil)
+						return setNilNextPageToContext(ctx)
 					})
-					ctx = context.WithValue(ctx, emKey("actionDesc"), "is being selected?")
-					return context.WithValue(ctx, emKey("currentPage"), people)
+					ctx = setActionDescToContext(ctx, "is being selected?")
+					return setCurrentPageToContext(ctx, people)
 				}, "is the leader?"),
 			},
 			{
 				description: "Leader Deselects Member",
 				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					ctx = context.WithValue(ctx, emKey("leader"), name)
-					ctx = context.WithValue(ctx, emKey("nextPage"), people)
-					ctx = context.WithValue(ctx, emKey("action"), func(ctx context.Context) context.Context {
-						leader := ctx.Value("leader").(string)
-						session := ctx.Value("session" + leader).(string)
-						name := ctx.Value("name").(string)
+					name := getNameFromContext(ctx)
+					ctx = setLeaderToContext(ctx, name)
+					ctx = setNextPageToContext(ctx, people)
+					ctx = setActionToContext(ctx, func(ctx context.Context) context.Context {
+						leader := getLeaderFromContext(ctx)
+						session := getSessionFromContext(ctx, leader)
+						name := getNameFromContext(ctx)
 						bcclient.LeaderDeselectsMember(session, name)
-						return context.WithValue(ctx, emKey("nextPage"), nil)
+						return setNilNextPageToContext(ctx)
 					})
-					return context.WithValue(ctx, emKey("actionDesc"), "is being deselected?")
+					ctx = setActionDescToContext(ctx, "is being deselected")
+					return setCurrentPageToContext(ctx, people)
 				}, "is the leader?"),
 			},
 			{
 				description: "Leader Confirms Team",
 				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					session := ctx.Value("session" + name).(string)
+					name := getNameFromContext(ctx)
+					session := getSessionFromContext(ctx, name)
 					bcclient.LeaderConfirmsTeam(session)
 					return ctx
 				}, "is confirming the team?"),
@@ -288,8 +449,8 @@ func New() *Emulator {
 			{
 				description: "Approve Team",
 				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					session := ctx.Value("session" + name).(string)
+					name := getNameFromContext(ctx)
+					session := getSessionFromContext(ctx, name)
 					bcclient.ApproveTeam(session)
 					return ctx
 				}, "is approving the team?"),
@@ -297,8 +458,8 @@ func New() *Emulator {
 			{
 				description: "Reject Team",
 				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					session := ctx.Value("session" + name).(string)
+					name := getNameFromContext(ctx)
+					session := getSessionFromContext(ctx, name)
 					bcclient.RejectTeam(session)
 					return ctx
 				}, "is rejecting the team?"),
@@ -306,8 +467,8 @@ func New() *Emulator {
 			{
 				description: "Succeed Mission",
 				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					session := ctx.Value("session" + name).(string)
+					name := getNameFromContext(ctx)
+					session := getSessionFromContext(ctx, name)
 					bcclient.SucceedMission(session)
 					return ctx
 				}, "is succeeding the mission?"),
@@ -315,8 +476,8 @@ func New() *Emulator {
 			{
 				description: "Fail Mission",
 				action: createActionWithName(func(ctx context.Context) context.Context {
-					name := ctx.Value("name").(string)
-					session := ctx.Value("session" + name).(string)
+					name := getNameFromContext(ctx)
+					session := getSessionFromContext(ctx, name)
 					bcclient.FailMission(session)
 					return ctx
 				}, "is failing the mission?"),
@@ -332,16 +493,13 @@ func New() *Emulator {
 			people:  peoplePage,
 			presets: presetsPage,
 		},
-		ctx: context.WithValue(context.Background(), emKey("currentPage"), presets),
+		ctx: setCurrentPageToContext(context.Background(), presets),
 	}
 }
 
 func (e *Emulator) updateList() {
 	p := e.getCurrentPage()
-	titleDesc, ok := e.ctx.Value("actionDesc").(string)
-	if !ok {
-		titleDesc = ""
-	}
+	titleDesc := getActionDescFromContext(e.ctx)
 	e.list.Title = fmt.Sprintf("%s%s", p.title, titleDesc)
 	rows := make([]string, len(p.rows))
 	for i := range rows {
@@ -350,12 +508,8 @@ func (e *Emulator) updateList() {
 	e.list.Rows = rows
 }
 
-func getPageFromContext(ctx context.Context) pageType {
-	return ctx.Value("currentPage").(pageType)
-}
-
 func (e *Emulator) getCurrentPage() page {
-	return e.pages[getPageFromContext(e.ctx)]
+	return e.pages[getCurrentPageFromContext(e.ctx)]
 }
 
 func (e *Emulator) HandleUiEvent(event termui.Event) {
