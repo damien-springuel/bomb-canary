@@ -24,14 +24,6 @@ export class MissionTrackerService {
     return this.currentMission == mission;
   }
 
-  shouldMissionTagHaveNoBorder(mission: number): boolean {
-    return mission <= this.currentMission;
-  }
-
-  shouldMissionTagTextBeGray(mission: number): boolean {
-    return mission <= this.currentMission;
-  }
-
   shouldMissionTagShowSuccess(mission: number): boolean {
     return mission < this.currentMission && this.values.missionResults[mission].success;
   }

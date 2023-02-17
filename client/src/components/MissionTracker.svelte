@@ -9,21 +9,19 @@ $: service = new MissionTrackerService(missionTrackerValues);
 </div>
 <div class="flex flex-row justify-around w-full text-3xl">
   {#each service.missions as m}
-    <div 
-      class="rounded-full border border-blue-400 h-16 w-16 flex items-center justify-center"
-      class:border-none={service.shouldMissionTagHaveNoBorder(m)}
-      class:text-gray-900={service.shouldMissionTagTextBeGray(m)}
-      class:bg-blue-400={service.isCurrentMission(m)}
-      class:bg-green-400={service.shouldMissionTagShowSuccess(m)}
-      class:bg-red-400={service.shouldMissionTagShowFailure(m)}
+    <button 
+      class="bc-button bc-button-empty h-16 w-16 flex items-center justify-center"
+      class:bc-button-blue={service.isCurrentMission(m)}
+      class:bc-button-green={service.shouldMissionTagShowSuccess(m)}
+      class:bc-button-red={service.shouldMissionTagShowFailure(m)}
     >
-    {#if service.shouldMissionTagShowNbOfPeopleOnMission(m)}
-      {service.getNumberPeopleOnMission(m)} {#if service.doesMissionNeedMoreThanOneFail(m)}*{/if}
-    {:else if service.shouldMissionTagShowSuccess(m)}
-      <span class="text-5xl">&#x2713;</span>
-    {:else if service.shouldMissionTagShowFailure(m)}
-      <span class="text-5xl">&#x2715;</span>
-    {/if}
-    </div>
+      {#if service.shouldMissionTagShowNbOfPeopleOnMission(m)}
+        {service.getNumberPeopleOnMission(m)} {#if service.doesMissionNeedMoreThanOneFail(m)}*{/if}
+      {:else if service.shouldMissionTagShowSuccess(m)}
+        <span class="text-5xl text-gray-900">&#x2713;</span>
+      {:else if service.shouldMissionTagShowFailure(m)}
+        <span class="text-5xl text-gray-900">&#x2715;</span>
+      {/if}
+    </button>
   {/each}
 </div>

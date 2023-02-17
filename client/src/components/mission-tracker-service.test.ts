@@ -7,26 +7,6 @@ test("Is Current Mission", () => {
   expect(gameService.isCurrentMission(1)).to.be.false;
 });
 
-test("Should mission tag have no border", ()=> {
-  const gameService: MissionTrackerService = new MissionTrackerService({
-    missionResults: [
-      {nbFails: 1, success: false}, 
-    ], missionRequirements:[]});
-  expect(gameService.shouldMissionTagHaveNoBorder(0)).to.be.true;
-  expect(gameService.shouldMissionTagHaveNoBorder(1)).to.be.true;
-  expect(gameService.shouldMissionTagHaveNoBorder(2)).to.be.false;
-});
-
-test("Should mission tag text be gray", ()=> {
-  const gameService: MissionTrackerService = new MissionTrackerService({
-    missionResults: [
-      {nbFails: 1, success: false}, 
-    ], missionRequirements:[]});
-  expect(gameService.shouldMissionTagTextBeGray(0)).to.be.true;
-  expect(gameService.shouldMissionTagTextBeGray(1)).to.be.true;
-  expect(gameService.shouldMissionTagTextBeGray(2)).to.be.false;
-});
-
 test("Should mission tag show success", ()=> {
   const gameService: MissionTrackerService = new MissionTrackerService({
     missionResults: [
