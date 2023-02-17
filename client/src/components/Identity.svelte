@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { IdentityService, type IdentityValues } from './identity-service';
-  export let identityValues: IdentityValues;
-  $: service = new IdentityService(identityValues);
-  </script>
+import { IdentityService, type IdentityValues } from './identity-service';
+export let identityValues: IdentityValues;
+$: service = new IdentityService(identityValues);
+</script>
 
 <div class="flex flex-col h-full items-center justify-center">
   <div class="text-3xl">You are a </div>

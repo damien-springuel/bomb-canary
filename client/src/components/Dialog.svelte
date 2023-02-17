@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { fly } from 'svelte/transition';
-  import { cubicIn, cubicOut } from 'svelte/easing';
-  import type { Dispatcher } from '../messages/dispatcher';
-  import { CloseDialog } from '../messages/commands';
-  export let dispatcher: Dispatcher;
+import { fly } from 'svelte/transition';
+import { cubicIn, cubicOut } from 'svelte/easing';
+import type { Dispatcher } from '../messages/dispatcher';
+import { CloseDialog } from '../messages/commands';
+export let dispatcher: Dispatcher;
 
-  function closeDialog() {
-    dispatcher.dispatch(new CloseDialog());
-  }
-  </script>
+function closeDialog() {
+  dispatcher.dispatch(new CloseDialog());
+}
+</script>
 
 <div 
   in:fly={{duration: 225, y: document.body.clientHeight, easing: cubicOut, opacity: 1}} 
