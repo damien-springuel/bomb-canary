@@ -56,9 +56,8 @@ function reject() {
   <div class="flex-grow grid grid-cols-3 w-full content-start gap-2 text-lg text-center">
     {#each storeValues.players as player}
       <div 
-        class="border border-blue-500 rounded-lg p-1" 
-        class:bg-blue-500={storeValues.hasGivenPlayerVoted(player)}
-        class:text-gray-900={storeValues.hasGivenPlayerVoted(player)}
+        class="bc-tag" 
+        class:bc-tag-solid={storeValues.hasGivenPlayerVoted(player)}
       >
         {player}
       </div>
