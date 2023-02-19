@@ -51,7 +51,7 @@ func setCurrentPageToContext(ctx context.Context, currentPage pageType) context.
 	return setValueToContext(ctx, "currentPage", currentPage)
 }
 
-func getNextPageToContext(ctx context.Context) pageType {
+func getNextPageFromContext(ctx context.Context) pageType {
 	return getPageFromContext(ctx, "nextPage")
 }
 
@@ -122,7 +122,7 @@ func createSetNameAction(name string) func(ctx context.Context) context.Context 
 		ctx = setNameToContext(ctx, name)
 		action := getActionFromContext(ctx)
 		ctx = action(ctx)
-		nextPage := getNextPageToContext(ctx)
+		nextPage := getNextPageFromContext(ctx)
 		if nextPage == "" {
 			nextPage = actions
 			ctx = setEmptyActionDescToContext(ctx)
