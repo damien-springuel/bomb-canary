@@ -44,7 +44,6 @@ export interface StoreValues {
   leader: string
   isPlayerTheLeader: boolean
   currentTeam: Set<string>,
-  isGivenPlayerInTeam: (player: string) => boolean,
   isPlayerSelectableForTeam: (player: string) => boolean,
   canConfirmTeam: boolean,
   peopleThatVotedOnTeam: Set<string>,
@@ -52,10 +51,8 @@ export interface StoreValues {
   hasGivenPlayerVoted: (player: string) => boolean,
   currentTeamVoteNb: number,
   teamVoteResults: TeamVotes[],
-  isPlayerInMission: boolean,
   peopleThatWorkedOnMission: Set<string>,
   playerMissionSuccess: boolean | null
-  hasGivenPlayerWorkedOnMission: (player: string) => boolean,
   missionResults: MissionResult[]
   dialogShown: Dialog,
   revealedSpies: Set<string>
@@ -73,7 +70,6 @@ function defaultValues(): StoreValues {
     leader: "",
     isPlayerTheLeader: false,
     currentTeam: new Set<string>(),
-    isGivenPlayerInTeam: undefined,
     isPlayerSelectableForTeam: undefined,
     canConfirmTeam: false,
     peopleThatVotedOnTeam: new Set<string>(),
@@ -81,10 +77,8 @@ function defaultValues(): StoreValues {
     hasGivenPlayerVoted: undefined,
     currentTeamVoteNb: 1,
     teamVoteResults: [{votes: []}, {votes: []}, {votes: []}, {votes: []}, {votes: []}],
-    isPlayerInMission: false,
     peopleThatWorkedOnMission: new Set<string>(),
     playerMissionSuccess: null,
-    hasGivenPlayerWorkedOnMission: undefined,
     missionResults: [],
     dialogShown: null,
     revealedSpies: new Set<string>(),
@@ -117,7 +111,6 @@ export class Store implements Readable<StoreValues> {
 
   protected updateComputed(value: StoreValues): StoreValues {
     value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
-    value.isGivenPlayerInTeam = player => value.currentTeam.has(player);
     
     const currentMissionRequirement = value.missionRequirements[value.currentMission];
     value.isPlayerSelectableForTeam = player => {
@@ -132,8 +125,6 @@ export class Store implements Readable<StoreValues> {
     value.canConfirmTeam = value.currentTeam.size === currentMissionRequirement?.nbPeopleOnMission
     value.hasGivenPlayerVoted = player => value.peopleThatVotedOnTeam.has(player);
     value.currentTeamVoteNb = value.teamVoteResults[value.currentMission].votes.length + 1;
-    value.isPlayerInMission = value.currentTeam.has(value.player);
-    value.hasGivenPlayerWorkedOnMission = player => value.peopleThatWorkedOnMission.has(player);
     
     return value;
   }

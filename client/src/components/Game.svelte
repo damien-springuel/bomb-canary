@@ -2,7 +2,7 @@
 import { ViewIdentity } from "../messages/commands";
 import type { StoreValues } from "../store/store";
 import { GamePhase, Dialog as DialogValues } from "../store/store";
-import Mission from "./game-phases/Mission.svelte";
+import MissionConducting from "./game-phases/MissionConducting.svelte";
 import TeamSelection from "./game-phases/TeamSelection.svelte";
 import TeamVote from "./game-phases/TeamVote.svelte";
 import Identity from './Identity.svelte';
@@ -26,7 +26,7 @@ function viewIdentity() {
   {:else if storeValues.currentGamePhase === GamePhase.TeamVote}
     <TeamVote dispatcher={dispatcher} storeValues={storeValues}/>
   {:else if storeValues.currentGamePhase === GamePhase.Mission}
-    <Mission dispatcher={dispatcher} storeValues={storeValues}/>
+    <MissionConducting dispatcher={dispatcher} missionConductingValues={storeValues}/>
   {/if}
 </div>
 {#if storeValues.dialogShown == DialogValues.Identity}

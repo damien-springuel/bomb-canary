@@ -9,6 +9,12 @@
   .bc-button:focus {
     @apply outline-none;
   }
+  .bc-button:disabled {
+    @apply bg-gray-500 text-gray-700
+  }
+  .bc-button:disabled:hover {
+    @apply bg-gray-500 text-gray-700
+  }
   .bc-button-blue {
     @apply bg-blue-500 text-gray-900 border-none
   }
@@ -47,5 +53,11 @@
   }
   .bc-input:hover {
     @apply bg-blue-300
+  }
+  .bc-tag {
+    @apply border border-blue-500 rounded-lg p-1
+  }
+  .bc-tag-solid {
+    @apply bg-blue-500 text-gray-900
   }
 }

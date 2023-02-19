@@ -17,7 +17,6 @@ test(`Store - default values`, t => {
       leader: "",
       isPlayerTheLeader: false,
       currentTeam: new Set<string>(),
-      isGivenPlayerInTeam: undefined,
       isPlayerSelectableForTeam: undefined,
       canConfirmTeam: false,
       peopleThatVotedOnTeam: new Set<string>(),
@@ -25,10 +24,8 @@ test(`Store - default values`, t => {
       hasGivenPlayerVoted: undefined,
       currentTeamVoteNb: 1,
       teamVoteResults: [{votes: []}, {votes: []}, {votes: []}, {votes: []}, {votes: []}],
-      isPlayerInMission: false,
       peopleThatWorkedOnMission: new Set<string>(),
       playerMissionSuccess: null,
-      hasGivenPlayerWorkedOnMission: undefined,
       missionResults: [],
       dialogShown: null,
       revealedSpies: new Set<string>(),
@@ -205,17 +202,6 @@ test(`Store - deselectPlayer`, t => {
   expect(storeValues.currentTeam).to.deep.equal(new Set<string>(["p2"]));
 });
 
-test(`Store - isGivenPlayerInTeam`, t => {
-  const store = new Store();
-  store.selectPlayer("p1");
-  store.selectPlayer("p2");
-  store.deselectPlayer("p1");
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.isGivenPlayerInTeam("p1")).to.be.false;
-  expect(storeValues.isGivenPlayerInTeam("p2")).to.be.true;
-  expect(storeValues.isGivenPlayerInTeam("p3")).to.be.false;
-});
-
 test(`Store - isPlayerSelectableForTeam`, t => {
   const store = new Store();
   store.setMissionRequirements([{nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1}]);
@@ -342,18 +328,6 @@ test(`Store - startMission`, t => {
   expect(storeValues.currentGamePhase).to.equal(GamePhase.Mission);
 });
 
-test(`Store - isPlayerInMission`, t => {
-  const store = new Store();
-  store.definePlayer("p1");
-  store.selectPlayer("p1");
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.isPlayerInMission).to.be.true;
-  
-  store.deselectPlayer("p1");
-  storeValues = get(store);
-  expect(storeValues.isPlayerInMission).to.be.false;
-});
-
 test(`Store - makePlayerWorkOnMission - the player`, t => {
   const store = new Store();
   store.definePlayer("p1");
@@ -370,14 +344,6 @@ test(`Store - makePlayerWorkOnMission - not the player`, t => {
   let storeValues: StoreValues = get(store);
   expect(storeValues.peopleThatWorkedOnMission).to.deep.equal(new Set<string>(["p2"]));
   expect(storeValues.playerMissionSuccess).to.be.null;
-});
-
-test(`Store - hasGivenPlayerWorkedOnMission`, t => {
-  const store = new Store();
-  store.makePlayerWorkOnMission("p1", true);
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.hasGivenPlayerWorkedOnMission("p1")).to.be.true;
-  expect(storeValues.hasGivenPlayerWorkedOnMission("p2")).to.be.false;
 });
 
 test(`Store - saveMissionResult`, t => {

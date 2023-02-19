@@ -9,8 +9,8 @@ export interface MissionRequirement {
 }
 
 export interface MissionTrackerValues {
-  missionRequirements: MissionRequirement[],
-  missionResults: MissionResult[],
+  readonly missionRequirements: MissionRequirement[],
+  readonly missionResults: MissionResult[],
 }
 
 export class MissionTrackerService {
