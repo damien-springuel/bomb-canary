@@ -1,3 +1,7 @@
+import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../../messages/commands";
+import type { Dispatcher } from "../../messages/dispatcher";
+import type { MissionTrackerService } from "../mission-tracker-service";
+
 export interface TeamSelectionValues {
   readonly currentTeam: Set<string>,
   readonly player: string,
@@ -7,7 +11,10 @@ export interface TeamSelectionValues {
 }
 
 export class TeamSelectionService {
-  constructor(readonly values: TeamSelectionValues){}
+  constructor(
+    private readonly values: TeamSelectionValues, 
+    private readonly missionTrackerService: MissionTrackerService,
+    private readonly dispatcher: Dispatcher){}
 
   isGivenPlayerInTeam(player: string): boolean {
     return this.values.currentTeam.has(player);
@@ -27,5 +34,25 @@ export class TeamSelectionService {
   
   get players(): string[] {
     return this.values.players;
+  }
+
+  isGivenPlayerSelectableForTeam(player: string): boolean {
+    return this.isGivenPlayerInTeam(player) || this.values.currentTeam.size < this.missionTrackerService.nbPeopleRequiredOnCurrentMission;
+  }
+  
+  get canConfirmTeam(): boolean {
+    return this.values.currentTeam.size === this.missionTrackerService.nbPeopleRequiredOnCurrentMission;
+  }
+
+  togglePlayerSelection(player: string) {
+    if(this.isGivenPlayerInTeam(player)) {
+      this.dispatcher.dispatch(new LeaderDeselectsMember(player));
+    } else {
+      this.dispatcher.dispatch(new LeaderSelectsMember(player));
+    }
+  }
+
+  confirmTeam() {
+    this.dispatcher.dispatch(new LeaderConfirmsTeam());
   }
 }

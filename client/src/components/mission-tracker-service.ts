@@ -47,4 +47,8 @@ export class MissionTrackerService {
   doesMissionNeedMoreThanOneFail(mission: number): boolean {
     return this.values.missionRequirements[mission].nbFailuresRequiredToFail > 1;
   }
+
+  get nbPeopleRequiredOnCurrentMission(): number {
+    return this.values.missionRequirements[this.currentMission].nbPeopleOnMission;
+  }
 }

@@ -55,7 +55,7 @@
     @apply bg-blue-300
   }
   .bc-tag {
-    @apply border border-blue-500 rounded-lg p-1
+    @apply border border-blue-500 rounded-lg p-2
   }
   .bc-tag-solid {
     @apply bg-blue-500 text-gray-900

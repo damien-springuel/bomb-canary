@@ -22,7 +22,7 @@ function viewIdentity() {
   <button class="bc-button bc-button-blue" on:click={viewIdentity}>Identity</button>
   <MissionTracker missionTrackerValues={storeValues}/>
   {#if storeValues.currentGamePhase === GamePhase.TeamSelection}
-    <TeamSelection dispatcher={dispatcher} storeValues={storeValues}/>
+    <TeamSelection dispatcher={dispatcher} teamSelectionValues={storeValues} missionTrackerValues={storeValues}/>
   {:else if storeValues.currentGamePhase === GamePhase.TeamVote}
     <TeamVote dispatcher={dispatcher} storeValues={storeValues}/>
   {:else if storeValues.currentGamePhase === GamePhase.Mission}
