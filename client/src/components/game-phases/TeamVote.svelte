@@ -1,64 +1,46 @@
 <script lang="ts">
-import { ApproveTeam, RejectTeam } from "../../messages/commands";
-import type { Message } from "../../messages/messagebus";
-import type { StoreValues } from "../../store/store";
-export let storeValues: StoreValues;
-export let dispatcher: {dispatch(message: Message): void};
+import type { Dispatcher } from "../../messages/dispatcher";
+import { TeamVoteService, type TeamVoteValues } from "./team-vote-service";
+export let teamVoteValues: TeamVoteValues;
+export let dispatcher: Dispatcher;
 
-function approve(){
-  dispatcher.dispatch(new ApproveTeam());
-}
-
-function reject() {
-  dispatcher.dispatch(new RejectTeam());
-}
-
+$: service = new TeamVoteService(teamVoteValues, dispatcher);
 </script>
 
 <div class="flex flex-col items-center h-full w-full">
   <div class="text-3xl">
     Team
   </div>
-  <div class="flex flex-row w-full text-blue-500 text-center ">
-    {#each Array.from(storeValues.currentTeam.values()) as member, i}
-      {#if i !== 0}
-        <div>|</div>
-      {/if}
-      <div class="flex-grow w-full">{member}</div>
-    {/each}
+  <div class="flex flex-row w-full text-blue-500 justify-center bc-tag mt-4 mb-4">
+    {service.currentTeamAsString}
   </div>
-  <div class="grid grid-cols-2 justify-center w-full gap-x-2 mt-4">
-    <button 
-      class="bc-button bc-button-green" 
-      on:click={approve}
-      class:text-gray-700={storeValues.hasGivenPlayerVoted(storeValues.player)}
-      class:bg-gray-500={storeValues.playerVote !== true && storeValues.playerVote !== null}
-      class:hover:bg-gray-500={storeValues.playerVote !== true && storeValues.playerVote !== null}
-      disabled={storeValues.hasGivenPlayerVoted(storeValues.player)}
-    >
-      Approve
-    </button>
-    <button 
-      class="bc-button bc-button-red" 
-      on:click={reject}
-      class:text-gray-700={storeValues.hasGivenPlayerVoted(storeValues.player)}
-      class:bg-gray-500={storeValues.playerVote !== false && storeValues.playerVote !== null}
-      class:hover:bg-gray-500={storeValues.playerVote !== false && storeValues.playerVote !== null}
-      disabled={storeValues.hasGivenPlayerVoted(storeValues.player)}
-    >
-      Reject
-    </button>
-  </div>
+  {#if !service.hasCurrentPlayerVoted}
+    <div class="grid grid-cols-2 justify-center w-full gap-x-2">
+      <button class="bc-button bc-button-green" on:click={()=> service.approveTeam()}>
+        Approve
+      </button>
+      <button class="bc-button bc-button-red" on:click={()=> service.rejectTeam()}>
+        Reject
+      </button>
+    </div>
+  {:else}
+    {#if service.playerVote}
+      <div>
+        You <span class="text-green-500">approved</span> the team.
+      </div> 
+    {:else}
+      <div>
+        You <span class="text-red-500">rejected</span> the team.
+      </div> 
+    {/if}
+  {/if}
   
-  <div class="text-3xl mt-8">
+  <div class="text-3xl mt-8 mb-4">
     Votes
   </div>
   <div class="flex-grow grid grid-cols-3 w-full content-start gap-2 text-lg text-center">
-    {#each storeValues.players as player}
-      <div 
-        class="bc-tag" 
-        class:bc-tag-solid={storeValues.hasGivenPlayerVoted(player)}
-      >
+    {#each service.players as player}
+      <div class="bc-tag" class:bc-tag-solid={service.hasGivenPlayerVoted(player)}>
         {player}
       </div>
     {/each}

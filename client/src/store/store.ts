@@ -42,13 +42,9 @@ export interface StoreValues {
   currentMission: number,
   currentGamePhase: GamePhase,
   leader: string
-  isPlayerTheLeader: boolean
   currentTeam: Set<string>,
-  isPlayerSelectableForTeam: (player: string) => boolean,
-  canConfirmTeam: boolean,
   peopleThatVotedOnTeam: Set<string>,
   playerVote: boolean | null
-  hasGivenPlayerVoted: (player: string) => boolean,
   currentTeamVoteNb: number,
   teamVoteResults: TeamVotes[],
   peopleThatWorkedOnMission: Set<string>,
@@ -68,13 +64,9 @@ function defaultValues(): StoreValues {
     currentMission: 0,
     currentGamePhase: GamePhase.TeamSelection,
     leader: "",
-    isPlayerTheLeader: false,
     currentTeam: new Set<string>(),
-    isPlayerSelectableForTeam: undefined,
-    canConfirmTeam: false,
     peopleThatVotedOnTeam: new Set<string>(),
     playerVote: null,
-    hasGivenPlayerVoted: undefined,
     currentTeamVoteNb: 1,
     teamVoteResults: [{votes: []}, {votes: []}, {votes: []}, {votes: []}, {votes: []}],
     peopleThatWorkedOnMission: new Set<string>(),
@@ -110,20 +102,7 @@ export class Store implements Readable<StoreValues> {
   }
 
   protected updateComputed(value: StoreValues): StoreValues {
-    value.isPlayerTheLeader = !!value.player && !!value.leader && (value.leader === value.player);
-    
-    const currentMissionRequirement = value.missionRequirements[value.currentMission];
-    value.isPlayerSelectableForTeam = player => {
-      if (value.currentTeam.has(player)) {
-        return true;
-      }
-      if (value.currentTeam.size < currentMissionRequirement?.nbPeopleOnMission) {
-        return true;
-      }
-      return false;
-    }
-    value.canConfirmTeam = value.currentTeam.size === currentMissionRequirement?.nbPeopleOnMission
-    value.hasGivenPlayerVoted = player => value.peopleThatVotedOnTeam.has(player);
+    value.currentMission = value.missionResults.length;
     value.currentTeamVoteNb = value.teamVoteResults[value.currentMission].votes.length + 1;
     
     return value;
@@ -289,7 +268,6 @@ function makePlayerWorkOnMission(this: Store, player: string, success: boolean |
 function saveMissionResult(this: Store, success: boolean, nbFails: number): void {
   this.update(v => {
     v.missionResults.push({success, nbFails});
-    v.currentMission += 1;
     return v;
   });
 }

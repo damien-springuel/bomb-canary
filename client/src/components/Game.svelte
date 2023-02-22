@@ -24,7 +24,7 @@ function viewIdentity() {
   {#if storeValues.currentGamePhase === GamePhase.TeamSelection}
     <TeamSelection dispatcher={dispatcher} teamSelectionValues={storeValues} missionTrackerValues={storeValues}/>
   {:else if storeValues.currentGamePhase === GamePhase.TeamVote}
-    <TeamVote dispatcher={dispatcher} storeValues={storeValues}/>
+    <TeamVote dispatcher={dispatcher} teamVoteValues={storeValues}/>
   {:else if storeValues.currentGamePhase === GamePhase.Mission}
     <MissionConducting dispatcher={dispatcher} missionConductingValues={storeValues}/>
   {/if}

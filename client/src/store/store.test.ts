@@ -15,13 +15,9 @@ test(`Store - default values`, t => {
       currentMission: 0,
       currentGamePhase: GamePhase.TeamSelection,
       leader: "",
-      isPlayerTheLeader: false,
       currentTeam: new Set<string>(),
-      isPlayerSelectableForTeam: undefined,
-      canConfirmTeam: false,
       peopleThatVotedOnTeam: new Set<string>(),
       playerVote: null,
-      hasGivenPlayerVoted: undefined,
       currentTeamVoteNb: 1,
       teamVoteResults: [{votes: []}, {votes: []}, {votes: []}, {votes: []}, {votes: []}],
       peopleThatWorkedOnMission: new Set<string>(),
@@ -173,18 +169,6 @@ test(`Store - assignLeader`, t => {
   expect(storeValues.leader).to.equal("testName1");
 });
 
-test(`Store - isLeader`, t => {
-  const store = new Store();
-  store.definePlayer("testName");
-  store.assignLeader("anotherLeader");
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.isPlayerTheLeader).to.be.false;
-  
-  store.assignLeader("testName");
-  storeValues = get(store);
-  expect(storeValues.isPlayerTheLeader).to.be.true;
-});
-
 test(`Store - selectPlayer`, t => {
   const store = new Store();
   store.selectPlayer("p1");
@@ -200,32 +184,6 @@ test(`Store - deselectPlayer`, t => {
   store.deselectPlayer("p1");
   let storeValues: StoreValues = get(store);
   expect(storeValues.currentTeam).to.deep.equal(new Set<string>(["p2"]));
-});
-
-test(`Store - isPlayerSelectableForTeam`, t => {
-  const store = new Store();
-  store.setMissionRequirements([{nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1}]);
-  store.selectPlayer("p1");
-  store.selectPlayer("p2");
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.isPlayerSelectableForTeam("p3")).to.be.false;
-  expect(storeValues.isPlayerSelectableForTeam("p1")).to.be.true;
-  
-  store.deselectPlayer("p1");
-  storeValues = get(store);
-  expect(storeValues.isPlayerSelectableForTeam("p3")).to.be.true;
-});
-
-test(`Store - canConfirmTeam`, t => {
-  const store = new Store();
-  store.setMissionRequirements([{nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1}]);
-  store.selectPlayer("p1");
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.canConfirmTeam).to.be.false;
-  
-  store.selectPlayer("p2");
-  storeValues = get(store);
-  expect(storeValues.canConfirmTeam).to.be.true;
 });
 
 test(`Store - startTeamVote`, t => {
@@ -301,14 +259,6 @@ test(`Store - saveTeamVoteResult - multiple results in multiple missions`, t => 
     {votes: []}, 
     {votes: []}
   ]);
-});
-
-test(`Store - hasGivenPlayerVoted`, t => {
-  const store = new Store();
-  store.makePlayerVote("p1", false);
-  let storeValues: StoreValues = get(store);
-  expect(storeValues.hasGivenPlayerVoted("p1")).to.be.true;
-  expect(storeValues.hasGivenPlayerVoted("p2")).to.be.false;
 });
 
 test(`Store - currentTeamVoteNb`, t => {
