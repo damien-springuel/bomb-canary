@@ -1,8 +1,8 @@
 import {expect, test} from "vitest";
-import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../../messages/commands";
-import type { Dispatcher } from "../../messages/dispatcher";
-import type { Message } from "../../messages/messagebus";
-import { MissionTrackerService } from "../MissionTracker-service";
+import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../messages/commands";
+import type { Dispatcher } from "../messages/dispatcher";
+import type { Message } from "../messages/messagebus";
+import { MissionTrackerService } from "./MissionTracker-service";
 import { TeamSelectionService } from "./TeamSelection-service";
 
 test("Is given player in current team", ()=> {

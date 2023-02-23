@@ -1,8 +1,8 @@
 <script lang="ts">
 import type { StoreValues } from "../store/store";
-import MissionConducting from "./game-phases/MissionConducting.svelte";
-import TeamSelection from "./game-phases/TeamSelection.svelte";
-import TeamVote from "./game-phases/TeamVote.svelte";
+import MissionConducting from "./MissionConducting.svelte";
+import TeamSelection from "./TeamSelection.svelte";
+import TeamVote from "./TeamVote.svelte";
 import Identity from './Identity.svelte';
 import Dialog from './Dialog.svelte';
 import type { Dispatcher } from "../messages/dispatcher";

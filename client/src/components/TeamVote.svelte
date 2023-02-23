@@ -1,5 +1,5 @@
 <script lang="ts">
-import type { Dispatcher } from "../../messages/dispatcher";
+import type { Dispatcher } from "../messages/dispatcher";
 import { TeamVoteService, type TeamVoteValues } from "./TeamVote-service";
 export let teamVoteValues: TeamVoteValues;
 export let dispatcher: Dispatcher;

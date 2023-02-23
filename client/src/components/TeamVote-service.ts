@@ -1,5 +1,5 @@
-import { ApproveTeam, RejectTeam } from "../../messages/commands";
-import type { Dispatcher } from "../../messages/dispatcher";
+import { ApproveTeam, RejectTeam } from "../messages/commands";
+import type { Dispatcher } from "../messages/dispatcher";
 
 export interface TeamVoteValues {
   readonly player: string,

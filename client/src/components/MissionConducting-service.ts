@@ -1,5 +1,5 @@
-import { FailMission, SucceedMission } from "../../messages/commands";
-import type { Dispatcher } from "../../messages/dispatcher";
+import { FailMission, SucceedMission } from "../messages/commands";
+import type { Dispatcher } from "../messages/dispatcher";
 
 export interface MissionConductingValues {
   readonly player: string,
