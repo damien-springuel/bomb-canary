@@ -1,7 +1,5 @@
 <script lang="ts">
-import { ViewIdentity } from "../messages/commands";
 import type { StoreValues } from "../store/store";
-import { GamePhase, Dialog as DialogValues } from "../store/store";
 import MissionConducting from "./game-phases/MissionConducting.svelte";
 import TeamSelection from "./game-phases/TeamSelection.svelte";
 import TeamVote from "./game-phases/TeamVote.svelte";
@@ -9,27 +7,26 @@ import Identity from './Identity.svelte';
 import Dialog from './Dialog.svelte';
 import type { Dispatcher } from "../messages/dispatcher";
 import MissionTracker from "./MissionTracker.svelte";
+import { GameService } from "./game-service";
 
 export let storeValues: StoreValues;
 export let dispatcher: Dispatcher;
 
-function viewIdentity() {
-  dispatcher.dispatch(new ViewIdentity());
-}
+$: service = new GameService(storeValues, dispatcher);
 </script>
 
 <div class="flex flex-col items-center h-full bg-gray-900 p-6 text-blue-500 space-y-4 text-2xl">
-  <button class="bc-button bc-button-blue" on:click={viewIdentity}>Identity</button>
+  <button class="bc-button bc-button-blue" on:click={()=> service.viewIdentity()}>Identity</button>
   <MissionTracker missionTrackerValues={storeValues}/>
-  {#if storeValues.currentGamePhase === GamePhase.TeamSelection}
+  {#if service.isTeamSelectionPhase}
     <TeamSelection dispatcher={dispatcher} teamSelectionValues={storeValues} missionTrackerValues={storeValues}/>
-  {:else if storeValues.currentGamePhase === GamePhase.TeamVote}
+  {:else if service.isTeamVotePhase}
     <TeamVote dispatcher={dispatcher} teamVoteValues={storeValues}/>
-  {:else if storeValues.currentGamePhase === GamePhase.Mission}
+  {:else if service.isMissionConductingPhase}
     <MissionConducting dispatcher={dispatcher} missionConductingValues={storeValues}/>
   {/if}
 </div>
-{#if storeValues.dialogShown == DialogValues.Identity}
+{#if service.isDialogShownIdentity}
   <Dialog dispatcher={dispatcher}>
     <Identity identityValues={storeValues}/>
   </Dialog>
