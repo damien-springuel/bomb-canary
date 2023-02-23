@@ -63,7 +63,11 @@ func setNilNextPageToContext(ctx context.Context) context.Context {
 }
 
 func getPageFromContext(ctx context.Context, page string) pageType {
-	return getValueFromContext(ctx, page).(pageType)
+	p, ok := getValueFromContext(ctx, page).(pageType)
+	if !ok {
+		return pageType("")
+	}
+	return p
 }
 
 func getActionFromContext(ctx context.Context) func(context.Context) context.Context {
