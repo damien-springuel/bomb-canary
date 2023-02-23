@@ -11,7 +11,7 @@ import {
   PlayerWorkedOnMission, 
   type MissionRequirement 
 } from "../messages/events";
-import type { Message } from "../messages/messagebus";
+import type { Message } from "../messages/message-bus";
 
 export interface GameStore {
   setMissionRequirements(requirements: MissionRequirement[]): void

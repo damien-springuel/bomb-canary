@@ -1,6 +1,6 @@
 import { CloseDialog, ViewIdentity } from "../messages/commands";
 import { PartyCreated, ServerConnectionClosed, SpiesRevealed } from "../messages/events";
-import type { Message } from "../messages/messagebus";
+import type { Message } from "../messages/message-bus";
 
 export interface RoomStore {
   showLobby(): void,

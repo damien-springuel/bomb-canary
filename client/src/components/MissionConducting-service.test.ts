@@ -1,7 +1,8 @@
 import {expect, test} from "vitest";
 import { FailMission, SucceedMission } from "../messages/commands";
 import type { Dispatcher } from "../messages/dispatcher";
-import type { Message } from "../messages/messagebus";
+import { DispatcherMock } from "../messages/dispatcher.test-utils";
+import type { Message } from "../messages/message-bus";
 import { MissionConductingService } from "./MissionConducting-service";
 
 test("Get Current Team", () => {
@@ -98,8 +99,7 @@ test("Get player mission result", ()=> {
 });
 
 test("Succeed Mission", ()=> {
-  let givenMessage: Message;
-  let dispatcher: Dispatcher = {dispatch(message){givenMessage = message}};
+  let dispatcher = new DispatcherMock()
 
   let service: MissionConductingService = new MissionConductingService({
     currentTeam: new Set<string>(["a", "b"]),
@@ -109,14 +109,13 @@ test("Succeed Mission", ()=> {
   }, dispatcher);
 
   service.succeedMission();
-  expect(givenMessage).to.be.instanceof(SucceedMission);
-  expect(givenMessage).to.deep.equal(new SucceedMission());
+  expect(dispatcher.receivedMessage).to.be.instanceof(SucceedMission);
+  expect(dispatcher.receivedMessage).to.deep.equal(new SucceedMission());
 
 });
 
 test("Fail Mission", ()=> {
-  let givenMessage: Message;
-  let dispatcher: Dispatcher = {dispatch(message){givenMessage = message}};
+  let dispatcher = new DispatcherMock();
 
   let service: MissionConductingService = new MissionConductingService({
     currentTeam: new Set<string>(["a", "b"]),
@@ -126,6 +125,6 @@ test("Fail Mission", ()=> {
   }, dispatcher);
 
   service.failMission();
-  expect(givenMessage).to.be.instanceof(FailMission);
-  expect(givenMessage).to.deep.equal(new FailMission());
+  expect(dispatcher.receivedMessage).to.be.instanceof(FailMission);
+  expect(dispatcher.receivedMessage).to.deep.equal(new FailMission());
 });

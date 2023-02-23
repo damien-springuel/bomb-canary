@@ -1,3 +1,4 @@
+import type { Dispatcher } from "../messages/dispatcher";
 import { 
   AllPlayerVotedOnTeam,
   EventsReplayEnded, 
@@ -19,12 +20,11 @@ import {
   ServerConnectionErrorOccured, 
   SpiesRevealed 
 } from "../messages/events";
-import type { Message } from "../messages/messagebus";
 import type { ServerEvent } from "./server-event";
 
 export class Handler {
 
-  constructor(private readonly dispatcher: {dispatch: (m: Message) => void}){}
+  constructor(private readonly dispatcher: Dispatcher){}
 
   onClose(): void {
     this.dispatcher.dispatch(new ServerConnectionClosed());

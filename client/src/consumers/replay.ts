@@ -4,7 +4,7 @@ import {
   ServerConnectionClosed, 
   ServerConnectionErrorOccured 
 } from "../messages/events";
-import type { Message } from "../messages/messagebus";
+import type { Message } from "../messages/message-bus";
 
 export interface ReplayStore {
   startReplay(): void,

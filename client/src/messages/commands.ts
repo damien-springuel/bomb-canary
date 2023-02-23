@@ -1,4 +1,4 @@
-import type { Message } from "./messagebus";
+import type { Message } from "./message-bus";
 
 export class CreateParty implements Message {
   constructor(readonly name: string){}

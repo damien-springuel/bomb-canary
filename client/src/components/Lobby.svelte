@@ -1,7 +1,7 @@
 <script lang="ts">
-import type { Message } from "../messages/messagebus";
+import type { Dispatcher } from "../messages/dispatcher";
 import { LobbyService } from "./Lobby-service";
-export let dispatcher: {dispatch: (message: Message) => void};
+export let dispatcher: Dispatcher;
 
 const service = new LobbyService(dispatcher);
 let name: string;

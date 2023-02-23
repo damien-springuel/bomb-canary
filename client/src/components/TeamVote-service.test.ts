@@ -1,7 +1,8 @@
 import {expect, test} from "vitest";
 import { ApproveTeam, RejectTeam } from "../messages/commands";
 import type { Dispatcher } from "../messages/dispatcher";
-import type { Message } from "../messages/messagebus";
+import { DispatcherMock } from "../messages/dispatcher.test-utils";
+import type { Message } from "../messages/message-bus";
 import { TeamVoteService } from "./TeamVote-service";
 
 test("Current Team", ()=> {
@@ -66,8 +67,7 @@ test("Get players", ()=> {
 })
 
 test("Approve team", ()=> {
-  let messageGiven: Message;
-  const dispatcher: Dispatcher = {dispatch(message){messageGiven = message}}
+  const dispatcher = new DispatcherMock();
   
   const service = new TeamVoteService(
     {
@@ -79,13 +79,12 @@ test("Approve team", ()=> {
   }, dispatcher);
 
   service.approveTeam();
-  expect(messageGiven).to.be.instanceof(ApproveTeam);
-  expect(messageGiven).to.deep.equal(new ApproveTeam());
+  expect(dispatcher.receivedMessage).to.be.instanceof(ApproveTeam);
+  expect(dispatcher.receivedMessage).to.deep.equal(new ApproveTeam());
 })
 
 test("Reject team", ()=> {
-  let messageGiven: Message;
-  const dispatcher: Dispatcher = {dispatch(message){messageGiven = message}}
+  const dispatcher = new DispatcherMock();
   
   const service = new TeamVoteService(
     {
@@ -97,6 +96,6 @@ test("Reject team", ()=> {
   }, dispatcher);
 
   service.rejectTeam();
-  expect(messageGiven).to.be.instanceof(RejectTeam);
-  expect(messageGiven).to.deep.equal(new RejectTeam());
+  expect(dispatcher.receivedMessage).to.be.instanceof(RejectTeam);
+  expect(dispatcher.receivedMessage).to.deep.equal(new RejectTeam());
 })

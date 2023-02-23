@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import App from './App.svelte';
-import { MessageBus } from './messages/messagebus';
+import { MessageBus } from './messages/message-bus';
 import { Party } from './party/party';
 import { Store } from './store/store';
 import { Handler } from './stream/handler';

@@ -1,12 +1,13 @@
 import type { HttpPost } from "../http/post";
 import { CreateParty, JoinParty } from "../messages/commands";
+import type { Dispatcher } from "../messages/dispatcher";
 import { CreatePartySucceeded, JoinPartySucceeded } from "../messages/events";
-import type { Message } from "../messages/messagebus";
+import type { Message } from "../messages/message-bus";
 
 export class Party {
   constructor(
     private readonly http: HttpPost,
-    private readonly dispatcher: {dispatch: (m:Message) => void},
+    private readonly dispatcher: Dispatcher,
   ){}
   
   consume(message: Message): void {

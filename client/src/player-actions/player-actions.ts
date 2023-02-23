@@ -9,7 +9,7 @@ import {
   StartGame, 
   SucceedMission 
 } from "../messages/commands";
-import type { Message } from "../messages/messagebus";
+import type { Message } from "../messages/message-bus";
 
 export class PlayerActions {
   constructor(

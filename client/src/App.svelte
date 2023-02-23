@@ -1,6 +1,5 @@
 <script lang="ts">
 import "../tailwind.css"
-import type { Message } from "./messages/messagebus";
 import type { Store, StoreValues } from "./store/store";
 import { Page } from "./store/store";
 import { AppLoaded } from "./messages/events";
@@ -8,7 +7,9 @@ import { onMount } from "svelte";
 import Lobby from "./components/Lobby.svelte";
 import PartyRoom from "./components/PartyRoom.svelte";
 import Game from "./components/Game.svelte";
-export let dispatcher: {dispatch: (message: Message) => void};
+import type { Dispatcher } from "./messages/dispatcher";
+
+export let dispatcher: Dispatcher;
 export let store: Store;
 
 let storeValues: StoreValues;

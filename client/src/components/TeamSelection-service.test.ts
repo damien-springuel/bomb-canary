@@ -1,7 +1,8 @@
 import {expect, test} from "vitest";
 import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../messages/commands";
 import type { Dispatcher } from "../messages/dispatcher";
-import type { Message } from "../messages/messagebus";
+import { DispatcherMock } from "../messages/dispatcher.test-utils";
+import type { Message } from "../messages/message-bus";
 import { MissionTrackerService } from "./MissionTracker-service";
 import { TeamSelectionService } from "./TeamSelection-service";
 
@@ -126,8 +127,7 @@ test("Can confirm team", ()=> {
 });
 
 test("Toggle player selection", ()=> {
-  let messageGiven: Message;
-  const dispatcher: Dispatcher = {dispatch(message){messageGiven = message}};
+  const dispatcher = new DispatcherMock();
   let service = new TeamSelectionService(
     {
       currentTeam: new Set<string>(["a", "b"]),
@@ -144,18 +144,17 @@ test("Toggle player selection", ()=> {
     dispatcher);
   
   service.togglePlayerSelection("d");
-  expect(messageGiven).to.be.an.instanceof(LeaderSelectsMember);
-  expect(messageGiven).to.deep.equal(new LeaderSelectsMember("d"));
+  expect(dispatcher.receivedMessage).to.be.an.instanceof(LeaderSelectsMember);
+  expect(dispatcher.receivedMessage).to.deep.equal(new LeaderSelectsMember("d"));
   
-  messageGiven = null;
+  dispatcher.receivedMessage = null;
   service.togglePlayerSelection("a");
-  expect(messageGiven).to.be.an.instanceof(LeaderDeselectsMember);
-  expect(messageGiven).to.deep.equal(new LeaderDeselectsMember("a"));
+  expect(dispatcher.receivedMessage).to.be.an.instanceof(LeaderDeselectsMember);
+  expect(dispatcher.receivedMessage).to.deep.equal(new LeaderDeselectsMember("a"));
 });
 
 test("Confirm Team", ()=> {
-  let messageGiven: Message;
-  const dispatcher: Dispatcher = {dispatch(message){messageGiven = message}};
+  const dispatcher = new DispatcherMock();
   let service = new TeamSelectionService(
     {
       currentTeam: new Set<string>(["a", "b"]),
@@ -172,6 +171,6 @@ test("Confirm Team", ()=> {
     dispatcher);
   
   service.confirmTeam();
-  expect(messageGiven).to.be.an.instanceof(LeaderConfirmsTeam);
-  expect(messageGiven).to.deep.equal(new LeaderConfirmsTeam());
+  expect(dispatcher.receivedMessage).to.be.an.instanceof(LeaderConfirmsTeam);
+  expect(dispatcher.receivedMessage).to.deep.equal(new LeaderConfirmsTeam());
 });

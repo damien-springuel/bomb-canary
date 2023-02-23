@@ -1,5 +1,5 @@
 import { EventsReplayStarted, PlayerJoined, SpiesRevealed } from "../messages/events";
-import type { Message } from "../messages/messagebus";
+import type { Message } from "../messages/message-bus";
 
 export interface PlayerStore {
   definePlayer(name: string): void

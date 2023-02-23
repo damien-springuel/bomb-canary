@@ -1,5 +1,5 @@
 import { AppLoaded, CreatePartySucceeded, JoinPartySucceeded } from "../messages/events";
-import type { Message } from "../messages/messagebus";
+import type { Message } from "../messages/message-bus";
 
 export class Opener {
   constructor(private readonly creator: {create: ()=>void}){}

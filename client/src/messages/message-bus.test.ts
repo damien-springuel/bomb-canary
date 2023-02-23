@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { type Message, MessageBus } from "./messagebus";
+import { type Message, MessageBus } from "./message-bus";
 
 test(`Dispatch message to all consumers`, t => {
   const mb = new MessageBus();
