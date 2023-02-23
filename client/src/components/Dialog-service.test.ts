@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import { CloseDialog } from "../messages/commands";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { DialogService } from "./dialog-service";
+import { DialogService } from "./Dialog-service";
 
 test("Close dialog", () => {
   let dispatcherMock = new DispatcherMock();

@@ -1,6 +1,6 @@
 import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../../messages/commands";
 import type { Dispatcher } from "../../messages/dispatcher";
-import type { MissionTrackerService } from "../mission-tracker-service";
+import type { MissionTrackerService } from "../MissionTracker-service";
 
 export interface TeamSelectionValues {
   readonly currentTeam: Set<string>,

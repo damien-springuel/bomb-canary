@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import { CreateParty, JoinParty } from "../messages/commands";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { LobbyService } from "./lobby-service";
+import { LobbyService } from "./Lobby-service";
 
 test("Join Party", ()=> {
   const dispatcher = new DispatcherMock();

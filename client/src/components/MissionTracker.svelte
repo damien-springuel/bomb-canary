@@ -1,5 +1,5 @@
 <script lang="ts">
-import { MissionTrackerService, type MissionTrackerValues } from "./mission-tracker-service";
+import { MissionTrackerService, type MissionTrackerValues } from "./MissionTracker-service";
 export let missionTrackerValues: MissionTrackerValues;
 $: service = new MissionTrackerService(missionTrackerValues);
 </script>

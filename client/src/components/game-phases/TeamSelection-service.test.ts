@@ -2,8 +2,8 @@ import {expect, test} from "vitest";
 import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../../messages/commands";
 import type { Dispatcher } from "../../messages/dispatcher";
 import type { Message } from "../../messages/messagebus";
-import { MissionTrackerService } from "../mission-tracker-service";
-import { TeamSelectionService } from "./team-selection-service";
+import { MissionTrackerService } from "../MissionTracker-service";
+import { TeamSelectionService } from "./TeamSelection-service";
 
 test("Is given player in current team", ()=> {
   const service = new TeamSelectionService(
@@ -144,7 +144,6 @@ test("Toggle player selection", ()=> {
     dispatcher);
   
   service.togglePlayerSelection("d");
-  console.log(messageGiven);
   expect(messageGiven).to.be.an.instanceof(LeaderSelectsMember);
   expect(messageGiven).to.deep.equal(new LeaderSelectsMember("d"));
   

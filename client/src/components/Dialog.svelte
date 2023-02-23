@@ -2,7 +2,7 @@
 import { fly } from 'svelte/transition';
 import { cubicIn, cubicOut } from 'svelte/easing';
 import type { Dispatcher } from '../messages/dispatcher';
-import { DialogService } from './dialog-service';
+import { DialogService } from './Dialog-service';
 export let dispatcher: Dispatcher;
 
 $: service = new DialogService(dispatcher);

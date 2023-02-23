@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { Dispatcher } from "../../messages/dispatcher";
-import { MissionTrackerService, type MissionTrackerValues } from "../mission-tracker-service";
-import { TeamSelectionService, type TeamSelectionValues } from "./team-selection-service";
+import { MissionTrackerService, type MissionTrackerValues } from "../MissionTracker-service";
+import { TeamSelectionService, type TeamSelectionValues } from "./TeamSelection-service";
 export let teamSelectionValues: TeamSelectionValues;
 export let missionTrackerValues: MissionTrackerValues;
 export let dispatcher: Dispatcher;

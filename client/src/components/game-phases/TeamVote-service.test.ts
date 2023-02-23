@@ -2,7 +2,7 @@ import {expect, test} from "vitest";
 import { ApproveTeam, RejectTeam } from "../../messages/commands";
 import type { Dispatcher } from "../../messages/dispatcher";
 import type { Message } from "../../messages/messagebus";
-import { TeamVoteService } from "./team-vote-service";
+import { TeamVoteService } from "./TeamVote-service";
 
 test("Current Team", ()=> {
   const service = new TeamVoteService({

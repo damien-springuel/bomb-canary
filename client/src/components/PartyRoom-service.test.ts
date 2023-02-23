@@ -1,7 +1,7 @@
 import {expect, test} from "vitest";
 import { StartGame } from "../messages/commands";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { PartyRoomService } from "./party-room-service";
+import { PartyRoomService } from "./PartyRoom-service";
 
 test("Party Code", ()=> {
   const service = new PartyRoomService({

@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { MissionTrackerService } from "./mission-tracker-service";
+import { MissionTrackerService } from "./MissionTracker-service";
 
 test("Is Current Mission", () => {
   const gameService: MissionTrackerService = new MissionTrackerService({missionResults: [], missionRequirements:[]});

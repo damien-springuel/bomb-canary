@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Message } from "../messages/messagebus";
-import { LobbyService } from "./lobby-service";
+import { LobbyService } from "./Lobby-service";
 export let dispatcher: {dispatch: (message: Message) => void};
 
 const service = new LobbyService(dispatcher);

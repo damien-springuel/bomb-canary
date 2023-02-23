@@ -1,5 +1,5 @@
 <script lang="ts">
-import { IdentityService, type IdentityValues } from './identity-service';
+import { IdentityService, type IdentityValues } from './Identity-service';
 export let identityValues: IdentityValues;
 $: service = new IdentityService(identityValues);
 </script>

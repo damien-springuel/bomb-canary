@@ -2,7 +2,7 @@ import {expect, test} from "vitest";
 import { FailMission, SucceedMission } from "../../messages/commands";
 import type { Dispatcher } from "../../messages/dispatcher";
 import type { Message } from "../../messages/messagebus";
-import { MissionConductingService } from "./mission-conducting-service";
+import { MissionConductingService } from "./MissionConducting-service";
 
 test("Get Current Team", () => {
   let service: MissionConductingService = new MissionConductingService({

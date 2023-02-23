@@ -1,7 +1,7 @@
 import {expect,test} from "vitest";
 import { ViewIdentity } from "../messages/commands";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { Dialog, GamePhase, GameService } from "./game-service";
+import { Dialog, GamePhase, GameService } from "./Game-service";
 
 test("View Identity", ()=> {
   const dispatcher = new DispatcherMock();

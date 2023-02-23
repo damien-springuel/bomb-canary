@@ -1,6 +1,6 @@
 <script lang="ts">
 import type { Dispatcher } from "../../messages/dispatcher";
-import { MissionConductingService, type MissionConductingValues } from "./mission-conducting-service";
+import { MissionConductingService, type MissionConductingValues } from "./MissionConducting-service";
 export let missionConductingValues: MissionConductingValues;
 export let dispatcher: Dispatcher;
 $: service = new MissionConductingService(missionConductingValues, dispatcher);

@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { IdentityService, type IdentityValues } from "./identity-service";
+import { IdentityService, type IdentityValues } from "./Identity-service";
 
 
 test(`Identity Service - isPlayerIsASpy`, t => {

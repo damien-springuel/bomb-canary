@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { Dispatcher } from "../messages/dispatcher";
 import type { StoreValues } from "../store/store";
-import { PartyRoomService } from "./party-room-service";
+import { PartyRoomService } from "./PartyRoom-service";
 export let dispatcher: Dispatcher;
 export let storeValues: StoreValues;
 

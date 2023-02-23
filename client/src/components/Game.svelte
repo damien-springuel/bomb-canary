@@ -7,7 +7,7 @@ import Identity from './Identity.svelte';
 import Dialog from './Dialog.svelte';
 import type { Dispatcher } from "../messages/dispatcher";
 import MissionTracker from "./MissionTracker.svelte";
-import { GameService } from "./game-service";
+import { GameService } from "./Game-service";
 
 export let storeValues: StoreValues;
 export let dispatcher: Dispatcher;
