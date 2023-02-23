@@ -4,7 +4,7 @@
 
 @layer components {
   .bc-button {
-    @apply rounded-full px-6 py-4
+    @apply rounded-full px-6 py-4 text-2xl
   }
   .bc-button:focus {
     @apply outline-none;

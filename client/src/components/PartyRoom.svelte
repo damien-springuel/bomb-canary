@@ -25,7 +25,7 @@ $: service = new PartyRoomService(storeValues, dispatcher);
       {/each}
     </ul>
   </div>
-  <div class="text-3xl mt-6">
+  <div class="mt-6">
     <button class="bc-button bc-button-blue" on:click={()=>service.startGame()}>
       Start Game
     </button>
