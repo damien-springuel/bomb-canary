@@ -1,14 +1,14 @@
 import { expect, test } from "vitest";
 import { HttpPostMock } from "../http/post.test-utils";
 import { 
-    ApproveTeam, 
-    FailMission, 
-    LeaderConfirmsTeam, 
-    LeaderDeselectsMember, 
-    LeaderSelectsMember, 
-    RejectTeam, 
-    StartGame, 
-    SucceedMission 
+  ApproveTeam, 
+  FailMission, 
+  LeaderConfirmsTeam, 
+  LeaderDeselectsMember, 
+  LeaderSelectsMember, 
+  RejectTeam, 
+  StartGame, 
+  SucceedMission 
 } from "../messages/commands";
 import { PlayerActions } from "./player-actions";
 

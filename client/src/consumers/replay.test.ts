@@ -1,5 +1,10 @@
 import { expect, test } from "vitest";
-import { EventsReplayEnded, EventsReplayStarted, ServerConnectionClosed, ServerConnectionErrorOccured } from "../messages/events";
+import { 
+  EventsReplayEnded, 
+  EventsReplayStarted, 
+  ServerConnectionClosed, 
+  ServerConnectionErrorOccured 
+} from "../messages/events";
 import { ReplayManager, type ReplayStore } from "./replay";
 
 test(`ReplayManager - EventsReplayStarted`, () => {

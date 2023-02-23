@@ -1,6 +1,26 @@
 import { expect, test } from "vitest";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { AllPlayerVotedOnTeam, EventsReplayEnded, EventsReplayStarted, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionCompleted, MissionStarted, PartyCreated, PlayerConnected, PlayerDisconnected, PlayerJoined, PlayerVotedOnTeam, PlayerWorkedOnMission, ServerConnectionClosed, ServerConnectionErrorOccured, SpiesRevealed } from "../messages/events";
+import { 
+  AllPlayerVotedOnTeam, 
+  EventsReplayEnded, 
+  EventsReplayStarted, 
+  GameStarted, 
+  LeaderConfirmedTeam, 
+  LeaderDeselectedMember, 
+  LeaderSelectedMember, 
+  LeaderStartedToSelectMembers, 
+  MissionCompleted, 
+  MissionStarted, 
+  PartyCreated, 
+  PlayerConnected, 
+  PlayerDisconnected, 
+  PlayerJoined, 
+  PlayerVotedOnTeam, 
+  PlayerWorkedOnMission, 
+  ServerConnectionClosed, 
+  ServerConnectionErrorOccured, 
+  SpiesRevealed 
+} from "../messages/events";
 import { Handler } from "./handler";
 
 test(`Handler - onClose`, t => {

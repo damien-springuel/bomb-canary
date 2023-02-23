@@ -1,4 +1,9 @@
-import { EventsReplayEnded, EventsReplayStarted, ServerConnectionClosed, ServerConnectionErrorOccured } from "../messages/events";
+import { 
+  EventsReplayEnded, 
+  EventsReplayStarted, 
+  ServerConnectionClosed, 
+  ServerConnectionErrorOccured 
+} from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
 export interface ReplayStore {

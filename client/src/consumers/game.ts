@@ -1,4 +1,16 @@
-import { AllPlayerVotedOnTeam, GameStarted, LeaderConfirmedTeam, LeaderDeselectedMember, LeaderSelectedMember, LeaderStartedToSelectMembers, MissionCompleted, MissionStarted, PlayerVotedOnTeam, PlayerWorkedOnMission, type MissionRequirement } from "../messages/events";
+import { 
+  AllPlayerVotedOnTeam, 
+  GameStarted, 
+  LeaderConfirmedTeam, 
+  LeaderDeselectedMember, 
+  LeaderSelectedMember, 
+  LeaderStartedToSelectMembers, 
+  MissionCompleted, 
+  MissionStarted, 
+  PlayerVotedOnTeam, 
+  PlayerWorkedOnMission, 
+  type MissionRequirement 
+} from "../messages/events";
 import type { Message } from "../messages/messagebus";
 
 export interface GameStore {
