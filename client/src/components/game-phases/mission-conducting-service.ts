@@ -1,3 +1,6 @@
+import { FailMission, SucceedMission } from "../../messages/commands";
+import type { Dispatcher } from "../../messages/dispatcher";
+
 export interface MissionConductingValues {
   readonly player: string,
   readonly currentTeam: Set<string>,
@@ -6,7 +9,9 @@ export interface MissionConductingValues {
 }
 
 export class MissionConductingService {
-  constructor(readonly values: MissionConductingValues) {}
+  constructor(
+    readonly values: MissionConductingValues,
+    readonly dispatcher: Dispatcher) {}
 
   get currentTeam(): string[] {
     return Array.from(this.values.currentTeam);
@@ -30,5 +35,13 @@ export class MissionConductingService {
 
   get playerMissionSuccess(): boolean {
     return this.values.playerMissionSuccess;
+  }
+
+  succeedMission() {
+    this.dispatcher.dispatch(new SucceedMission());
+  }
+
+  failMission() {
+    this.dispatcher.dispatch(new FailMission());
   }
 }

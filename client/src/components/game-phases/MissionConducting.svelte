@@ -1,30 +1,20 @@
 <script lang="ts">
-import { FailMission, SucceedMission } from "../../messages/commands";
-import type { Message } from "../../messages/messagebus";
+import type { Dispatcher } from "../../messages/dispatcher";
 import { MissionConductingService, type MissionConductingValues } from "./mission-conducting-service";
 export let missionConductingValues: MissionConductingValues;
-export let dispatcher: {dispatch(message: Message): void};
-
-$: service = new MissionConductingService(missionConductingValues);
-
-function succeed(){
-  dispatcher.dispatch(new SucceedMission());
-}
-
-function fail() {
-  dispatcher.dispatch(new FailMission());
-}
+export let dispatcher: Dispatcher;
+$: service = new MissionConductingService(missionConductingValues, dispatcher);
 
 </script>
 
 <div class="flex flex-col items-center h-full w-full">
-  <div class="text-3xl mt-8">
+  <div class="text-3xl mt-8 mb-4">
     Conducting Mission
   </div>
   <div class="grid grid-cols-2 w-full content-start gap-2 text-lg text-center">
     {#each service.currentTeam as member}
       <div 
-        class="bc-tag" 
+        class="bc-tag"
         class:bc-tag-solid={service.hasGivenPlayerWorkedOnMission(member)}
       >
         {member}
@@ -53,22 +43,18 @@ function fail() {
           ?
         </div>
         <div class="grid grid-cols-2 justify-center w-full gap-x-2 mt-4">
-          <button 
-            class="bc-button bc-button-green"
-            on:click={succeed}
-          >
+          <button class="bc-button bc-button-green" on:click={()=> service.succeedMission()}>
             Succeed
           </button>
-          <button 
-            class="bc-button bc-button-red"
-            on:click={fail}
-          >
+          <button class="bc-button bc-button-red" on:click={()=> service.failMission()}>
             Fail
           </button>
         </div>
       {/if}
     </div>
   {:else}
-    <div class="flex-grow content-center flex flex-col justify-center text-center text-3xl">{service.currentTeamAsString} are conducting the mission.</div>
+    <div class="flex-grow content-center flex flex-col justify-center text-center text-3xl">
+      {service.currentTeamAsString} are conducting the mission.
+    </div>
   {/if}
 </div>
