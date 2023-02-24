@@ -12,14 +12,14 @@ import {
 } from "../messages/commands";
 import { PlayerActions } from "./player-actions";
 
-test(`Player Actions - Start Game`, t => {
+test(`Player Actions - Start Game`, () => {
   const httpPost = new HttpPostMock();
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new StartGame());
   expect(httpPost.givenUrl).to.equal("/actions/start-game");
 });
 
-test(`Player Actions - Leader Selects Member`, t => {
+test(`Player Actions - Leader Selects Member`, () => {
   const httpPost = new HttpPostMock();
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new LeaderSelectsMember("testName"));
@@ -27,7 +27,7 @@ test(`Player Actions - Leader Selects Member`, t => {
   expect(httpPost.givenData).to.deep.equal({member: "testName"});
 });
 
-test(`Player Actions - Leader Deselects Member`, t => {
+test(`Player Actions - Leader Deselects Member`, () => {
   const httpPost = new HttpPostMock();
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new LeaderDeselectsMember("testName"));
@@ -35,35 +35,35 @@ test(`Player Actions - Leader Deselects Member`, t => {
   expect(httpPost.givenData).to.deep.equal({member: "testName"});
 });
 
-test(`Player Actions - Leader Confirms team`, t => {
+test(`Player Actions - Leader Confirms team`, () => {
   const httpPost = new HttpPostMock();
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new LeaderConfirmsTeam());
   expect(httpPost.givenUrl).to.equal("/actions/leader-confirms-team");
 });
 
-test(`Player Actions - Approve Team`, t => {
+test(`Player Actions - Approve Team`, () => {
   const httpPost = new HttpPostMock();
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new ApproveTeam());
   expect(httpPost.givenUrl).to.equal("/actions/approve-team");
 });
 
-test(`Player Actions - Reject Team`, t => {
+test(`Player Actions - Reject Team`, () => {
   const httpPost = new HttpPostMock();
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new RejectTeam());
   expect(httpPost.givenUrl).to.equal("/actions/reject-team");
 });
 
-test(`Player Actions - Succeed Mission`, t => {
+test(`Player Actions - Succeed Mission`, () => {
   const httpPost = new HttpPostMock();
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new SucceedMission());
   expect(httpPost.givenUrl).to.equal("/actions/succeed-mission");
 });
 
-test(`Player Actions - Fail Mission`, t => {
+test(`Player Actions - Fail Mission`, () => {
   const httpPost = new HttpPostMock();
   const playerActions = new PlayerActions(httpPost);
   playerActions.consume(new FailMission());

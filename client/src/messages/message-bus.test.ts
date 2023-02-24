@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { type Message, MessageBus } from "./message-bus";
 
-test(`Dispatch message to all consumers`, t => {
+test(`Dispatch message to all consumers`, () => {
   const mb = new MessageBus();
   const c1 = []
   const c2 = []

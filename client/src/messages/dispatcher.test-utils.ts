@@ -6,7 +6,7 @@ export class AsyncDispatcherMock {
   private done: (value?: void) => void
 
   constructor(){
-    this.isDone = new Promise((resolver, rejecter) => {
+    this.isDone = new Promise((resolver) => {
       this.done = resolver;
     });
   }

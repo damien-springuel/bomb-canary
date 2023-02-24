@@ -9,7 +9,7 @@ interface BasicWebsocket {
 interface EventHandler {
   onClose(): void;
   onError(): void;
-  onEvent(event: ServerEvent)
+  onEvent(event: ServerEvent): void
 }
 
 export class Creator {

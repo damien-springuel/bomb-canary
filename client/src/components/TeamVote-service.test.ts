@@ -1,8 +1,6 @@
 import {expect, test} from "vitest";
 import { ApproveTeam, RejectTeam } from "../messages/commands";
-import type { Dispatcher } from "../messages/dispatcher";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import type { Message } from "../messages/message-bus";
 import { TeamVoteService } from "./TeamVote-service";
 
 test("Current Team", ()=> {
