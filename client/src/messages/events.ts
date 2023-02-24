@@ -1,3 +1,4 @@
+import type { MissionRequirement } from "../types/types";
 import type { Message } from "./message-bus";
 
 export class AppLoaded implements Message{}
@@ -26,11 +27,6 @@ export class PlayerDisconnected implements Message {
 
 export class PlayerJoined implements Message {
   constructor(readonly name: string) {}
-}
-
-export interface MissionRequirement {
-  readonly nbPeopleOnMission: number, 
-  readonly nbFailuresRequiredToFail: number
 }
 
 export class GameStarted implements Message {

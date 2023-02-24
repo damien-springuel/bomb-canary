@@ -1,6 +1,6 @@
 import type { Dispatcher } from "./messages/dispatcher";
 import { AppLoaded } from "./messages/events";
-import { Page } from "./store/store";
+import { Page } from "./types/types";
 
 export interface AppValues {
   pageToShow: Page

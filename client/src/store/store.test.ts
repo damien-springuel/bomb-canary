@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
-import { Dialog, GamePhase, Page, Store, type StoreValues } from "./store";
+import { Store, type StoreValues } from "./store";
 import {get} from "svelte/store";
+import { Dialog, GamePhase, Page } from "../types/types";
 
 test(`Store - default values`, t => {
   const store = new Store();

@@ -9,9 +9,9 @@ import {
   MissionStarted, 
   PlayerVotedOnTeam, 
   PlayerWorkedOnMission, 
-  type MissionRequirement 
 } from "../messages/events";
 import type { Message } from "../messages/message-bus";
+import type { MissionRequirement } from "../types/types";
 
 export interface GameStore {
   setMissionRequirements(requirements: MissionRequirement[]): void

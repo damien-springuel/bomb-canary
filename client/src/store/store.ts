@@ -1,37 +1,13 @@
 import {get, type Readable, type Writable} from "svelte/store";
 import {writable} from "svelte/store";
-import type { MissionRequirement } from "../messages/events";
-
-export enum Page {
-  Loading = "loading",
-  Lobby = "lobby",
-  PartyRoom = "partyRoom",
-  Game = "game",
-}
-
-export enum GamePhase {
-  TeamSelection = "teamSelection",
-  TeamVote = "teamVote",
-  Mission = "mission",
-}
-
-export enum Dialog {
-  Identity = "identity",
-}
-
-export interface MissionResult {
-  readonly success: boolean
-  readonly nbFails: number
-}
-
-export interface TeamVote {
-  readonly approved: boolean
-  readonly playerVotes: Map<string, boolean>
-}
-
-export interface TeamVotes {
-  readonly votes: TeamVote[]
-}
+import { 
+  Dialog,
+  GamePhase,
+  Page, 
+  type MissionRequirement, 
+  type MissionResult, 
+  type TeamVotes 
+} from "../types/types";
 
 export interface StoreValues {
   pageToShow: Page

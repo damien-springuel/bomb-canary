@@ -1,15 +1,6 @@
 import { ViewIdentity } from "../messages/commands";
 import type { Dispatcher } from "../messages/dispatcher";
-
-export enum GamePhase {
-  TeamSelection = "teamSelection",
-  TeamVote = "teamVote",
-  Mission = "mission",
-}
-
-export enum Dialog {
-  Identity = "identity",
-}
+import { Dialog, GamePhase } from "../types/types";
 
 export interface GameValues {
   readonly currentGamePhase: GamePhase,

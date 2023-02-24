@@ -7,11 +7,11 @@ import {
     LeaderSelectedMember, 
     LeaderStartedToSelectMembers, 
     MissionCompleted, 
-    type MissionRequirement, 
     MissionStarted, 
     PlayerVotedOnTeam, 
     PlayerWorkedOnMission 
 } from "../messages/events";
+import type { MissionRequirement } from "../types/types";
 import { GameManager, type GameStore } from "./game";
 
 test(`Game Manager - GameStarted`, t => {

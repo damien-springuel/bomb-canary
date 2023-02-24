@@ -1,12 +1,4 @@
-export interface MissionResult {
-  readonly success: boolean
-  readonly nbFails: number
-}
-
-export interface MissionRequirement {
-  readonly nbPeopleOnMission: number, 
-  readonly nbFailuresRequiredToFail: number
-}
+import type { MissionRequirement, MissionResult } from "../types/types";
 
 export interface MissionTrackerValues {
   readonly missionRequirements: MissionRequirement[],
