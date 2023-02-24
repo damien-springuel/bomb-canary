@@ -7,7 +7,7 @@ export interface PlayerStore {
   rememberSpies(spies: Set<string>): void
 }
 
-export class PlayerManager {
+export class PlayerConsumer {
 
   constructor(private readonly playerStore: PlayerStore){}
 

@@ -11,7 +11,7 @@ export interface ReplayStore {
   endReplay(): void
 }
 
-export class ReplayManager {
+export class ReplayConsumer {
   constructor(private readonly replayStore: ReplayStore){}
 
   consume(message: Message) {

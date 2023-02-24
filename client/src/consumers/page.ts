@@ -10,7 +10,7 @@ export interface RoomStore {
   closeDialog(): void,
 }
 
-export class PageManager {
+export class PageConsumer {
 
   constructor(private readonly store: RoomStore) {}
 

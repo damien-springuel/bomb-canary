@@ -1,10 +1,10 @@
 import { expect, test } from "vitest";
 import { ServerConnectionClosed } from "../messages/events";
-import { ResetManager } from "./reset";
+import { ResetConsumer } from "./reset";
 
 test(`Reset manager - ServerConnectionClosed `, t => {
   let reset = false;
-  const eventReplayer = new ResetManager({reset: () => {reset = true;}});
-  eventReplayer.consume(new ServerConnectionClosed());
+  const resetConsumer = new ResetConsumer({reset: () => {reset = true;}});
+  resetConsumer.consume(new ServerConnectionClosed());
   expect(reset).to.be.true;
 });

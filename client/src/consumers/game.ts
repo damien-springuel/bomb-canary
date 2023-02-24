@@ -27,7 +27,7 @@ export interface GameStore {
   saveMissionResult(success: boolean, nbFails: number): void
 }
 
-export class GameManager {
+export class GameConsumer {
 
   constructor(private readonly gameStore: GameStore) {}
 

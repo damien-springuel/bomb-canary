@@ -1,7 +1,7 @@
 import { ServerConnectionClosed } from "../messages/events";
 import type { Message } from "../messages/message-bus";
 
-export class ResetManager {
+export class ResetConsumer {
 
   constructor(private readonly resetter: {reset: () => void}){}
 

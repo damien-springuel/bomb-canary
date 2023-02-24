@@ -6,12 +6,12 @@ import { Store } from './store/store';
 import { Handler } from './stream/handler';
 import { Opener } from './stream/opener';
 import { Creator } from './stream/creator';
-import { PageManager } from './consumers/page';
-import { ReplayManager } from './consumers/replay';
-import { PlayerManager } from './consumers/player';
+import { PageConsumer } from './consumers/page';
+import { ReplayConsumer } from './consumers/replay';
+import { PlayerConsumer } from './consumers/player';
 import { PlayerActions } from './player-actions/player-actions';
-import { ResetManager } from './consumers/reset';
-import { GameManager } from './consumers/game';
+import { ResetConsumer } from './consumers/reset';
+import { GameConsumer } from './consumers/game';
 
 const hostname = window.location.hostname;
 
@@ -35,11 +35,11 @@ const creator = new Creator(() => new WebSocket(`ws://${hostname}:44324/events`)
 const opener = new Opener(creator);
 messageBus.subscribeConsumer(opener);
 
-messageBus.subscribeConsumer(new ResetManager(store));
-messageBus.subscribeConsumer(new PageManager(store));
-messageBus.subscribeConsumer(new ReplayManager(store));
-messageBus.subscribeConsumer(new PlayerManager(store));
-messageBus.subscribeConsumer(new GameManager(store));
+messageBus.subscribeConsumer(new ResetConsumer(store));
+messageBus.subscribeConsumer(new PageConsumer(store));
+messageBus.subscribeConsumer(new ReplayConsumer(store));
+messageBus.subscribeConsumer(new PlayerConsumer(store));
+messageBus.subscribeConsumer(new GameConsumer(store));
 
 const app = new App({
   target: document.body,
