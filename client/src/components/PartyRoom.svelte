@@ -1,11 +1,10 @@
 <script lang="ts">
 import type { Dispatcher } from "../messages/dispatcher";
-import type { StoreValues } from "../store/store";
-import { PartyRoomService } from "./PartyRoom-service";
+import { PartyRoomService, type PartyRoomValues } from "./PartyRoom-service";
 export let dispatcher: Dispatcher;
-export let storeValues: StoreValues;
+export let partyRoomValues: PartyRoomValues;
 
-$: service = new PartyRoomService(storeValues, dispatcher);
+$: service = new PartyRoomService(partyRoomValues, dispatcher);
 </script>
 
 <div class="flex flex-col items-center h-full bg-gray-900 text-blue-500 p-6">

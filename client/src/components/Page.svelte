@@ -15,7 +15,7 @@ $: service = new PageService(storeValues);
 {#if service.isPageLobby}
   <Lobby dispatcher={dispatcher}/>
 {:else if service.isPagePartyRoom}
-  <PartyRoom dispatcher={dispatcher} storeValues={storeValues}/>
+  <PartyRoom dispatcher={dispatcher} partyRoomValues={storeValues}/>
 {:else if service.isPageGame}
   <Game dispatcher={dispatcher} storeValues={storeValues}/>
 {:else}
