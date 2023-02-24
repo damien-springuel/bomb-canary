@@ -5,7 +5,6 @@ import (
 
 	"github.com/damien-springuel/bomb-canary/cli/emulator"
 	"github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
 )
 
 func main() {
@@ -13,12 +12,6 @@ func main() {
 		log.Fatalf("failed to initialize termui: %v", err)
 	}
 	defer termui.Close()
-
-	l := widgets.NewList()
-	l.Title = "Actions (^C to quit)"
-	l.Rows = []string{
-		"[0] Create Game",
-	}
 
 	grid := termui.NewGrid()
 	termWidth, termHeight := termui.TerminalDimensions()
