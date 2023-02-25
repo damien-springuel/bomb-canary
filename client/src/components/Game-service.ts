@@ -1,10 +1,20 @@
 import { ViewIdentity } from "../messages/commands";
 import type { Dispatcher } from "../messages/dispatcher";
 import { Dialog, GamePhase } from "../types/types";
+import type { IdentityValues } from "./Identity-service";
+import type { MissionConductingValues } from "./MissionConducting-service";
+import type { MissionTrackerValues } from "./MissionTracker-service";
+import type { TeamSelectionValues } from "./TeamSelection-service";
+import type { TeamVoteValues } from "./TeamVote-service";
 
 export interface GameValues {
   readonly currentGamePhase: GamePhase,
   readonly dialogShown: Dialog,
+  readonly identityValues: IdentityValues;
+  readonly missionTrackerValues: MissionTrackerValues;
+  readonly teamSelectionValues: TeamSelectionValues;
+  readonly teamVoteValues: TeamVoteValues;
+  readonly missionConductingValues: MissionConductingValues;
 }
 
 export class GameService {

@@ -1,7 +1,11 @@
 import { Page } from "../types/types";
+import type { GameValues } from "./Game-service";
+import type { PartyRoomValues } from "./PartyRoom-service";
 
 export interface PageValues {
-  pageToShow: Page
+  readonly pageToShow: Page,
+  readonly gameValues: GameValues,
+  readonly partyRoomValues: PartyRoomValues,
 }
 
 export class PageService {

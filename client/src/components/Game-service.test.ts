@@ -2,11 +2,11 @@ import {expect,test} from "vitest";
 import { ViewIdentity } from "../messages/commands";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
 import { Dialog, GamePhase } from "../types/types";
-import { GameService } from "./Game-service";
+import { GameService, type GameValues } from "./Game-service";
 
 test("View Identity", ()=> {
   const dispatcher = new DispatcherMock();
-  const service = new GameService({currentGamePhase: null, dialogShown: null}, dispatcher);
+  const service = new GameService({} as GameValues, dispatcher);
 
   service.viewIdentity();
   expect(dispatcher.receivedMessage).to.be.instanceof(ViewIdentity);
@@ -14,65 +14,57 @@ test("View Identity", ()=> {
 });
 
 test("Is game phase team selection", ()=> {
-  let service = new GameService({
-    currentGamePhase: GamePhase.TeamSelection,
-    dialogShown: null,
-  }, null);
+  let service = new GameService(
+    {currentGamePhase: GamePhase.TeamSelection} as GameValues, 
+    null);
 
   expect(service.isTeamSelectionPhase).to.be.true;
   
-  service = new GameService({
-    currentGamePhase: GamePhase.TeamVote,
-    dialogShown: null,
-  }, null);
+  service = new GameService(
+    {currentGamePhase: GamePhase.TeamVote} as GameValues, 
+    null);
 
   expect(service.isTeamSelectionPhase).to.be.false;
 });
 
 test("Is game phase team vote", ()=> {
-  let service = new GameService({
-    currentGamePhase: GamePhase.TeamVote,
-    dialogShown: null,
-  }, null);
+  let service = new GameService(
+    {currentGamePhase: GamePhase.TeamVote} as GameValues, 
+    null);
 
   expect(service.isTeamVotePhase).to.be.true;
 
-  service = new GameService({
-    currentGamePhase: GamePhase.TeamSelection,
-    dialogShown: Dialog.Identity,
-  }, null);
+  service = new GameService(
+    {currentGamePhase: GamePhase.TeamSelection} as GameValues, 
+    null);
 
   expect(service.isTeamVotePhase).to.be.false;
 });
 
 test("Is game phase Mission", ()=> {
-  let service = new GameService({
-    currentGamePhase: GamePhase.Mission,
-    dialogShown: null,
-  }, null);
+  let service = new GameService(
+    {currentGamePhase: GamePhase.Mission} as GameValues, 
+    null);
 
   expect(service.isMissionConductingPhase).to.be.true;
   
-  service = new GameService({
-    currentGamePhase: GamePhase.TeamSelection,
-    dialogShown: Dialog.Identity,
-  }, null);
+  service = new GameService(
+    {currentGamePhase: GamePhase.TeamSelection} as GameValues, 
+    null);
 
   expect(service.isMissionConductingPhase).to.be.false;
 });
 
 test("Is dialog shown Identity", ()=> {
-  let service = new GameService({
-    currentGamePhase: GamePhase.Mission,
-    dialogShown: Dialog.Identity,
-  }, null);
+  let service = new GameService(
+    {dialogShown: Dialog.Identity} as GameValues, 
+    null);
 
   expect(service.isDialogShownIdentity).to.be.true;
   
-  service = new GameService({
-    currentGamePhase: GamePhase.TeamSelection,
-    dialogShown: null,
-  }, null);
+  service = new GameService(
+    {dialogShown: null} as GameValues, 
+    null);
 
   expect(service.isDialogShownIdentity).to.be.false;
 });
