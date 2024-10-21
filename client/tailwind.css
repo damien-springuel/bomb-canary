@@ -7,7 +7,7 @@
     @apply rounded-full px-6 py-4 text-2xl
   }
   .bc-button:focus {
-    @apply outline-none;
+    @apply outline-none
   }
   .bc-button:disabled {
     @apply bg-gray-500 text-gray-700
@@ -19,7 +19,7 @@
     @apply bg-blue-500 text-gray-900 border-none
   }
   .bc-button-blue:hover {
-    @apply bg-blue-300;
+    @apply bg-blue-300
   }
   .bc-button-empty {
     @apply border border-blue-500
@@ -28,13 +28,13 @@
     @apply bg-green-500 text-gray-900 border-none
   }
   .bc-button-green:hover {
-    @apply bg-green-300;
+    @apply bg-green-300
   }
   .bc-button-red {
     @apply bg-red-500 text-gray-900 border-none
   }
   .bc-button-red:hover {
-    @apply bg-red-300;
+    @apply bg-red-300
   }
   .bc-button-gray {
     @apply bg-gray-500 text-gray-700 
