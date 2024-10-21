@@ -1,6 +1,6 @@
 module github.com/damien-springuel/bomb-canary/cli
 
-go 1.20
+go 1.23
 
 require github.com/gizak/termui/v3 v3.1.0
 
