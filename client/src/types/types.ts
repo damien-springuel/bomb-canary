@@ -22,6 +22,7 @@ export interface MissionResult {
 }
 
 export interface TeamVote {
+  readonly team: Set<string>
   readonly approved: boolean
   readonly playerVotes: Map<string, boolean>
 }

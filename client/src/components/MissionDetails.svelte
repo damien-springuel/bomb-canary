@@ -15,13 +15,14 @@ const service = new MissionDetailsService(missionDetailsValues);
     Votes
   </div>
   <div>
-    <div class="grid grid-cols-2 gap-2">
+    <div class="grid grid-cols-2 gap-2 text-2xl">
       {#each service.teamVotes.votes as teamVote, i}
-        <div 
-          class="bc-tag flex flex-col h-full"
-        >
+      <div>
+        <div>
+          Team #{i+1}: {service.getTeamFromVote(i)}
+        </div>
+        <div class="bc-tag flex flex-col">
           <div class="font-bold">
-            Vote #{i+1}: 
             {#if teamVote.approved}
               <span class="text-green-500">Approved</span>
             {/if}
@@ -41,6 +42,7 @@ const service = new MissionDetailsService(missionDetailsValues);
             {/each}
           </div>
         </div>
+      </div>
       {/each}
     </div>
   </div>

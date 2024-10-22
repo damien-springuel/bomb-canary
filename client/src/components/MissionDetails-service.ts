@@ -15,4 +15,14 @@ export class MissionDetailsService{
   get teamVotes(): TeamVotes {
     return this.missionDetailsValues.teamVotes;
   }
+
+  getTeamFromVote(vote: number): string {
+    const team = Array.from(
+      this.missionDetailsValues
+        .teamVotes
+        .votes[vote]
+        .team
+        .values());
+    return team.join(", ");
+  }
 }

@@ -222,7 +222,11 @@ function makePlayerVote(this: Store, player: string, approval: boolean | null): 
 
 function saveTeamVoteResult(this: Store, approved: boolean, playerVotes: Map<string, boolean>): void {
   this.update(v => {
-    v.teamVoteResults[v.currentMission].votes.push({approved: approved, playerVotes: playerVotes});
+    v.teamVoteResults[v.currentMission].votes.push({
+      team: new Set<string>(v.currentTeam),
+      approved: approved, 
+      playerVotes: playerVotes
+    });
     return v;
   });
 }
