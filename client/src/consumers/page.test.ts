@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { CloseDialog, ViewIdentity } from "../messages/commands";
+import { CloseDialog, ViewIdentity, ViewMissionDetails } from "../messages/commands";
 import { PartyCreated, ServerConnectionClosed, SpiesRevealed } from "../messages/events";
 import { PageConsumer, type RoomStore } from "./page";
 
@@ -34,6 +34,20 @@ test(`Page Manager - show identity on view identity`, () => {
   const pageConsumer = new PageConsumer({showIdentity: () => {identityShown = true}} as RoomStore);
   pageConsumer.consume(new ViewIdentity());
   expect(identityShown).to.be.true;
+});
+
+test(`Page Manager - show proper mission details on view mission details`, () => {
+  let missionDetailsShown = false;
+  let missionGiven: number = null;
+  const pageConsumer = new PageConsumer({
+    showMissionDetails: (mission: number) => {
+      missionDetailsShown = true;
+      missionGiven = mission
+    }
+  } as RoomStore);
+  pageConsumer.consume(new ViewMissionDetails(3));
+  expect(missionDetailsShown).to.be.true;
+  expect(missionGiven).to.equal(3);
 });
 
 test(`Page Manager - close dialog on close dialog`, () => {

@@ -26,6 +26,7 @@ test(`Store - default values`, () => {
       missionResults: [],
       dialogShown: null,
       revealedSpies: new Set<string>(),
+      missionDetailsShown: 0,
     }
   );
 });
@@ -325,6 +326,25 @@ test(`Store - showIdentity isn't replayed`, () => {
   
   store.startReplay();
   store.showIdentity();
+  store.endReplay();
+
+  let storeValues: StoreValues = get(store);
+  expect(storeValues.dialogShown).to.be.null;
+});
+
+test(`Store - showMissionDetails`, () => {
+  const store = new Store();
+  store.showMissionDetails(2);
+  let storeValues: StoreValues = get(store);
+  expect(storeValues.dialogShown).to.equal(Dialog.MissionDetails);
+  expect(storeValues.missionDetailsShown).to.equal(2);
+});
+
+test(`Store - showMissionDetails isn't replayed`, () => {
+  const store = new Store();
+  
+  store.startReplay();
+  store.showMissionDetails(2);
   store.endReplay();
 
   let storeValues: StoreValues = get(store);

@@ -68,3 +68,17 @@ test("Is dialog shown Identity", ()=> {
 
   expect(service.isDialogShownIdentity).to.be.false;
 });
+
+test("Is dialog shown Mission Details", ()=> {
+  let service = new GameService(
+    {dialogShown: Dialog.MissionDetails} as GameValues, 
+    null);
+
+  expect(service.isDialogShownMissionDetails).to.be.true;
+  
+  service = new GameService(
+    {dialogShown: null} as GameValues, 
+    null);
+
+  expect(service.isDialogShownMissionDetails).to.be.false;
+});

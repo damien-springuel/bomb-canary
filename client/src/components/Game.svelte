@@ -7,6 +7,7 @@ import Dialog from './Dialog.svelte';
 import type { Dispatcher } from "../messages/dispatcher";
 import MissionTracker from "./MissionTracker.svelte";
 import { GameService, type GameValues } from "./Game-service";
+import MissionDetails from "./MissionDetails.svelte";
 
 export let gameValues: GameValues;
 export let dispatcher: Dispatcher;
@@ -16,7 +17,7 @@ $: service = new GameService(gameValues, dispatcher);
 
 <div class="flex flex-col items-center h-full bg-gray-900 p-6 text-blue-500 space-y-4 text-2xl">
   <button class="bc-button bc-button-blue" on:click={()=> service.viewIdentity()}>Identity</button>
-  <MissionTracker missionTrackerValues={gameValues.missionTrackerValues}/>
+  <MissionTracker missionTrackerValues={gameValues.missionTrackerValues} dispatcher={dispatcher}/>
   {#if service.isTeamSelectionPhase}
     <TeamSelection dispatcher={dispatcher} teamSelectionValues={gameValues.teamSelectionValues} missionTrackerValues={gameValues.missionTrackerValues}/>
   {:else if service.isTeamVotePhase}
@@ -28,5 +29,10 @@ $: service = new GameService(gameValues, dispatcher);
 {#if service.isDialogShownIdentity}
   <Dialog dispatcher={dispatcher}>
     <Identity identityValues={gameValues.identityValues}/>
+  </Dialog>
+{/if}
+{#if service.isDialogShownMissionDetails}
+  <Dialog dispatcher={dispatcher}>
+    <MissionDetails missionDetailsValues={gameValues.missionDetailsValues}/>
   </Dialog>
 {/if}

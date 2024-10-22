@@ -3,6 +3,7 @@ import type { Dispatcher } from "../messages/dispatcher";
 import { Dialog, GamePhase } from "../types/types";
 import type { IdentityValues } from "./Identity-service";
 import type { MissionConductingValues } from "./MissionConducting-service";
+import type { MissionDetailsValues } from "./MissionDetails-service";
 import type { MissionTrackerValues } from "./MissionTracker-service";
 import type { TeamSelectionValues } from "./TeamSelection-service";
 import type { TeamVoteValues } from "./TeamVote-service";
@@ -15,6 +16,7 @@ export interface GameValues {
   readonly teamSelectionValues: TeamSelectionValues;
   readonly teamVoteValues: TeamVoteValues;
   readonly missionConductingValues: MissionConductingValues;
+  readonly missionDetailsValues: MissionDetailsValues;
 }
 
 export class GameService {
@@ -44,5 +46,9 @@ export class GameService {
 
   get isDialogShownIdentity(): boolean {
     return this.values.dialogShown == Dialog.Identity;
+  }
+
+  get isDialogShownMissionDetails(): boolean {
+    return this.values.dialogShown == Dialog.MissionDetails;
   }
 }

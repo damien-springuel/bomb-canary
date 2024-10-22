@@ -29,4 +29,8 @@ export class FailMission implements Message {}
 
 export class ViewIdentity implements Message {}
 
+export class ViewMissionDetails implements Message {
+  constructor(readonly mission:number){}
+}
+
 export class CloseDialog implements Message {}

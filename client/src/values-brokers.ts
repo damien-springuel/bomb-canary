@@ -1,13 +1,14 @@
 import type { GameValues } from "./components/Game-service";
 import type { IdentityValues } from "./components/Identity-service";
 import type { MissionConductingValues } from "./components/MissionConducting-service";
+import type { MissionDetailsValues } from "./components/MissionDetails-service";
 import type { MissionTrackerValues } from "./components/MissionTracker-service";
 import type { PageValues } from "./components/Page-service";
 import type { PartyRoomValues } from "./components/PartyRoom-service";
 import type { TeamSelectionValues } from "./components/TeamSelection-service";
 import type { TeamVoteValues } from "./components/TeamVote-service";
 import type { StoreValues } from "./store/store";
-import type { Dialog, GamePhase, MissionRequirement, MissionResult, Page } from "./types/types";
+import type { Dialog, GamePhase, MissionRequirement, MissionResult, Page, TeamVotes } from "./types/types";
 
 export class IdentityValuesBroker implements IdentityValues {
   constructor(private readonly storeValues: StoreValues){}
@@ -29,6 +30,17 @@ export class MissionTrackerValuesBroker implements MissionTrackerValues {
 
   get missionResults(): MissionResult[] {
     return this.storeValues.missionResults;
+  }
+}
+
+export class MissionDetailsValuesBroker implements MissionDetailsValues {
+  constructor(private readonly storeValues: StoreValues) {}
+  get mission(): number{
+    return this.storeValues.missionDetailsShown;
+  }
+
+  get teamVotes(): TeamVotes {
+    return this.storeValues.teamVoteResults[this.mission];
   }
 }
 
@@ -129,6 +141,10 @@ export class GameValuesBroker implements GameValues {
 
   get missionConductingValues(): MissionConductingValues {
     return new MissionConductingValuesBroker(this.storeValues);
+  }
+
+  get missionDetailsValues(): MissionDetailsValues {
+    return new MissionDetailsValuesBroker(this.storeValues);
   }
 }
 

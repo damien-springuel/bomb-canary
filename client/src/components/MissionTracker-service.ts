@@ -1,3 +1,5 @@
+import { ViewMissionDetails } from "../messages/commands";
+import type { Dispatcher } from "../messages/dispatcher";
 import type { MissionRequirement, MissionResult } from "../types/types";
 
 export interface MissionTrackerValues {
@@ -6,7 +8,10 @@ export interface MissionTrackerValues {
 }
 
 export class MissionTrackerService {
-  constructor(readonly values: MissionTrackerValues){}
+  constructor(
+    readonly values: MissionTrackerValues,
+    readonly dispatcher: Dispatcher,
+  ){}
   
   private get currentMission():number {
     return this.values.missionResults.length;
@@ -42,5 +47,9 @@ export class MissionTrackerService {
 
   get nbPeopleRequiredOnCurrentMission(): number {
     return this.values.missionRequirements[this.currentMission].nbPeopleOnMission;
+  }
+
+  viewMissionDetails(mission: number) {
+    this.dispatcher.dispatch(new ViewMissionDetails(mission));
   }
 }

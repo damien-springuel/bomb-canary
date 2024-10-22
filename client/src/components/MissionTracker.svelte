@@ -1,7 +1,9 @@
 <script lang="ts">
+import type { Dispatcher } from "../messages/dispatcher";
 import { MissionTrackerService, type MissionTrackerValues } from "./MissionTracker-service";
 export let missionTrackerValues: MissionTrackerValues;
-$: service = new MissionTrackerService(missionTrackerValues);
+export let dispatcher: Dispatcher;
+$: service = new MissionTrackerService(missionTrackerValues, dispatcher);
 </script>
 
 <div class="text-5xl">
@@ -14,6 +16,7 @@ $: service = new MissionTrackerService(missionTrackerValues);
       class:bc-button-blue={service.isCurrentMission(m)}
       class:bc-button-green={service.shouldMissionTagShowSuccess(m)}
       class:bc-button-red={service.shouldMissionTagShowFailure(m)}
+      on:click={()=>service.viewMissionDetails(m)}
     >
       {#if service.shouldMissionTagShowNbOfPeopleOnMission(m)}
         {service.getNumberPeopleOnMission(m)} {#if service.doesMissionNeedMoreThanOneFail(m)}*{/if}
