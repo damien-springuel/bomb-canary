@@ -1,12 +1,10 @@
 <script lang="ts">
 import type { Dispatcher } from "../messages/dispatcher";
-import { MissionTrackerService, type MissionTrackerValues } from "./MissionTracker-service";
 import { TeamSelectionService, type TeamSelectionValues } from "./TeamSelection-service";
 export let teamSelectionValues: TeamSelectionValues;
-export let missionTrackerValues: MissionTrackerValues;
 export let dispatcher: Dispatcher;
 
-$: service = new TeamSelectionService(teamSelectionValues, new MissionTrackerService(missionTrackerValues), dispatcher);
+$: service = new TeamSelectionService(teamSelectionValues, dispatcher);
 </script>
 
 <div class="flex flex-col items-center h-full w-full">

@@ -67,6 +67,10 @@ export class TeamSelectionValuesBroker implements TeamSelectionValues {
   get players(): string[] {
     return this.storeValues.players;
   }
+
+  get nbPeopleRequiredOnMission(): number {
+    return this.storeValues.missionRequirements[this.storeValues.currentMission].nbPeopleOnMission;
+  }
 }
 
 export class TeamVoteValuesBroker implements TeamVoteValues {

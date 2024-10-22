@@ -19,7 +19,7 @@ $: service = new GameService(gameValues, dispatcher);
   <button class="bc-button bc-button-blue" on:click={()=> service.viewIdentity()}>Identity</button>
   <MissionTracker missionTrackerValues={gameValues.missionTrackerValues} dispatcher={dispatcher}/>
   {#if service.isTeamSelectionPhase}
-    <TeamSelection dispatcher={dispatcher} teamSelectionValues={gameValues.teamSelectionValues} missionTrackerValues={gameValues.missionTrackerValues}/>
+    <TeamSelection dispatcher={dispatcher} teamSelectionValues={gameValues.teamSelectionValues}/>
   {:else if service.isTeamVotePhase}
     <TeamVote dispatcher={dispatcher} teamVoteValues={gameValues.teamVoteValues}/>
   {:else if service.isMissionConductingPhase}

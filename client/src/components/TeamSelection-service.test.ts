@@ -1,7 +1,6 @@
 import {expect, test} from "vitest";
 import { LeaderConfirmsTeam, LeaderDeselectsMember, LeaderSelectsMember } from "../messages/commands";
 import { DispatcherMock } from "../messages/dispatcher.test-utils";
-import { MissionTrackerService } from "./MissionTracker-service";
 import { TeamSelectionService } from "./TeamSelection-service";
 
 test("Is given player in current team", ()=> {
@@ -12,9 +11,8 @@ test("Is given player in current team", ()=> {
       leader: "a",
       currentTeamVoteNb: 1,
       players: ["a", "b"],
-      
+      nbPeopleRequiredOnMission: 3,
     },
-    new MissionTrackerService({missionResults: [], missionRequirements:[]}),
     null);
 
   expect(service.isGivenPlayerInTeam("a")).to.be.true;
@@ -29,8 +27,8 @@ test("Is the player the leader", ()=> {
       leader: "a",
       currentTeamVoteNb: 1,
       players: ["a", "b"],
+      nbPeopleRequiredOnMission: 3,
     },
-    new MissionTrackerService({missionResults: [], missionRequirements:[]}),
     null);
   expect(service.isPlayerTheLeader).to.be.true;
 
@@ -41,8 +39,8 @@ test("Is the player the leader", ()=> {
       leader: "b",
       currentTeamVoteNb: 1,
       players: ["a", "b"],
+      nbPeopleRequiredOnMission: 3,
     },
-    new MissionTrackerService({missionResults: [], missionRequirements:[]}),
     null);
 
   expect(service.isPlayerTheLeader).to.be.false;
@@ -56,12 +54,8 @@ test("Is the player selectable to the team - team not full", ()=> {
       leader: "a",
       currentTeamVoteNb: 1,
       players: ["a", "b", "c"],
+      nbPeopleRequiredOnMission: 3,
     },
-    new MissionTrackerService({
-      missionResults: [], 
-      missionRequirements:[
-        {nbPeopleOnMission: 3, nbFailuresRequiredToFail: 1}
-      ]}),
     null);
   expect(service.isGivenPlayerSelectableForTeam("a")).to.be.true;
   expect(service.isGivenPlayerSelectableForTeam("b")).to.be.true;
@@ -76,12 +70,8 @@ test("Is the player selectable to the team - team full", ()=> {
       leader: "a",
       currentTeamVoteNb: 1,
       players: ["a", "b", "c"],
+      nbPeopleRequiredOnMission: 2,
     },
-    new MissionTrackerService({
-      missionResults: [], 
-      missionRequirements:[
-        {nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1}
-      ]}),
     null);
   expect(service.isGivenPlayerSelectableForTeam("a")).to.be.true;
   expect(service.isGivenPlayerSelectableForTeam("b")).to.be.true;
@@ -96,12 +86,8 @@ test("Can confirm team", ()=> {
       leader: "a",
       currentTeamVoteNb: 1,
       players: ["a", "b", "c"],
+      nbPeopleRequiredOnMission: 3,
     },
-    new MissionTrackerService({
-      missionResults: [], 
-      missionRequirements:[
-        {nbPeopleOnMission: 3, nbFailuresRequiredToFail: 1}
-      ]}),
     null);
   
   expect(service.canConfirmTeam).to.be.false;
@@ -113,12 +99,8 @@ test("Can confirm team", ()=> {
       leader: "a",
       currentTeamVoteNb: 1,
       players: ["a", "b", "c"],
+      nbPeopleRequiredOnMission: 2,
     },
-    new MissionTrackerService({
-      missionResults: [], 
-      missionRequirements:[
-        {nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1}
-      ]}),
     null);
 
   expect(service.canConfirmTeam).to.be.true;
@@ -133,12 +115,8 @@ test("Toggle player selection", ()=> {
       leader: "a",
       currentTeamVoteNb: 1,
       players: ["a", "b", "c", "d"],
+      nbPeopleRequiredOnMission: 3,
     },
-    new MissionTrackerService({
-      missionResults: [], 
-      missionRequirements:[
-        {nbPeopleOnMission: 3, nbFailuresRequiredToFail: 1}
-      ]}),
     dispatcher);
   
   service.togglePlayerSelection("d");
@@ -160,12 +138,8 @@ test("Confirm Team", ()=> {
       leader: "a",
       currentTeamVoteNb: 1,
       players: ["a", "b", "c", "d"],
+      nbPeopleRequiredOnMission: 3,
     },
-    new MissionTrackerService({
-      missionResults: [], 
-      missionRequirements:[
-        {nbPeopleOnMission: 2, nbFailuresRequiredToFail: 1}
-      ]}),
     dispatcher);
   
   service.confirmTeam();
