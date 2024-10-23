@@ -214,11 +214,20 @@ func fivePlayerGameFirstVote(ctx context.Context) context.Context {
 
 func fivePlayerGameFirstMission(ctx context.Context) context.Context {
 	ctx = fivePlayerGameFirstVote(ctx)
-	bcclient.ApproveTeam(getSessionFromContext(ctx, "Alice"))
-	bcclient.ApproveTeam(getSessionFromContext(ctx, "Bob"))
-	bcclient.ApproveTeam(getSessionFromContext(ctx, "Charlie"))
-	bcclient.ApproveTeam(getSessionFromContext(ctx, "Dan"))
-	bcclient.ApproveTeam(getSessionFromContext(ctx, "Edith"))
+
+	alice := getSessionFromContext(ctx, "Alice")
+	bob := getSessionFromContext(ctx, "Bob")
+	charlie := getSessionFromContext(ctx, "Charlie")
+	dan := getSessionFromContext(ctx, "Dan")
+	edith := getSessionFromContext(ctx, "Edith")
+
+	bcclient.ApproveTeam(alice)
+	bcclient.ApproveTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.ApproveTeam(dan)
+	bcclient.ApproveTeam(edith)
+
+	bcclient.SucceedMission(bob)
 	return ctx
 }
 
