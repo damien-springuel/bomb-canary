@@ -11,6 +11,27 @@ test("Get Mission Timeline", ()=>{
   expect(service.missionTimeLine).to.equal(MissionTimeline.Future);
 });
 
+test("Team Size", ()=>{
+  const service = new MissionDetailsService({
+    missionRequirement: {
+      nbPeopleOnMission: 4,
+      nbFailuresRequiredToFail: 2,
+    }
+  } as MissionDetailsValues);
+  expect(service.teamSize).to.equal(4);
+});
+
+test("Number of failures required to fail", ()=>{
+  const service = new MissionDetailsService({
+    missionRequirement: {
+      nbPeopleOnMission: 4,
+      nbFailuresRequiredToFail: 2,
+    }
+  } as MissionDetailsValues);
+  expect(service.nbFailuresRequiredToFail).to.equal(2);
+});
+
+
 test("Get Team votes", ()=>{
   const service = new MissionDetailsService({
     teamVotes: {
@@ -54,8 +75,13 @@ test("Has mission passed", ()=>{
 });
 
 test("Number of successes", ()=>{
-  const service = new MissionDetailsService({teamSize: 4, nbFailures: 1} as MissionDetailsValues);
+  const service = new MissionDetailsService({missionRequirement: {nbPeopleOnMission: 4}, nbFailures: 1} as MissionDetailsValues);
   expect(service.nbSuccesses).to.equal(3);
+});
+
+test("Number of failures", ()=>{
+  const service = new MissionDetailsService({missionRequirement: {nbPeopleOnMission: 4}, nbFailures: 1} as MissionDetailsValues);
+  expect(service.nbFailures).to.equal(1);
 });
 
 test("Should Show Votes", ()=>{

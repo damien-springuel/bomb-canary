@@ -6,42 +6,54 @@ export let missionDetailsValues: MissionDetailsValues;
 const service = new MissionDetailsService(missionDetailsValues);
 </script>
 
-<div class="flex flex-col items-center h-full w-full items-center">
-  <div class="text-5xl my-2">
+<div class="flex flex-col items-center h-full gap-y-8">
+  <div class="text-5xl my-2 font-bold">
     Mission #{service.mission + 1} Details
   </div>
-  {#if service.shouldShowVotes}
-    <div class="text-3xl my-2 text-center">
-      Votes
+  <div class="text-center text-xl">
+    <div class="text-3xl">Mission Requirements</div>
+    <div>The mission needs a team of <span class="font-bold">{service.teamSize}</span> people.</div>
+    <div>
+      The mission needs at least
+      <span class="font-bold">{service.nbFailuresRequiredToFail}</span>
+      <span class="text-red-500">failure{#if service.nbFailuresRequiredToFail > 1}<span>s</span>{/if}</span>
+      to fail.
     </div>
-    <div class="grid grid-cols-2 gap-2 text-2xl">
-      {#each service.teamVotes.votes as teamVote, i}
-      <div>
-        <div>
-          Team #{i+1}: <span class="font-bold">{service.teamFromVoteAsString(i)}</span>
-        </div>
-        <div class="bc-tag flex flex-col">
-          <div class="font-bold text-center underline">
-            {#if teamVote.approved}
-              <span class="text-green-500">Approved</span>
-            {/if}
-            {#if !teamVote.approved}
-              <span class="text-red-500">Rejected</span>
-            {/if}
-          </div>
-          <div class="grid grid-cols-2 gap-x-2">
-            {#each teamVote.playerVotes.entries() as [player, vote]}
-              <div 
-                class:text-green-500={vote}
-                class:text-red-500={!vote}
-              >
-                {player}
-              </div>
-            {/each}
-          </div>
-        </div>
+  </div>
+  {#if service.shouldShowVotes}
+    <div>
+      <div class="text-3xl text-center">
+        Votes
       </div>
-      {/each}
+      <div class="grid grid-cols-2 gap-2 text-2xl">
+        {#each service.teamVotes.votes as teamVote, i}
+        <div>
+          <div>
+            Team #{i+1}: <span class="font-bold">{service.teamFromVoteAsString(i)}</span>
+          </div>
+          <div class="bc-tag flex flex-col">
+            <div class="font-bold text-center underline">
+              {#if teamVote.approved}
+                <span class="text-green-500">Approved</span>
+              {/if}
+              {#if !teamVote.approved}
+                <span class="text-red-500">Rejected</span>
+              {/if}
+            </div>
+            <div class="grid grid-cols-2 gap-x-2">
+              {#each teamVote.playerVotes.entries() as [player, vote]}
+                <div 
+                  class:text-green-500={vote}
+                  class:text-red-500={!vote}
+                >
+                  {player}
+                </div>
+              {/each}
+            </div>
+          </div>
+        </div>
+        {/each}
+      </div>
     </div>
   {/if}
   {#if service.shouldShowMissionResult}

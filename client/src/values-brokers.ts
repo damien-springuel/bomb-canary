@@ -54,8 +54,8 @@ export class MissionDetailsValuesBroker implements MissionDetailsValues {
     return this.storeValues.teamVoteResults[this.mission];
   }
 
-  get teamSize(): number {
-    return this.storeValues.missionRequirements[this.mission].nbPeopleOnMission;
+  get missionRequirement(): MissionRequirement {
+    return this.storeValues.missionRequirements[this.mission];
   }
 
   get missionResult(): boolean {

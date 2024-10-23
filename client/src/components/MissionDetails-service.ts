@@ -1,4 +1,4 @@
-import type { TeamVotes } from "../types/types";
+import type { MissionRequirement, TeamVotes } from "../types/types";
 
 export enum MissionTimeline {
   Past = "Past",
@@ -10,7 +10,7 @@ export interface MissionDetailsValues {
   readonly mission: number;
   readonly missionTimeline: MissionTimeline;
   readonly teamVotes: TeamVotes;
-  readonly teamSize: number;
+  readonly missionRequirement: MissionRequirement;
   readonly missionResult: boolean;
   readonly nbFailures: number;
 }
@@ -30,6 +30,14 @@ export class MissionDetailsService{
     return this.missionDetailsValues.teamVotes;
   }
 
+  get teamSize(): number {
+    return this.missionDetailsValues.missionRequirement.nbPeopleOnMission;
+  }
+
+  get nbFailuresRequiredToFail(): number {
+    return this.missionDetailsValues.missionRequirement.nbFailuresRequiredToFail;
+  }
+
   teamFromVoteAsString(vote: number): string {
     const team = Array.from(
       this.missionDetailsValues
@@ -45,7 +53,7 @@ export class MissionDetailsService{
   }
 
   get nbSuccesses(): number {
-    return this.missionDetailsValues.teamSize - this.missionDetailsValues.nbFailures;
+    return this.teamSize - this.missionDetailsValues.nbFailures;
   }
 
   get nbFailures(): number {
