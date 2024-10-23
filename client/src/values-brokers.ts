@@ -1,7 +1,7 @@
 import type { GameValues } from "./components/Game-service";
 import type { IdentityValues } from "./components/Identity-service";
 import type { MissionConductingValues } from "./components/MissionConducting-service";
-import type { MissionDetailsValues } from "./components/MissionDetails-service";
+import { MissionTimeline, type MissionDetailsValues } from "./components/MissionDetails-service";
 import type { MissionTrackerValues } from "./components/MissionTracker-service";
 import type { PageValues } from "./components/Page-service";
 import type { PartyRoomValues } from "./components/PartyRoom-service";
@@ -35,12 +35,35 @@ export class MissionTrackerValuesBroker implements MissionTrackerValues {
 
 export class MissionDetailsValuesBroker implements MissionDetailsValues {
   constructor(private readonly storeValues: StoreValues) {}
+  
   get mission(): number{
     return this.storeValues.missionDetailsShown;
   }
 
+  get missionTimeline(): MissionTimeline {
+    if (this.mission < this.storeValues.currentMission) {
+      return MissionTimeline.Past;
+    }
+    if (this.mission === this.storeValues.currentMission) {
+      return MissionTimeline.Current;
+    }
+    return MissionTimeline.Future;
+  }
+
   get teamVotes(): TeamVotes {
     return this.storeValues.teamVoteResults[this.mission];
+  }
+
+  get teamSize(): number {
+    return this.storeValues.missionRequirements[this.mission].nbPeopleOnMission;
+  }
+
+  get missionResult(): boolean {
+    return this.storeValues.missionResults[this.mission].success;
+  }
+
+  get nbFailures(): number {
+    return this.storeValues.missionResults[this.mission].nbFails;;
   }
 }
 

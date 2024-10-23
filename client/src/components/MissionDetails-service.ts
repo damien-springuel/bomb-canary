@@ -1,8 +1,18 @@
 import type { TeamVotes } from "../types/types";
 
-export class MissionDetailsValues {
+export enum MissionTimeline {
+  Past = "Past",
+  Current = "Current",
+  Future = "Future",
+}
+
+export interface MissionDetailsValues {
   readonly mission: number;
+  readonly missionTimeline: MissionTimeline;
   readonly teamVotes: TeamVotes;
+  readonly teamSize: number;
+  readonly missionResult: boolean;
+  readonly nbFailures: number;
 }
 
 export class MissionDetailsService{
@@ -12,11 +22,15 @@ export class MissionDetailsService{
     return this.missionDetailsValues.mission;
   }
 
+  get missionTimeLine(): MissionTimeline {
+    return this.missionDetailsValues.missionTimeline;
+  }
+
   get teamVotes(): TeamVotes {
     return this.missionDetailsValues.teamVotes;
   }
 
-  getTeamFromVote(vote: number): string {
+  teamFromVoteAsString(vote: number): string {
     const team = Array.from(
       this.missionDetailsValues
         .teamVotes
@@ -24,5 +38,26 @@ export class MissionDetailsService{
         .team
         .values());
     return team.join(", ");
+  }
+
+  get hasMissionSucceeded(): boolean {
+    return this.missionDetailsValues.missionResult;
+  }
+
+  get nbSuccesses(): number {
+    return this.missionDetailsValues.teamSize - this.missionDetailsValues.nbFailures;
+  }
+
+  get nbFailures(): number {
+    return this.missionDetailsValues.nbFailures;
+  }
+
+  get shouldShowVotes(): boolean {
+    return this.missionTimeLine === MissionTimeline.Current || 
+      this.missionTimeLine === MissionTimeline.Past;
+  }
+
+  get shouldShowMissionResult(): boolean {
+    return this.missionTimeLine === MissionTimeline.Past;
   }
 }
