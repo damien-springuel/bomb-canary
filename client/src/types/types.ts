@@ -14,6 +14,7 @@ export enum GamePhase {
 export enum Dialog {
   Identity = "identity",
   MissionDetails = "missionDetails",
+  LastMissionResult = "LastMissionResult",
 }
 
 export interface MissionResult {

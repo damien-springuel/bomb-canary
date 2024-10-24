@@ -1,5 +1,6 @@
 import type { GameValues } from "./components/Game-service";
 import type { IdentityValues } from "./components/Identity-service";
+import type { LastMissionResultValues } from "./components/LastMissionResult-service";
 import type { MissionConductingValues } from "./components/MissionConducting-service";
 import { MissionTimeline, type MissionDetailsValues } from "./components/MissionDetails-service";
 import type { MissionTrackerValues } from "./components/MissionTracker-service";
@@ -67,6 +68,14 @@ export class MissionDetailsValuesBroker implements MissionDetailsValues {
   }
 }
 
+export class LastMissionResultValuesBroker implements LastMissionResultValues {
+  constructor(private readonly storeValues: StoreValues) {}
+
+  get success(): boolean {
+    const results = this.storeValues.missionResults;
+    return results[results.length-1].success;
+  }
+}
 
 export class TeamSelectionValuesBroker implements TeamSelectionValues {
   constructor(private readonly storeValues: StoreValues) {}
@@ -172,6 +181,10 @@ export class GameValuesBroker implements GameValues {
 
   get missionDetailsValues(): MissionDetailsValues {
     return new MissionDetailsValuesBroker(this.storeValues);
+  }
+
+  get lastMissionResultValues(): LastMissionResultValues {
+    return new LastMissionResultValuesBroker(this.storeValues);
   }
 }
 

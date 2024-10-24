@@ -2,6 +2,7 @@ import { ViewIdentity } from "../messages/commands";
 import type { Dispatcher } from "../messages/dispatcher";
 import { Dialog, GamePhase } from "../types/types";
 import type { IdentityValues } from "./Identity-service";
+import type { LastMissionResultValues } from "./LastMissionResult-service";
 import type { MissionConductingValues } from "./MissionConducting-service";
 import type { MissionDetailsValues } from "./MissionDetails-service";
 import type { MissionTrackerValues } from "./MissionTracker-service";
@@ -17,6 +18,7 @@ export interface GameValues {
   readonly teamVoteValues: TeamVoteValues;
   readonly missionConductingValues: MissionConductingValues;
   readonly missionDetailsValues: MissionDetailsValues;
+  readonly lastMissionResultValues: LastMissionResultValues;
 }
 
 export class GameService {
@@ -50,5 +52,9 @@ export class GameService {
 
   get isDialogShownMissionDetails(): boolean {
     return this.values.dialogShown == Dialog.MissionDetails;
+  }
+
+  get isDialogShownLastMissionResult(): boolean {
+    return this.values.dialogShown == Dialog.LastMissionResult;
   }
 }

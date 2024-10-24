@@ -82,3 +82,17 @@ test("Is dialog shown Mission Details", ()=> {
 
   expect(service.isDialogShownMissionDetails).to.be.false;
 });
+
+test("Is dialog shown last mission result", ()=> {
+  let service = new GameService(
+    {dialogShown: Dialog.LastMissionResult} as GameValues, 
+    null);
+
+  expect(service.isDialogShownLastMissionResult).to.be.true;
+  
+  service = new GameService(
+    {dialogShown: null} as GameValues, 
+    null);
+
+  expect(service.isDialogShownLastMissionResult).to.be.false;
+});

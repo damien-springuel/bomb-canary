@@ -8,6 +8,7 @@ import type { Dispatcher } from "../messages/dispatcher";
 import MissionTracker from "./MissionTracker.svelte";
 import { GameService, type GameValues } from "./Game-service";
 import MissionDetails from "./MissionDetails.svelte";
+    import LastMissionResult from "./LastMissionResult.svelte";
 
 export let gameValues: GameValues;
 export let dispatcher: Dispatcher;
@@ -34,5 +35,10 @@ $: service = new GameService(gameValues, dispatcher);
 {#if service.isDialogShownMissionDetails}
   <Dialog dispatcher={dispatcher}>
     <MissionDetails missionDetailsValues={gameValues.missionDetailsValues}/>
+  </Dialog>
+{/if}
+{#if service.isDialogShownLastMissionResult}
+  <Dialog dispatcher={dispatcher}>
+    <LastMissionResult lastMissionResultValues={gameValues.lastMissionResultValues}/>
   </Dialog>
 {/if}

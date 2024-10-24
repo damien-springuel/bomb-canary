@@ -3,7 +3,7 @@ import { Store, type StoreValues } from "./store";
 import {get} from "svelte/store";
 import { Dialog, GamePhase, Page } from "../types/types";
 
-test(`Store - default values`, () => {
+test(`default values`, () => {
   const store = new Store();
   const storeValues: StoreValues = get(store);
   expect(storeValues).to.deep.equal( 
@@ -31,7 +31,7 @@ test(`Store - default values`, () => {
   );
 });
 
-test(`Store - endReplay`, () => {
+test(`endReplay`, () => {
   const store = new Store();
   store.startReplay();
   store.showPartyRoom("test");
@@ -50,7 +50,7 @@ test(`Store - endReplay`, () => {
   expect(storeValues.leader).to.equal("leader");
 });
 
-test(`Store - endReplay twice`, () => {
+test(`endReplay twice`, () => {
   const store = new Store();
   store.startReplay();
   store.showPartyRoom("test");
@@ -70,7 +70,7 @@ test(`Store - endReplay twice`, () => {
   expect(storeValues.leader).to.equal("leader");
 });
 
-test(`Store - startReplay twice`, () => {
+test(`startReplay twice`, () => {
   const store = new Store();
   
   store.startReplay();
@@ -90,7 +90,7 @@ test(`Store - startReplay twice`, () => {
   expect(storeValues.leader).to.equal("leader");
 });
 
-test(`Store - reset`, () => {
+test(`reset`, () => {
   const store = new Store();
   store.showPartyRoom("test");
   store.joinPlayer("name1");
@@ -100,14 +100,14 @@ test(`Store - reset`, () => {
   expect(storeValues.players).to.deep.equal([]);
 });
 
-test(`Store - showLobby`, () => {
+test(`showLobby`, () => {
   const store = new Store();
   store.showLobby();
   const storeValues: StoreValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.Lobby);
 });
 
-test(`Store - showPartyRoom`, () => {
+test(`showPartyRoom`, () => {
   const store = new Store();
   store.showPartyRoom("testCode");
   const storeValues: StoreValues = get(store);
@@ -115,21 +115,21 @@ test(`Store - showPartyRoom`, () => {
   expect(storeValues.partyCode).to.equal("testCode");
 });
 
-test(`Store - showGameRoom`, () => {
+test(`showGameRoom`, () => {
   const store = new Store();
   store.showGameRoom();
   const storeValues: StoreValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.Game);
 });
 
-test(`Store - definePlayer`, () => {
+test(`definePlayer`, () => {
   const store = new Store();
   store.definePlayer("testName");
   let storeValues: StoreValues = get(store);
   expect(storeValues.player).to.equal("testName");
 });
 
-test(`Store - joinPlayer`, () => {
+test(`joinPlayer`, () => {
   const store = new Store();
   store.joinPlayer("testName1");
   let storeValues: StoreValues = get(store);
@@ -141,7 +141,7 @@ test(`Store - joinPlayer`, () => {
   expect(storeValues.players).to.deep.equal(["testName1", "testName2"]);
 });
 
-test(`Store - setMissionRequirements`, () => {
+test(`setMissionRequirements`, () => {
   const store = new Store();
   store.setMissionRequirements([{nbFailuresRequiredToFail: 3, nbPeopleOnMission: 4}, {nbFailuresRequiredToFail: 2, nbPeopleOnMission:4}]);
   let storeValues: StoreValues = get(store);
@@ -149,7 +149,7 @@ test(`Store - setMissionRequirements`, () => {
   expect(storeValues.currentMission).to.equal(0);
 });
 
-test(`Store - startTeamSelection`, () => {
+test(`startTeamSelection`, () => {
   const store = new Store();
   store.definePlayer("testName");
   store.selectPlayer("testName");
@@ -164,14 +164,14 @@ test(`Store - startTeamSelection`, () => {
   expect(storeValues.playerMissionSuccess).to.deep.equal(null);
 });
 
-test(`Store - assignLeader`, () => {
+test(`assignLeader`, () => {
   const store = new Store();
   store.assignLeader("testName1");
   let storeValues: StoreValues = get(store);
   expect(storeValues.leader).to.equal("testName1");
 });
 
-test(`Store - selectPlayer`, () => {
+test(`selectPlayer`, () => {
   const store = new Store();
   store.selectPlayer("p1");
   store.selectPlayer("p2");
@@ -179,7 +179,7 @@ test(`Store - selectPlayer`, () => {
   expect(storeValues.currentTeam).to.deep.equal(new Set<string>(["p1", "p2"]));
 });
 
-test(`Store - deselectPlayer`, () => {
+test(`deselectPlayer`, () => {
   const store = new Store();
   store.selectPlayer("p1");
   store.selectPlayer("p2");
@@ -188,14 +188,14 @@ test(`Store - deselectPlayer`, () => {
   expect(storeValues.currentTeam).to.deep.equal(new Set<string>(["p2"]));
 });
 
-test(`Store - startTeamVote`, () => {
+test(`startTeamVote`, () => {
   const store = new Store();
   store.startTeamVote();
   let storeValues: StoreValues = get(store);
   expect(storeValues.currentGamePhase).to.equal(GamePhase.TeamVote);
 });
 
-test(`Store - makePlayerVote - not the player`, () => {
+test(`makePlayerVote - not the player`, () => {
   const store = new Store();
   store.makePlayerVote("testName", true);
   let storeValues: StoreValues = get(store);
@@ -203,7 +203,7 @@ test(`Store - makePlayerVote - not the player`, () => {
   expect(storeValues.playerVote).to.be.null;
 });
 
-test(`Store - makePlayerVote - the player`, () => {
+test(`makePlayerVote - the player`, () => {
   const store = new Store();
   store.definePlayer("testName");
   store.makePlayerVote("testName", true);
@@ -212,7 +212,7 @@ test(`Store - makePlayerVote - the player`, () => {
   expect(storeValues.playerVote).to.be.true;
 });
 
-test(`Store - saveTeamVoteResult`, () => {
+test(`saveTeamVoteResult`, () => {
   const store = new Store();
   store.selectPlayer("p1");
   store.saveTeamVoteResult(true, new Map<string, boolean>([["p1", true], ["p2", false]]));
@@ -226,7 +226,7 @@ test(`Store - saveTeamVoteResult`, () => {
   ]);
 });
 
-test(`Store - saveTeamVoteResult - multiple results`, () => {
+test(`saveTeamVoteResult - multiple results`, () => {
   const store = new Store();
   store.selectPlayer("p1");
   store.selectPlayer("p3");
@@ -245,7 +245,7 @@ test(`Store - saveTeamVoteResult - multiple results`, () => {
   ]);
 });
 
-test(`Store - saveTeamVoteResult - multiple results in multiple missions`, () => {
+test(`saveTeamVoteResult - multiple results in multiple missions`, () => {
   const store = new Store();
   store.selectPlayer("p1");
   store.selectPlayer("p3");
@@ -268,7 +268,7 @@ test(`Store - saveTeamVoteResult - multiple results in multiple missions`, () =>
   ]);
 });
 
-test(`Store - currentTeamVoteNb`, () => {
+test(`currentTeamVoteNb`, () => {
   const store = new Store();
   store.saveTeamVoteResult(true, new Map<string, boolean>([["p1", true], ["p2", false]]));
   store.saveTeamVoteResult(false, new Map<string, boolean>([["p1", false], ["p2", false]]));
@@ -278,14 +278,14 @@ test(`Store - currentTeamVoteNb`, () => {
   expect(storeValues.currentTeamVoteNb).to.equal(2);
 });
 
-test(`Store - startMission`, () => {
+test(`startMission`, () => {
   const store = new Store();
   store.startMission();
   let storeValues: StoreValues = get(store);
   expect(storeValues.currentGamePhase).to.equal(GamePhase.Mission);
 });
 
-test(`Store - makePlayerWorkOnMission - the player`, () => {
+test(`makePlayerWorkOnMission - the player`, () => {
   const store = new Store();
   store.definePlayer("p1");
   store.makePlayerWorkOnMission("p1", true);
@@ -294,7 +294,7 @@ test(`Store - makePlayerWorkOnMission - the player`, () => {
   expect(storeValues.playerMissionSuccess).to.be.true;
 });
 
-test(`Store - makePlayerWorkOnMission - not the player`, () => {
+test(`makePlayerWorkOnMission - not the player`, () => {
   const store = new Store();
   store.definePlayer("p1");
   store.makePlayerWorkOnMission("p2", true);
@@ -303,7 +303,7 @@ test(`Store - makePlayerWorkOnMission - not the player`, () => {
   expect(storeValues.playerMissionSuccess).to.be.null;
 });
 
-test(`Store - saveMissionResult`, () => {
+test(`saveMissionResult`, () => {
   const store = new Store();
   store.saveMissionResult(true, 2);
   let storeValues: StoreValues = get(store);
@@ -311,7 +311,7 @@ test(`Store - saveMissionResult`, () => {
   expect(storeValues.currentMission).to.equal(1); // second mission, since mission are zero-based
 });
 
-test(`Store - close Dialog`, () => {
+test(`close Dialog`, () => {
   const store = new Store();
   store.showIdentity();
   store.closeDialog();
@@ -319,14 +319,14 @@ test(`Store - close Dialog`, () => {
   expect(storeValues.dialogShown).to.be.null;
 });
 
-test(`Store - showIdentity`, () => {
+test(`showIdentity`, () => {
   const store = new Store();
   store.showIdentity();
   let storeValues: StoreValues = get(store);
   expect(storeValues.dialogShown).to.equal(Dialog.Identity);
 });
 
-test(`Store - showIdentity isn't replayed`, () => {
+test(`showIdentity isn't replayed`, () => {
   const store = new Store();
   
   store.startReplay();
@@ -337,7 +337,7 @@ test(`Store - showIdentity isn't replayed`, () => {
   expect(storeValues.dialogShown).to.be.null;
 });
 
-test(`Store - showMissionDetails`, () => {
+test(`showMissionDetails`, () => {
   const store = new Store();
   store.showMissionDetails(2);
   let storeValues: StoreValues = get(store);
@@ -345,7 +345,7 @@ test(`Store - showMissionDetails`, () => {
   expect(storeValues.missionDetailsShown).to.equal(2);
 });
 
-test(`Store - showMissionDetails isn't replayed`, () => {
+test(`showMissionDetails isn't replayed`, () => {
   const store = new Store();
   
   store.startReplay();
@@ -356,9 +356,27 @@ test(`Store - showMissionDetails isn't replayed`, () => {
   expect(storeValues.dialogShown).to.be.null;
 });
 
-test(`Store - rememberSpies`, () => {
+test(`rememberSpies`, () => {
   const store = new Store();
   store.rememberSpies(new Set<string>(["spy 1", "spy 2"]));
   let storeValues: StoreValues = get(store);
   expect(storeValues.revealedSpies).to.deep.equal(new Set<string>(["spy 1", "spy 2"]));
+});
+
+test(`showLastMissionResult`, () => {
+  const store = new Store();
+  store.showLastMissionResult();
+  let storeValues: StoreValues = get(store);
+  expect(storeValues.dialogShown).to.equal(Dialog.LastMissionResult);
+});
+
+test(`showLastMissionResult isn't replayed`, () => {
+  const store = new Store();
+  
+  store.startReplay();
+  store.showLastMissionResult();
+  store.endReplay();
+
+  let storeValues: StoreValues = get(store);
+  expect(storeValues.dialogShown).to.be.null;
 });

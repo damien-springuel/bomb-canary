@@ -14,14 +14,14 @@ import {
 import type { MissionRequirement } from "../types/types";
 import { GameConsumer, type GameStore } from "./game";
 
-test(`Game Manager - GameStarted`, () => {
+test(`GameStarted`, () => {
   let receivedReq: MissionRequirement[]
   const gameConsumer = new GameConsumer({setMissionRequirements: req => {receivedReq = req}} as GameStore);
   gameConsumer.consume(new GameStarted([{nbFailuresRequiredToFail: 1, nbPeopleOnMission: 3}]));
   expect(receivedReq).to.deep.equal([{nbPeopleOnMission: 3, nbFailuresRequiredToFail: 1}]);
 });
 
-test(`Game Manager - LeaderStartedToSelectMembers`, () => {
+test(`LeaderStartedToSelectMembers`, () => {
   let receivedLeader: string
   let teamSelectionStarted = false;
   const gameConsumer = new GameConsumer({assignLeader: leader => {receivedLeader = leader}, startTeamSelection: () => {teamSelectionStarted = true}} as GameStore);
@@ -30,28 +30,28 @@ test(`Game Manager - LeaderStartedToSelectMembers`, () => {
   expect(receivedLeader).to.equal("testLeader");
 });
 
-test(`Game Manager - LeaderSelectedMember`, () => {
+test(`LeaderSelectedMember`, () => {
   let receivedMember: string
   const gameConsumer = new GameConsumer({selectPlayer: member => {receivedMember = member}} as GameStore);
   gameConsumer.consume(new LeaderSelectedMember("member"));
   expect(receivedMember).to.equal("member");
 });
 
-test(`Game Manager - LeaderDeselectedMember`, () => {
+test(`LeaderDeselectedMember`, () => {
   let receivedMember: string
   const gameConsumer = new GameConsumer({deselectPlayer: member => {receivedMember = member}} as GameStore);
   gameConsumer.consume(new LeaderDeselectedMember("member"));
   expect(receivedMember).to.equal("member");
 });
 
-test(`Game Manager - LeaderConfirmedTeam`, () => {
+test(`LeaderConfirmedTeam`, () => {
   let voteStarted = false;
   const gameConsumer = new GameConsumer({startTeamVote: () => {voteStarted = true}} as GameStore);
   gameConsumer.consume(new LeaderConfirmedTeam());
   expect(voteStarted).to.be.true;
 });
 
-test(`Game Manager - PlayerVotedOnTeam`, () => {
+test(`PlayerVotedOnTeam`, () => {
   let receivedPlayer: string;
   let receivedApproval: boolean;
   const gameConsumer = new GameConsumer({makePlayerVote: (player, approval) => {
@@ -63,7 +63,7 @@ test(`Game Manager - PlayerVotedOnTeam`, () => {
   expect(receivedApproval).to.be.true;
 });
 
-test(`Game Manager - AllPlayerVotedOnTeam`, () => {
+test(`AllPlayerVotedOnTeam`, () => {
   let receivedApproved: boolean;
   let receivedPlayerVotes: Map<string, boolean>;
   const gameConsumer = new GameConsumer({saveTeamVoteResult: (approved, playerVotes) => {
@@ -75,14 +75,14 @@ test(`Game Manager - AllPlayerVotedOnTeam`, () => {
   expect(receivedPlayerVotes).to.deep.equal(new Map<string, boolean>([["p1", true], ["p2", true], ["p3", false]]));
 });
 
-test(`Game Manager - MissionStarted`, () => {
+test(`MissionStarted`, () => {
   let missionStarted: boolean = false;
   const gameConsumer = new GameConsumer({startMission: () => {missionStarted = true}} as GameStore);
   gameConsumer.consume(new MissionStarted());
   expect(missionStarted).to.be.true;
 });
 
-test(`Game Manager - PlayerWorkedOnMission`, () => {
+test(`PlayerWorkedOnMission`, () => {
   let receivedPlayer: string;
   let receivedSuccess: boolean;
   const gameConsumer = new GameConsumer({makePlayerWorkOnMission: (player, approval) => {
@@ -95,15 +95,19 @@ test(`Game Manager - PlayerWorkedOnMission`, () => {
   
 });
 
-test(`Game Manager - SaveMissionResult`, () => {
+test(`MissionCompleted`, () => {
   let receivedSuccess: boolean;
   let receivedNbFails: number;
+  let lastMissionResultShown: boolean;
   const gameConsumer = new GameConsumer({saveMissionResult: (success, nbFails) => {
     receivedSuccess = success;
     receivedNbFails = nbFails;
-  }} as GameStore);
+  },
+  showLastMissionResult: ()=>{lastMissionResultShown = true;}
+} as GameStore);
   gameConsumer.consume(new MissionCompleted(false, 2));
   expect(receivedSuccess).to.be.false;
   expect(receivedNbFails).to.equal(2);
+  expect(lastMissionResultShown).to.be.true;
 });
 

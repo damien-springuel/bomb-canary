@@ -125,6 +125,7 @@ export class Store implements Readable<StoreValues> {
   readonly showMissionDetails = showMissionDetails;
   readonly closeDialog = closeDialog;
   readonly rememberSpies = rememberSpies;
+  readonly showLastMissionResult = showLastMissionResult;
 }
 
 function showLobby(this: Store) {
@@ -280,6 +281,13 @@ function closeDialog(this: Store) {
 function rememberSpies(this: Store, spies: Set<string>) {
   this.update(v => {
     v.revealedSpies = spies;
+    return v
+  })
+}
+
+function showLastMissionResult(this: Store) {
+  this.updateNoReplay(v => {
+    v.dialogShown = Dialog.LastMissionResult;
     return v
   })
 }

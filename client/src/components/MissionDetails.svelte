@@ -7,7 +7,7 @@ const service = new MissionDetailsService(missionDetailsValues);
 </script>
 
 <div class="flex flex-col items-center h-full gap-y-8">
-  <div class="text-5xl my-2 font-bold">
+  <div class="text-5xl my-2 underline">
     Mission #{service.mission + 1} Details
   </div>
   <div class="text-center text-xl">

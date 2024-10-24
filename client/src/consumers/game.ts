@@ -25,6 +25,7 @@ export interface GameStore {
   startMission(): void
   makePlayerWorkOnMission(player: string, success: boolean | null): void
   saveMissionResult(success: boolean, nbFails: number): void
+  showLastMissionResult(): void
 }
 
 export class GameConsumer {
@@ -62,6 +63,7 @@ export class GameConsumer {
     }
     else if(message instanceof MissionCompleted) {
       this.gameStore.saveMissionResult(message.success, message.nbFails);
+      this.gameStore.showLastMissionResult();
     }
   }
 }
