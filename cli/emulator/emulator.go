@@ -284,6 +284,53 @@ func fivePlayerGameOneSuccessOneFailure(ctx context.Context) context.Context {
 	return ctx
 }
 
+func fivePlayerTwoSuccessesTwoFailuresLastMission(ctx context.Context) context.Context {
+	ctx = fivePlayerGameOneSuccessOneFailure(ctx)
+	alice := getSessionFromContext(ctx, "Alice")
+	bob := getSessionFromContext(ctx, "Bob")
+	charlie := getSessionFromContext(ctx, "Charlie")
+	dan := getSessionFromContext(ctx, "Dan")
+	edith := getSessionFromContext(ctx, "Edith")
+
+	bcclient.LeaderSelectsMember(edith, "Alice")
+	bcclient.LeaderSelectsMember(edith, "Bob")
+	bcclient.LeaderConfirmsTeam(edith)
+	bcclient.ApproveTeam(alice)
+	bcclient.ApproveTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.ApproveTeam(dan)
+	bcclient.ApproveTeam(edith)
+	bcclient.SucceedMission(alice)
+	bcclient.SucceedMission(bob)
+
+	bcclient.LeaderSelectsMember(alice, "Alice")
+	bcclient.LeaderSelectsMember(alice, "Bob")
+	bcclient.LeaderSelectsMember(alice, "Charlie")
+	bcclient.LeaderConfirmsTeam(alice)
+	bcclient.ApproveTeam(alice)
+	bcclient.ApproveTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.ApproveTeam(dan)
+	bcclient.ApproveTeam(edith)
+	bcclient.FailMission(alice)
+	bcclient.FailMission(bob)
+	bcclient.FailMission(charlie)
+
+	bcclient.LeaderSelectsMember(bob, "Alice")
+	bcclient.LeaderSelectsMember(bob, "Bob")
+	bcclient.LeaderSelectsMember(bob, "Charlie")
+	bcclient.LeaderConfirmsTeam(bob)
+	bcclient.ApproveTeam(alice)
+	bcclient.ApproveTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.ApproveTeam(dan)
+	bcclient.ApproveTeam(edith)
+	bcclient.SucceedMission(bob)
+	bcclient.SucceedMission(charlie)
+
+	return ctx
+}
+
 func tenPlayerGameFourTeamVoteFailures(ctx context.Context) context.Context {
 	ctx = started10PlayerGame(ctx)
 	alice := getSessionFromContext(ctx, "Alice")
@@ -409,6 +456,10 @@ func New() *Emulator {
 			{
 				description: "10 player game with 4 team vote failures",
 				action:      tenPlayerGameFourTeamVoteFailures,
+			},
+			{
+				description: "5-player 2 successes, 2 failures, last mission",
+				action:      fivePlayerTwoSuccessesTwoFailuresLastMission,
 			},
 		},
 	}

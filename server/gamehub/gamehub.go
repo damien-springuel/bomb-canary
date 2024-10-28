@@ -348,12 +348,12 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string, outc
 	commonMissionMessages := []messagebus.Message{}
 
 	if updatedGame.State() == gamerules.SelectingTeam {
-		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
+		lastMissionSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
 		talliedOutcomes := tallyOutcomes(outcomes)
 		commonMissionMessages = append(commonMissionMessages,
 			messagebus.MissionCompleted{
 				Event:    messagebus.Event{Party: messagebus.Party{Code: code}},
-				Success:  lastGameSuccess,
+				Success:  lastMissionSuccess,
 				Outcomes: talliedOutcomes,
 			},
 		)
@@ -364,12 +364,12 @@ func commonMissionOutgoingMessages(updatedGame gamerules.Game, code string, outc
 			},
 		)
 	} else if updatedGame.State() == gamerules.GameOver {
-		lastGameSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()-1]
+		lastMissionSuccess := updatedGame.GetMissionResults()[updatedGame.CurrentMission()]
 		talliedOutcomes := tallyOutcomes(outcomes)
 		commonMissionMessages = append(commonMissionMessages,
 			messagebus.MissionCompleted{
 				Event:    messagebus.Event{Party: messagebus.Party{Code: code}},
-				Success:  lastGameSuccess,
+				Success:  lastMissionSuccess,
 				Outcomes: talliedOutcomes,
 			},
 		)

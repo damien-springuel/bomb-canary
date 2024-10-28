@@ -66,24 +66,17 @@ export class Store implements Readable<StoreValues> {
 
   protected update(updater: (value: StoreValues) => StoreValues) {
     if (this.replayingEvent) {
-      this.replayedValues = this.updateComputed(updater(this.replayedValues));
+      this.replayedValues = updater(this.replayedValues);
     } 
     else {
-      this.writable.update(v => this.updateComputed(updater(v)));
+      this.writable.update(v => updater(v));
     }
   }
 
   protected updateNoReplay(updater: (value: StoreValues) => StoreValues) {
     if (!this.replayingEvent) {
-      this.writable.update(v => this.updateComputed(updater(v)));
+      this.writable.update(v => updater(v));
     }
-  }
-
-  protected updateComputed(value: StoreValues): StoreValues {
-    value.currentMission = value.missionResults.length;
-    value.currentTeamVoteNb = value.teamVoteResults[value.currentMission].votes.length + 1;
-    
-    return value;
   }
 
   startReplay() {
@@ -228,6 +221,7 @@ function saveTeamVoteResult(this: Store, approved: boolean, playerVotes: Map<str
       approved: approved, 
       playerVotes: playerVotes
     });
+    v.currentTeamVoteNb += 1;
     return v;
   });
 }
@@ -252,6 +246,8 @@ function makePlayerWorkOnMission(this: Store, player: string, success: boolean |
 function saveMissionResult(this: Store, success: boolean, nbFails: number): void {
   this.update(v => {
     v.missionResults.push({success, nbFails});
+    v.currentMission += 1;
+    v.currentTeamVoteNb = 1;
     return v;
   });
 }
