@@ -500,7 +500,6 @@ func Test_HandleShouldIgnoreCodeThatDoesntExist(t *testing.T) {
 	messageDispatcher, hub, code := setupHub()
 	expectedGame := newlyStartedGame(hub, code)
 
-	type fakeMessage struct{ Party }
 	messageDispatcher.clearReceivedMessages()
 	hub.Consume(JoinParty{Command: Command{Party: Party{Code: "doesn't exist"}}})
 
@@ -767,7 +766,7 @@ func Test_HandleApproveTeam_RejectedFiveTimeInARow(t *testing.T) {
 	hub.Consume(ApproveTeam{Command: Command{Party: Party{Code: code}}, Player: "Edith"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy}))
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy, Spies: []string{"Alice", "Bob"}}))
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
 		AllPlayerVotedOnTeam{
 			Event:        Event{Party: Party{Code: code}},
@@ -874,7 +873,7 @@ func Test_HandleRejectTeam_RejectedFiveTimeInARow(t *testing.T) {
 	hub.Consume(RejectTeam{Command: Command{Party: Party{Code: code}}, Player: "Edith"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy}))
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy, Spies: []string{"Alice", "Bob"}}))
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
 		AllPlayerVotedOnTeam{
 			Event:        Event{Party: Party{Code: code}},
@@ -968,7 +967,7 @@ func Test_HandleSucceedMission_MissionCompleted_ThirdSuccess(t *testing.T) {
 	hub.Consume(SucceedMission{Command: Command{Party: Party{Code: code}}, Player: "Bob"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Resistance}))
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Resistance, Spies: []string{"Alice", "Bob"}}))
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
 		MissionCompleted{
 			Event:    Event{Party: Party{Code: code}},
@@ -1039,7 +1038,7 @@ func Test_HandleFailMission_MissionCompleted_ThirdFailure(t *testing.T) {
 	hub.Consume(FailMission{Command: Command{Party: Party{Code: code}}, Player: "Bob"})
 
 	g := NewWithT(t)
-	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy}))
+	g.Expect(messageDispatcher.messageFromEnd(0)).To(Equal(GameEnded{Event: Event{Party: Party{Code: code}}, Winner: Spy, Spies: []string{"Alice", "Bob"}}))
 	g.Expect(messageDispatcher.messageFromEnd(1)).To(Equal(
 		MissionCompleted{
 			Event:    Event{Party: Party{Code: code}},

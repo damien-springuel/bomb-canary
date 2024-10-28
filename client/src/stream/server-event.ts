@@ -65,6 +65,7 @@ export interface ServerEvent {
 
   GameEnded?: {
     Winner: string,
+    Spies: string[],
   }
 
   EventsReplayStarted?: {

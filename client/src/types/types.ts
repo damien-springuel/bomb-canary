@@ -36,3 +36,8 @@ export interface MissionRequirement {
   readonly nbPeopleOnMission: number, 
   readonly nbFailuresRequiredToFail: number
 }
+
+export enum Allegiance {
+  Resistance = "Resistance",
+  Spies = "Spies",
+}

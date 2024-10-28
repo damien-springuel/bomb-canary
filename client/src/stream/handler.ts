@@ -3,6 +3,7 @@ import {
   AllPlayerVotedOnTeam,
   EventsReplayEnded, 
   EventsReplayStarted, 
+  GameEnded, 
   GameStarted, 
   LeaderConfirmedTeam, 
   LeaderDeselectedMember, 
@@ -20,6 +21,7 @@ import {
   ServerConnectionErrorOccured, 
   SpiesRevealed 
 } from "../messages/events";
+import { Allegiance } from "../types/types";
 import type { ServerEvent } from "./server-event";
 
 export class Handler {
@@ -36,7 +38,7 @@ export class Handler {
     if (event.EventsReplayStarted) {
       this.dispatcher.dispatch(new EventsReplayStarted(event.EventsReplayStarted.Player));
     }
-    if (event.EventsReplayEnded) {
+    else if (event.EventsReplayEnded) {
       this.dispatcher.dispatch(new EventsReplayEnded());
     }
     else if (event.PartyCreated) {
@@ -88,6 +90,10 @@ export class Handler {
     }
     else if (event.MissionCompleted) {
       this.dispatcher.dispatch(new MissionCompleted(event.MissionCompleted.Success, event.MissionCompleted.NbFails));
+    }
+    else if (event.GameEnded) {
+      const winner = event.GameEnded.Winner === "spy" ? Allegiance.Spies : Allegiance.Resistance
+      this.dispatcher.dispatch(new GameEnded(winner, new Set<string>(event.GameEnded.Spies)));
     }
   }
 }

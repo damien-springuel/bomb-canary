@@ -357,6 +357,20 @@ func tenPlayerGameFourTeamVoteFailures(ctx context.Context) context.Context {
 	bcclient.RejectTeam(ian)
 	bcclient.ApproveTeam(jay)
 
+	bcclient.LeaderSelectsMember(edith, "Frank")
+	bcclient.LeaderSelectsMember(edith, "Edith")
+	bcclient.LeaderSelectsMember(edith, "Bob")
+	bcclient.LeaderConfirmsTeam(edith)
+	bcclient.RejectTeam(bob)
+	bcclient.ApproveTeam(charlie)
+	bcclient.RejectTeam(dan)
+	bcclient.ApproveTeam(edith)
+	bcclient.RejectTeam(frank)
+	bcclient.RejectTeam(gus)
+	bcclient.ApproveTeam(henry)
+	bcclient.ApproveTeam(ian)
+	bcclient.ApproveTeam(jay)
+
 	return ctx
 }
 

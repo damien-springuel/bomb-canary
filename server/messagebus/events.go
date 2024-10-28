@@ -100,4 +100,5 @@ const (
 type GameEnded struct {
 	Event
 	Winner Allegiance
+	Spies  []string
 }

@@ -107,7 +107,7 @@ func (c clientEventBroker) Consume(m messagebus.Message) {
 		c.send(code, clientEvent{MissionCompleted: &missionCompleted{Success: m.Success, NbFails: m.Outcomes[false]}})
 
 	case messagebus.GameEnded:
-		c.send(code, clientEvent{GameEnded: &gameEnded{Winner: string(m.Winner)}})
+		c.send(code, clientEvent{GameEnded: &gameEnded{Winner: string(m.Winner), Spies: m.Spies}})
 	}
 }
 

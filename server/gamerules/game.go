@@ -121,6 +121,7 @@ type Game struct {
 	voteFailures    int
 	missionOutcomes votes
 	missionResults  missionResults
+	spies           players
 }
 
 func NewGame() Game {
@@ -176,6 +177,9 @@ func (g Game) Start(allegianceGenerator AllegianceGenerator) (Game, map[string]A
 	playerAllegiance := map[string]Allegiance{}
 	for i, a := range allegiances {
 		playerAllegiance[g.players[i]] = a
+		if a == Spy {
+			g.spies, _ = g.spies.add(g.players[i])
+		}
 	}
 
 	return g, playerAllegiance, g.getMissionRequirements(), nil
@@ -376,4 +380,8 @@ func (g Game) Winner() Allegiance {
 		return Resistance
 	}
 	return Spy
+}
+
+func (g Game) Spies() []string {
+	return g.spies
 }

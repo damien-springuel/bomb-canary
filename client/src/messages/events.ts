@@ -1,4 +1,4 @@
-import type { MissionRequirement } from "../types/types";
+import type { Allegiance, MissionRequirement } from "../types/types";
 import type { Message } from "./message-bus";
 
 export class AppLoaded implements Message{}
@@ -67,4 +67,8 @@ export class PlayerWorkedOnMission implements Message {
 
 export class MissionCompleted implements Message {
   constructor(readonly success: boolean, readonly nbFails: number){}
+}
+
+export class GameEnded implements Message {
+  constructor(readonly winner: Allegiance, readonly spies: Set<string>){}
 }

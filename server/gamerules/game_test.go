@@ -73,7 +73,7 @@ func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 
 	newGame, _, _, _ = newGame.Start(spiesFirstGenerator{})
 
-	newGame, err := newGame.AddPlayer("Frank")
+	_, err := newGame.AddPlayer("Frank")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -82,7 +82,7 @@ func Test_AddPlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 func Test_AddPlayer_ShouldErrorIfPlayerAlreadyThere(t *testing.T) {
 	newGame := NewGame()
 	newGame, _ = newGame.AddPlayer("Alice")
-	newGame, err := newGame.AddPlayer("Alice")
+	_, err := newGame.AddPlayer("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerAlreadyInGroup))
@@ -100,7 +100,7 @@ func Test_AddPlayer_ShouldErrorIfAlready10Players(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("8")
 	newGame, _ = newGame.AddPlayer("9")
 	newGame, _ = newGame.AddPlayer("10")
-	newGame, err := newGame.AddPlayer("11")
+	_, err := newGame.AddPlayer("11")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errAlreadyMaxNumberOfPlayers))
@@ -136,7 +136,7 @@ func Test_RemovePlayer_ShouldErrorIfGameHasStarted(t *testing.T) {
 
 	newGame, _, _, _ = newGame.Start(spiesFirstGenerator{})
 
-	newGame, err := newGame.removePlayer("Bob")
+	_, err := newGame.removePlayer("Bob")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -149,7 +149,7 @@ func Test_StartGame_WhenFewerThan5Players_ShouldError(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Charlie")
 	newGame, _ = newGame.AddPlayer("Dan")
 
-	newGame, _, _, err := newGame.Start(spiesFirstGenerator{})
+	_, _, _, err := newGame.Start(spiesFirstGenerator{})
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errNotEnoughPlayers))
@@ -199,6 +199,7 @@ func Test_StartGame(t *testing.T) {
 	}))
 	g.Expect(spyGenerator.nbPlayersGiven).To(Equal(5))
 	g.Expect(spyGenerator.nbSpiesGiven).To(Equal(2))
+	g.Expect(newGame.spies).To(Equal(players{"Alice", "Charlie"}))
 }
 
 func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
@@ -210,7 +211,7 @@ func Test_StartGame_ShouldErrorIfGameHasStarted(t *testing.T) {
 	newGame, _ = newGame.AddPlayer("Edith")
 
 	newGame, _, _, _ = newGame.Start(spiesFirstGenerator{})
-	newGame, _, _, err := newGame.Start(spiesFirstGenerator{})
+	_, _, _, err := newGame.Start(spiesFirstGenerator{})
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -229,7 +230,7 @@ func Test_LeaderSelectsAMember(t *testing.T) {
 func Test_LeaderSelectsAMember_ShouldErrorIfPlayerNotExists(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
-	newGame, err := newGame.LeaderSelectsMember("NotThere")
+	_, err := newGame.LeaderSelectsMember("NotThere")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
@@ -239,7 +240,7 @@ func Test_LeaderSelectsAMember_ShouldErrorIfAlreadyInTeam(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
-	newGame, err := newGame.LeaderSelectsMember("Alice")
+	_, err := newGame.LeaderSelectsMember("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerAlreadyInGroup))
@@ -250,7 +251,7 @@ func Test_LeaderSelectsAMember_ShouldErrorIfTeamIsComplete(t *testing.T) {
 
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
 	newGame, _ = newGame.LeaderSelectsMember("Bob")
-	newGame, err := newGame.LeaderSelectsMember("Charlie")
+	_, err := newGame.LeaderSelectsMember("Charlie")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errTeamIsFull))
@@ -259,7 +260,7 @@ func Test_LeaderSelectsAMember_ShouldErrorIfTeamIsComplete(t *testing.T) {
 func Test_LeaderSelectsAMember_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 	newGame := NewGame()
 
-	newGame, err := newGame.LeaderSelectsMember("Alice")
+	_, err := newGame.LeaderSelectsMember("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -280,7 +281,7 @@ func Test_LeaderDeselectsAMember_ShouldErrorIfPlayerNotInTeam(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
-	newGame, err := newGame.LeaderDeselectsMember("Bob")
+	_, err := newGame.LeaderDeselectsMember("Bob")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
@@ -289,7 +290,7 @@ func Test_LeaderDeselectsAMember_ShouldErrorIfPlayerNotInTeam(t *testing.T) {
 func Test_LeaderDeselectsAMember_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 	newGame := NewGame()
 
-	newGame, err := newGame.LeaderDeselectsMember("Alice")
+	_, err := newGame.LeaderDeselectsMember("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -311,7 +312,7 @@ func Test_LeaderConfirmsSelection_ShouldErrorIfTeamIsIncomplete(t *testing.T) {
 	newGame := createNewlyStartedGame()
 
 	newGame, _ = newGame.LeaderSelectsMember("Alice")
-	newGame, err := newGame.LeaderConfirmsTeamSelection()
+	_, err := newGame.LeaderConfirmsTeamSelection()
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errTeamIsIncomplete))
@@ -320,7 +321,7 @@ func Test_LeaderConfirmsSelection_ShouldErrorIfTeamIsIncomplete(t *testing.T) {
 func Test_LeaderConfirmsSelection_ShouldErrorIfNotSelectingTeam(t *testing.T) {
 	newGame := NewGame()
 
-	newGame, err := newGame.LeaderConfirmsTeamSelection()
+	_, err := newGame.LeaderConfirmsTeamSelection()
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -340,7 +341,7 @@ func Test_ApproveTeam(t *testing.T) {
 func Test_ApproveTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _, _ = newGame.ApproveTeamBy("Alice")
-	newGame, resultingVotes, err := newGame.ApproveTeamBy("Alice")
+	_, resultingVotes, err := newGame.ApproveTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
@@ -350,7 +351,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfAlreadyApproved(t *testing.T) {
 func Test_ApproveTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _, _ = newGame.ApproveTeamBy("Alice")
-	newGame, resultingVotes, err := newGame.RejectTeamBy("Alice")
+	_, resultingVotes, err := newGame.RejectTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
@@ -359,7 +360,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 
 func Test_ApproveTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, resultingVotes, err := newGame.ApproveTeamBy("NotThere")
+	_, resultingVotes, err := newGame.ApproveTeamBy("NotThere")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
@@ -368,7 +369,7 @@ func Test_ApproveTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 
 func Test_ApproveTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 	newGame := createNewlyStartedGame()
-	newGame, resultingVotes, err := newGame.ApproveTeamBy("Alice")
+	_, resultingVotes, err := newGame.ApproveTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -389,7 +390,7 @@ func Test_RejectTeam(t *testing.T) {
 func Test_RejectTeam_ShouldReturnErrorIfAlreadyRejected(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _, _ = newGame.RejectTeamBy("Alice")
-	newGame, resultingVotes, err := newGame.RejectTeamBy("Alice")
+	_, resultingVotes, err := newGame.RejectTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
@@ -399,7 +400,7 @@ func Test_RejectTeam_ShouldReturnErrorIfAlreadyRejected(t *testing.T) {
 func Test_RejectTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
 	newGame, _, _ = newGame.RejectTeamBy("Alice")
-	newGame, resultingVotes, err := newGame.ApproveTeamBy("Alice")
+	_, resultingVotes, err := newGame.ApproveTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerHasAlreadyVoted))
@@ -408,7 +409,7 @@ func Test_RejectTeam_ShouldReturnErrorIfAlreadyVoted(t *testing.T) {
 
 func Test_RejectTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, resultingVotes, err := newGame.RejectTeamBy("NotThere")
+	_, resultingVotes, err := newGame.RejectTeamBy("NotThere")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errPlayerNotFound))
@@ -417,7 +418,7 @@ func Test_RejectTeam_ShouldReturnErrorIfPlayerDoesntExist(t *testing.T) {
 
 func Test_RejectTeam_ShouldReturnErrorIfNotCurrentlyVoting(t *testing.T) {
 	newGame := createNewlyStartedGame()
-	newGame, resultingVotes, err := newGame.RejectTeamBy("Alice")
+	_, resultingVotes, err := newGame.RejectTeamBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -553,7 +554,7 @@ func Test_SucceedMission(t *testing.T) {
 
 func Test_SucceedMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, outcomes, err := newGame.SucceedMissionBy("Charlie")
+	_, outcomes, err := newGame.SucceedMissionBy("Charlie")
 
 	g := NewWithT(t)
 	g.Expect(err).To(Equal(errPlayerNotFound))
@@ -563,7 +564,7 @@ func Test_SucceedMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
 func Test_SucceedMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
 	newGame, _, _ = newGame.SucceedMissionBy("Alice")
-	newGame, outcomes, err := newGame.SucceedMissionBy("Alice")
+	_, outcomes, err := newGame.SucceedMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(Equal(errPlayerHasAlreadyVoted))
@@ -572,7 +573,7 @@ func Test_SucceedMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) 
 
 func Test_SucceedMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, outcomes, err := newGame.SucceedMissionBy("Alice")
+	_, outcomes, err := newGame.SucceedMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))
@@ -591,7 +592,7 @@ func Test_FailMission(t *testing.T) {
 
 func Test_FailMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
-	newGame, outcomes, err := newGame.FailMissionBy("Charlie")
+	_, outcomes, err := newGame.FailMissionBy("Charlie")
 
 	g := NewWithT(t)
 	g.Expect(err).To(Equal(errPlayerNotFound))
@@ -601,7 +602,7 @@ func Test_FailMission_ShouldFailIfPersonIsntOnTeam(t *testing.T) {
 func Test_FailMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) {
 	newGame := createNewlyConductingMissionGame()
 	newGame, _, _ = newGame.FailMissionBy("Alice")
-	newGame, outcomes, err := newGame.FailMissionBy("Alice")
+	_, outcomes, err := newGame.FailMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(Equal(errPlayerHasAlreadyVoted))
@@ -610,7 +611,7 @@ func Test_FailMission_ShouldFailIfPersonAlreadyWorkedOnMission(t *testing.T) {
 
 func Test_FailMission_ShouldFailIfStateIsntConductingMission(t *testing.T) {
 	newGame := createNewlyVotingOnTeamGame()
-	newGame, outcomes, err := newGame.FailMissionBy("Alice")
+	_, outcomes, err := newGame.FailMissionBy("Alice")
 
 	g := NewWithT(t)
 	g.Expect(err).To(MatchError(errInvalidStateForAction))

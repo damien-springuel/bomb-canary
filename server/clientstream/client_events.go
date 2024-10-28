@@ -89,6 +89,7 @@ type missionCompleted struct {
 
 type gameEnded struct {
 	Winner string
+	Spies  []string
 }
 
 type eventsReplayEnded struct{}
