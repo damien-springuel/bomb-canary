@@ -3,8 +3,7 @@ import type { Dispatcher } from "../messages/dispatcher";
 import { MissionConductingService, type MissionConductingValues } from "./MissionConducting-service";
 export let missionConductingValues: MissionConductingValues;
 export let dispatcher: Dispatcher;
-$: service = new MissionConductingService(missionConductingValues, dispatcher);
-
+const service = new MissionConductingService(missionConductingValues, dispatcher);
 </script>
 
 <div class="flex flex-col items-center h-full w-full">

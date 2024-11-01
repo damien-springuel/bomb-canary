@@ -1,6 +1,7 @@
 import {get, type Readable, type Writable} from "svelte/store";
 import {writable} from "svelte/store";
 import { 
+  Allegiance,
   Dialog,
   GamePhase,
   Page, 
@@ -28,7 +29,8 @@ export interface StoreValues {
   missionResults: MissionResult[]
   dialogShown: Dialog,
   revealedSpies: Set<string>,
-  missionDetailsShown: number
+  missionDetailsShown: number,
+  winner: Allegiance,
 }
 
 function defaultValues(): StoreValues {
@@ -52,6 +54,7 @@ function defaultValues(): StoreValues {
     dialogShown: null,
     revealedSpies: new Set<string>(),
     missionDetailsShown: 0,
+    winner: null,
   }
 }
 
@@ -119,6 +122,7 @@ export class Store implements Readable<StoreValues> {
   readonly closeDialog = closeDialog;
   readonly rememberSpies = rememberSpies;
   readonly showLastMissionResult = showLastMissionResult;
+  readonly endGame = endGame;
 }
 
 function showLobby(this: Store) {
@@ -284,6 +288,15 @@ function rememberSpies(this: Store, spies: Set<string>) {
 function showLastMissionResult(this: Store) {
   this.updateNoReplay(v => {
     v.dialogShown = Dialog.LastMissionResult;
+    return v
+  })
+}
+
+function endGame(winner: Allegiance, spies: Set<string>) {
+  this.update(v => {
+    v.currentGamePhase = GamePhase.GameEnded;
+    v.revealedSpies = spies;
+    v.winner = winner;
     return v
   })
 }

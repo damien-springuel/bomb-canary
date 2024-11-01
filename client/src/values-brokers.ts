@@ -1,3 +1,4 @@
+import type { EndGameValues } from "./components/EndGame-service";
 import type { GameValues } from "./components/Game-service";
 import type { IdentityValues } from "./components/Identity-service";
 import type { LastMissionResultValues } from "./components/LastMissionResult-service";
@@ -9,7 +10,7 @@ import type { PartyRoomValues } from "./components/PartyRoom-service";
 import type { TeamSelectionValues } from "./components/TeamSelection-service";
 import type { TeamVoteValues } from "./components/TeamVote-service";
 import type { StoreValues } from "./store/store";
-import type { Dialog, GamePhase, MissionRequirement, MissionResult, Page, TeamVotes } from "./types/types";
+import type { Allegiance, Dialog, GamePhase, MissionRequirement, MissionResult, Page, TeamVotes } from "./types/types";
 
 export class IdentityValuesBroker implements IdentityValues {
   constructor(private readonly storeValues: StoreValues){}
@@ -149,6 +150,22 @@ export class MissionConductingValuesBroker implements MissionConductingValues {
   }
 }
 
+export class EndGameValuesBroker implements EndGameValues {
+  constructor(private readonly storeValues: StoreValues){}
+  
+  get winner(): Allegiance {
+    return this.storeValues.winner;
+  }
+
+  get spies(): Set<string> {
+    return this.storeValues.revealedSpies;
+  }
+
+  get player(): string {
+    return this.storeValues.player;
+  }
+}
+
 export class GameValuesBroker implements GameValues {
   constructor(private readonly storeValues: StoreValues){}
     
@@ -185,6 +202,10 @@ export class GameValuesBroker implements GameValues {
 
   get lastMissionResultValues(): LastMissionResultValues {
     return new LastMissionResultValuesBroker(this.storeValues);
+  }
+
+  get endGameValues(): EndGameValues {
+    return new EndGameValuesBroker(this.storeValues);
   }
 }
 

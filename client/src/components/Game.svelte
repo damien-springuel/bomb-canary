@@ -9,6 +9,7 @@ import MissionTracker from "./MissionTracker.svelte";
 import { GameService, type GameValues } from "./Game-service";
 import MissionDetails from "./MissionDetails.svelte";
     import LastMissionResult from "./LastMissionResult.svelte";
+    import EndGame from "./EndGame.svelte";
 
 export let gameValues: GameValues;
 export let dispatcher: Dispatcher;
@@ -25,6 +26,8 @@ $: service = new GameService(gameValues, dispatcher);
     <TeamVote dispatcher={dispatcher} teamVoteValues={gameValues.teamVoteValues}/>
   {:else if service.isMissionConductingPhase}
     <MissionConducting dispatcher={dispatcher} missionConductingValues={gameValues.missionConductingValues}/>
+  {:else if service.gameHasEnded}
+    <EndGame endGameValues={gameValues.endGameValues}/>
   {/if}
 </div>
 {#if service.isDialogShownIdentity}

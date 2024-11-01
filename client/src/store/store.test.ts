@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 import { Store, type StoreValues } from "./store";
 import {get} from "svelte/store";
-import { Dialog, GamePhase, Page } from "../types/types";
+import { Allegiance, Dialog, GamePhase, Page } from "../types/types";
 
 test(`default values`, () => {
   const store = new Store();
@@ -27,6 +27,7 @@ test(`default values`, () => {
       dialogShown: null,
       revealedSpies: new Set<string>(),
       missionDetailsShown: 0,
+      winner: null,
     }
   );
 });
@@ -379,4 +380,14 @@ test(`showLastMissionResult isn't replayed`, () => {
 
   let storeValues: StoreValues = get(store);
   expect(storeValues.dialogShown).to.be.null;
+});
+
+test(`end game`, () => {
+  const store = new Store();
+  store.endGame(Allegiance.Resistance, new Set<string>(["spy 1", "spy2"]));
+
+  let storeValues: StoreValues = get(store);
+  expect(storeValues.winner).to.equal(Allegiance.Resistance);
+  expect(storeValues.revealedSpies).to.deep.equal(new Set<string>(["spy 1", "spy2"]));
+  expect(storeValues.currentGamePhase).to.equal(GamePhase.GameEnded);
 });

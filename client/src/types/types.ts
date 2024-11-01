@@ -9,6 +9,7 @@ export enum GamePhase {
   TeamSelection = "teamSelection",
   TeamVote = "teamVote",
   Mission = "mission",
+  GameEnded = "gameEnded",
 }
 
 export enum Dialog {

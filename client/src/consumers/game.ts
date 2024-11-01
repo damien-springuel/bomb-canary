@@ -1,5 +1,6 @@
 import { 
   AllPlayerVotedOnTeam, 
+  GameEnded, 
   GameStarted, 
   LeaderConfirmedTeam, 
   LeaderDeselectedMember, 
@@ -11,7 +12,7 @@ import {
   PlayerWorkedOnMission, 
 } from "../messages/events";
 import type { Message } from "../messages/message-bus";
-import type { MissionRequirement } from "../types/types";
+import type { Allegiance, MissionRequirement } from "../types/types";
 
 export interface GameStore {
   setMissionRequirements(requirements: MissionRequirement[]): void
@@ -26,6 +27,7 @@ export interface GameStore {
   makePlayerWorkOnMission(player: string, success: boolean | null): void
   saveMissionResult(success: boolean, nbFails: number): void
   showLastMissionResult(): void
+  endGame(winner: Allegiance, spies: Set<string>): void
 }
 
 export class GameConsumer {
@@ -64,6 +66,9 @@ export class GameConsumer {
     else if(message instanceof MissionCompleted) {
       this.gameStore.saveMissionResult(message.success, message.nbFails);
       this.gameStore.showLastMissionResult();
+    }
+    else if(message instanceof GameEnded) {
+      this.gameStore.endGame(message.winner, message.spies);
     }
   }
 }

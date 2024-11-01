@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import { 
     AllPlayerVotedOnTeam, 
+    GameEnded, 
     GameStarted, 
     LeaderConfirmedTeam, 
     LeaderDeselectedMember, 
@@ -11,7 +12,7 @@ import {
     PlayerVotedOnTeam, 
     PlayerWorkedOnMission 
 } from "../messages/events";
-import type { MissionRequirement } from "../types/types";
+import { Allegiance, type MissionRequirement } from "../types/types";
 import { GameConsumer, type GameStore } from "./game";
 
 test(`GameStarted`, () => {
@@ -109,5 +110,17 @@ test(`MissionCompleted`, () => {
   expect(receivedSuccess).to.be.false;
   expect(receivedNbFails).to.equal(2);
   expect(lastMissionResultShown).to.be.true;
+});
+
+test(`GameEnded`, () => {
+  let receivedWinner: Allegiance = null;
+  let receivedSpies: Set<string> = null;
+  const gameConsumer = new GameConsumer({endGame: (winner, spies) =>{
+    receivedWinner = winner;
+    receivedSpies = spies;
+  }} as GameStore);
+  gameConsumer.consume(new GameEnded(Allegiance.Spies, new Set<string>(["a", "b"])));
+  expect(receivedWinner).to.equal(Allegiance.Spies);
+  expect(receivedSpies).to.deep.equal(new Set<string>(["a", "b"]));
 });
 
