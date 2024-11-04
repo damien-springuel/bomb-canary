@@ -47,22 +47,15 @@ func Test_DispatchMessage(t *testing.T) {
 	g.Expect(testConsumer3.receivedMessage).To(Equal("m1m2m3"))
 }
 
-func Test_GetPartyCode(t *testing.T) {
-	m := Party{Code: "testCode"}
-
-	g := NewWithT(t)
-	g.Expect(m.GetPartyCode()).To(Equal("testCode"))
-}
-
 func Test_TypeCommand(t *testing.T) {
-	m := Command{Party{Code: "testCode"}}
+	m := Command{}
 
 	g := NewWithT(t)
 	g.Expect(m.Type()).To(Equal(CommandMessage))
 }
 
 func Test_TypeEvent(t *testing.T) {
-	m := Event{Party{Code: "testCode"}}
+	m := Event{}
 
 	g := NewWithT(t)
 	g.Expect(m.Type()).To(Equal(EventMessage))

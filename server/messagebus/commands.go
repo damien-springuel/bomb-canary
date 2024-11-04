@@ -1,8 +1,6 @@
 package messagebus
 
-type Command struct {
-	Party
-}
+type Command struct{}
 
 func (c Command) Type() Type {
 	return CommandMessage

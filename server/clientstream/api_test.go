@@ -17,20 +17,18 @@ type mockSessionGetter struct {
 	getError        error
 }
 
-func (m *mockSessionGetter) Get(session string) (code string, name string, err error) {
+func (m *mockSessionGetter) Get(session string) (name string, err error) {
 	m.receivedSession = session
-	return "testCode", "testName", m.getError
+	return "testName", m.getError
 }
 
 type mockClientBroker struct {
 	channelToReturn chan []byte
-	receivedCode    string
 	receivedName    string
 	closerCalled    bool
 }
 
-func (m *mockClientBroker) Add(code, name string) (chan []byte, func()) {
-	m.receivedCode = code
+func (m *mockClientBroker) Add(name string) (chan []byte, func()) {
 	m.receivedName = name
 	return m.channelToReturn, func() {
 		m.closerCalled = true
@@ -88,7 +86,6 @@ func Test_StreamEvents(t *testing.T) {
 	}))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(clientBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(clientBroker.receivedName).To(Equal("testName"))
 	g.Expect(clientBroker.closerCalled).To(BeTrue())
 }
@@ -107,7 +104,6 @@ func Test_StreamEvents_CloseConnectionWith4401IfNoSessionCookie(t *testing.T) {
 	g.Expect(closeError.Code).To(Equal(4401))
 
 	g.Expect(sessionGetter.receivedSession).To(BeEmpty())
-	g.Expect(clientBroker.receivedCode).To(BeEmpty())
 	g.Expect(clientBroker.receivedName).To(BeEmpty())
 }
 
@@ -129,6 +125,5 @@ func Test_StreamEvents_CloseConnectionWith4403IfSessionIsInvalid(t *testing.T) {
 	g.Expect(closeError.Code).To(Equal(4403))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(clientBroker.receivedCode).To(BeEmpty())
 	g.Expect(clientBroker.receivedName).To(BeEmpty())
 }

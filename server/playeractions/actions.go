@@ -16,71 +16,64 @@ func NewActionService(messageDispatcher messageDispatcher) actionService {
 	}
 }
 
-func (a actionService) StartGame(code string) {
-	a.messageDispatcher.Dispatch(messagebus.StartGame{Command: messagebus.Command{Party: messagebus.Party{Code: code}}})
+func (a actionService) StartGame() {
+	a.messageDispatcher.Dispatch(messagebus.StartGame{})
 }
 
-func (a actionService) LeaderSelectsMember(code string, leader string, member string) {
+func (a actionService) LeaderSelectsMember(leader string, member string) {
 	a.messageDispatcher.Dispatch(
 		messagebus.LeaderSelectsMember{
-			Command:        messagebus.Command{Party: messagebus.Party{Code: code}},
 			Leader:         leader,
 			MemberToSelect: member,
 		},
 	)
 }
 
-func (a actionService) LeaderDeselectsMember(code string, leader string, member string) {
+func (a actionService) LeaderDeselectsMember(leader string, member string) {
 	a.messageDispatcher.Dispatch(
 		messagebus.LeaderDeselectsMember{
-			Command:          messagebus.Command{Party: messagebus.Party{Code: code}},
 			Leader:           leader,
 			MemberToDeselect: member,
 		},
 	)
 }
 
-func (a actionService) LeaderConfirmsTeam(code string, leader string) {
+func (a actionService) LeaderConfirmsTeam(leader string) {
 	a.messageDispatcher.Dispatch(
 		messagebus.LeaderConfirmsTeamSelection{
-			Command: messagebus.Command{Party: messagebus.Party{Code: code}},
-			Leader:  leader,
+			Leader: leader,
 		},
 	)
 }
 
-func (a actionService) ApproveTeam(code string, player string) {
+func (a actionService) ApproveTeam(player string) {
 	a.messageDispatcher.Dispatch(
 		messagebus.ApproveTeam{
-			Command: messagebus.Command{Party: messagebus.Party{Code: code}},
-			Player:  player,
+			Player: player,
 		},
 	)
 }
 
-func (a actionService) RejectTeam(code string, player string) {
+func (a actionService) RejectTeam(player string) {
 	a.messageDispatcher.Dispatch(
 		messagebus.RejectTeam{
-			Command: messagebus.Command{Party: messagebus.Party{Code: code}},
-			Player:  player,
+			Player: player,
 		},
 	)
 }
 
-func (a actionService) SucceedMission(code string, player string) {
+func (a actionService) SucceedMission(player string) {
 	a.messageDispatcher.Dispatch(
 		messagebus.SucceedMission{
-			Command: messagebus.Command{Party: messagebus.Party{Code: code}},
-			Player:  player,
+			Player: player,
 		},
 	)
 }
 
-func (a actionService) FailMission(code string, player string) {
+func (a actionService) FailMission(player string) {
 	a.messageDispatcher.Dispatch(
 		messagebus.FailMission{
-			Command: messagebus.Command{Party: messagebus.Party{Code: code}},
-			Player:  player,
+			Player: player,
 		},
 	)
 }

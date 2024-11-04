@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/damien-springuel/bomb-canary/server/clientstream"
-	"github.com/damien-springuel/bomb-canary/server/codegenerator"
 	"github.com/damien-springuel/bomb-canary/server/gamehub"
 	"github.com/damien-springuel/bomb-canary/server/gamerules"
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
@@ -18,7 +17,6 @@ import (
 	"github.com/damien-springuel/bomb-canary/server/sessions"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/gookit/color"
 )
 
@@ -40,11 +38,11 @@ func (r randomAllegianceGenerator) Generate(nbPlayers, nbSpies int) []gamerules.
 	return allegiances
 }
 
-type uuidV4 struct{}
+// type uuidV4 struct{}
 
-func (u uuidV4) Create() string {
-	return uuid.New().String()
-}
+// func (u uuidV4) Create() string {
+// 	return uuid.New().String()
+// }
 
 type easySession struct {
 	mut       *sync.Mutex
@@ -81,13 +79,7 @@ func main() {
 
 	bus.SubscribeConsumer(messagelogger.New(colorPrinter{}))
 
-	nowRandom := rand.New(rand.NewSource(time.Now().UnixNano()))
-	randomRuneGenerator := func() rune {
-		min := 65 // A
-		max := 90 // Z
-		return rune(nowRandom.Intn(max-min+1) + min)
-	}
-	hub := gamehub.New(codegenerator.New(randomRuneGenerator), bus, randomAllegianceGenerator{})
+	hub := gamehub.New(bus, randomAllegianceGenerator{})
 	bus.SubscribeConsumer(hub)
 
 	// sessions := sessions.New(uuidV4{})
@@ -105,11 +97,9 @@ func main() {
 	corsConfig.AllowOrigins = []string{"http://localhost:44322", "http://192.168.0.103:44322"}
 	router.Use(cors.New(corsConfig))
 
-	party.Register(router, party.NewPartyService(hub, hub, bus), sessions)
+	party.Register(router, party.NewPartyService(bus), sessions)
 	playeractions.Register(router, sessions, playeractions.NewActionService(bus))
 	clientstream.Register(router, sessions, clientStreamer)
-
-	router.StaticFile("/", "./index.html")
 
 	port := ":44324"
 	blackOnYellow.Printf("serving %s\n", port)

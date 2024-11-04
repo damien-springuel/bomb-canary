@@ -19,14 +19,13 @@ type mockSessionGetter struct {
 	getError        error
 }
 
-func (m *mockSessionGetter) Get(session string) (code string, name string, err error) {
+func (m *mockSessionGetter) Get(session string) (name string, err error) {
 	m.receivedSession = session
-	return "testCode", "testName", m.getError
+	return "testName", m.getError
 }
 
 type mockActionBroker struct {
 	gameStarted              bool
-	receivedCode             string
 	receivedLeader           string
 	receivedSelectedMember   string
 	receivedDeselectedMember string
@@ -37,46 +36,38 @@ type mockActionBroker struct {
 	receivedPlayerFail       string
 }
 
-func (m *mockActionBroker) StartGame(code string) {
-	m.receivedCode = code
+func (m *mockActionBroker) StartGame() {
 	m.gameStarted = true
 }
 
-func (m *mockActionBroker) LeaderSelectsMember(code string, leader string, member string) {
-	m.receivedCode = code
+func (m *mockActionBroker) LeaderSelectsMember(leader string, member string) {
 	m.receivedLeader = leader
 	m.receivedSelectedMember = member
 }
 
-func (m *mockActionBroker) LeaderDeselectsMember(code string, leader string, member string) {
-	m.receivedCode = code
+func (m *mockActionBroker) LeaderDeselectsMember(leader string, member string) {
 	m.receivedLeader = leader
 	m.receivedDeselectedMember = member
 }
 
-func (m *mockActionBroker) LeaderConfirmsTeam(code string, leader string) {
-	m.receivedCode = code
+func (m *mockActionBroker) LeaderConfirmsTeam(leader string) {
 	m.receivedLeader = leader
 	m.teamConfirmed = true
 }
 
-func (m *mockActionBroker) ApproveTeam(code string, player string) {
-	m.receivedCode = code
+func (m *mockActionBroker) ApproveTeam(player string) {
 	m.receivedPlayerApprove = player
 }
 
-func (m *mockActionBroker) RejectTeam(code string, player string) {
-	m.receivedCode = code
+func (m *mockActionBroker) RejectTeam(player string) {
 	m.receivedPlayerReject = player
 }
 
-func (m *mockActionBroker) SucceedMission(code string, player string) {
-	m.receivedCode = code
+func (m *mockActionBroker) SucceedMission(player string) {
 	m.receivedPlayerSucceed = player
 }
 
-func (m *mockActionBroker) FailMission(code string, player string) {
-	m.receivedCode = code
+func (m *mockActionBroker) FailMission(player string) {
 	m.receivedPlayerFail = player
 }
 
@@ -133,7 +124,6 @@ func Test_StartGame(t *testing.T) {
 	g.Expect(w.Body.String()).To(Equal("{}"))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(actionBroker.gameStarted).To(BeTrue())
 }
 
@@ -147,7 +137,6 @@ func Test_LeaderSelectsMember(t *testing.T) {
 	g.Expect(w.Body.String()).To(Equal("{}"))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(actionBroker.receivedLeader).To(Equal("testName"))
 	g.Expect(actionBroker.receivedSelectedMember).To(Equal("aMember"))
 }
@@ -161,7 +150,6 @@ func Test_LeaderSelectsMember_Returns400IfMemberIsMissing(t *testing.T) {
 	g.Expect(w.Code).To(Equal(400))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal(""))
 	g.Expect(actionBroker.receivedLeader).To(Equal(""))
 	g.Expect(actionBroker.receivedSelectedMember).To(Equal(""))
 }
@@ -175,7 +163,6 @@ func Test_LeaderSelectsMember_Returns400IfBodyMalformed(t *testing.T) {
 	g.Expect(w.Code).To(Equal(400))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal(""))
 	g.Expect(actionBroker.receivedLeader).To(Equal(""))
 	g.Expect(actionBroker.receivedSelectedMember).To(Equal(""))
 }
@@ -190,7 +177,6 @@ func Test_LeaderDeselectsMember(t *testing.T) {
 	g.Expect(w.Body.String()).To(Equal("{}"))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(actionBroker.receivedLeader).To(Equal("testName"))
 	g.Expect(actionBroker.receivedDeselectedMember).To(Equal("aMember"))
 }
@@ -204,7 +190,6 @@ func Test_LeaderDeselectsMember_Returns400IfMemberIsMissing(t *testing.T) {
 	g.Expect(w.Code).To(Equal(400))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal(""))
 	g.Expect(actionBroker.receivedLeader).To(Equal(""))
 	g.Expect(actionBroker.receivedDeselectedMember).To(Equal(""))
 }
@@ -218,7 +203,6 @@ func Test_LeaderDeselectsMember_Returns400IfBodyMalformed(t *testing.T) {
 	g.Expect(w.Code).To(Equal(400))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal(""))
 	g.Expect(actionBroker.receivedLeader).To(Equal(""))
 	g.Expect(actionBroker.receivedDeselectedMember).To(Equal(""))
 }
@@ -232,7 +216,6 @@ func Test_LeaderConfirmsTeam(t *testing.T) {
 	g.Expect(w.Code).To(Equal(200))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(actionBroker.receivedLeader).To(Equal("testName"))
 	g.Expect(actionBroker.teamConfirmed).To(BeTrue())
 }
@@ -247,7 +230,6 @@ func Test_ApproveTeam(t *testing.T) {
 	g.Expect(w.Body.String()).To(Equal("{}"))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(actionBroker.receivedPlayerApprove).To(Equal("testName"))
 }
 
@@ -261,7 +243,6 @@ func Test_RejectTeam(t *testing.T) {
 	g.Expect(w.Body.String()).To(Equal("{}"))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(actionBroker.receivedPlayerReject).To(Equal("testName"))
 }
 
@@ -275,7 +256,6 @@ func Test_SucceedMission(t *testing.T) {
 	g.Expect(w.Body.String()).To(Equal("{}"))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(actionBroker.receivedPlayerSucceed).To(Equal("testName"))
 }
 
@@ -289,6 +269,5 @@ func Test_FailMission(t *testing.T) {
 	g.Expect(w.Body.String()).To(Equal("{}"))
 
 	g.Expect(sessionGetter.receivedSession).To(Equal("testSession"))
-	g.Expect(actionBroker.receivedCode).To(Equal("testCode"))
 	g.Expect(actionBroker.receivedPlayerFail).To(Equal("testName"))
 }

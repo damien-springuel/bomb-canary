@@ -16,11 +16,11 @@ const (
 type websocketWriter func(messageType int, data []byte) error
 
 type sessionGetter interface {
-	Get(session string) (code string, name string, err error)
+	Get(session string) (name string, err error)
 }
 
 type clientBroker interface {
-	Add(code, name string) (chan []byte, func())
+	Add(name string) (chan []byte, func())
 }
 
 type clientStreamServer struct {
@@ -85,13 +85,13 @@ func (s clientStreamServer) checkSession(c *gin.Context) {
 		return
 	}
 
-	partyCode, playerName, err := s.sessionGetter.Get(session)
+	playerName, err := s.sessionGetter.Get(session)
 	if err != nil {
 		_ = writer(websocket.CloseMessage, websocket.FormatCloseMessage(4403, "invalid session"))
 		c.Abort()
 		return
 	}
-	out, closeClientStream := s.clientBroker.Add(partyCode, playerName)
+	out, closeClientStream := s.clientBroker.Add(playerName)
 	go func() {
 		connClosed := getConnClosedFromContext(c)
 		<-connClosed

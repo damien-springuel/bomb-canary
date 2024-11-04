@@ -1,7 +1,6 @@
 package clientstream
 
 type clientEvent struct {
-	PartyCreated                 *partyCreated                 `json:",omitempty"`
 	PlayerConnected              *playerConnected              `json:",omitempty"`
 	PlayerDisconnected           *playerDisconnected           `json:",omitempty"`
 	PlayerJoined                 *playerJoined                 `json:",omitempty"`
@@ -19,10 +18,6 @@ type clientEvent struct {
 	GameEnded                    *gameEnded                    `json:",omitempty"`
 	EventsReplayStarted          *eventsReplayStarted          `json:",omitempty"`
 	EventsReplayEnded            *eventsReplayEnded            `json:",omitempty"`
-}
-
-type partyCreated struct {
-	Code string
 }
 
 type playerJoined struct {

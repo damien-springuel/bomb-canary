@@ -5,50 +5,42 @@ import (
 	"sync"
 )
 
-type playerSession struct {
-	partyCode string
-	name      string
-}
-
 type uuidCreator interface {
 	Create() string
 }
 
 type sessions struct {
-	uuidCreator uuidCreator
-	mut         *sync.RWMutex
-	sessionById map[string]playerSession
+	uuidCreator     uuidCreator
+	mut             *sync.RWMutex
+	nameBySessionId map[string]string
 }
 
 func New(uuidCreator uuidCreator) sessions {
 	return sessions{
-		uuidCreator: uuidCreator,
-		sessionById: make(map[string]playerSession),
-		mut:         &sync.RWMutex{},
+		uuidCreator:     uuidCreator,
+		nameBySessionId: make(map[string]string),
+		mut:             &sync.RWMutex{},
 	}
 }
 
-func (s sessions) Create(code string, name string) string {
+func (s sessions) Create(name string) string {
 	s.mut.Lock()
 	defer s.mut.Unlock()
 
 	uuid := s.uuidCreator.Create()
 
-	s.sessionById[uuid] = playerSession{
-		partyCode: code,
-		name:      name,
-	}
+	s.nameBySessionId[uuid] = name
 
 	return uuid
 }
 
-func (s sessions) Get(session string) (code string, name string, err error) {
+func (s sessions) Get(session string) (name string, err error) {
 	s.mut.RLock()
 	defer s.mut.RUnlock()
-	playerSession, exists := s.sessionById[session]
+	playerName, exists := s.nameBySessionId[session]
 	if !exists {
-		return "", "", errors.New("session doesn't exist")
+		return "", errors.New("session doesn't exist")
 	}
 
-	return playerSession.partyCode, playerSession.name, nil
+	return playerName, nil
 }

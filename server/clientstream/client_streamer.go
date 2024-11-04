@@ -6,7 +6,6 @@ import (
 	"github.com/damien-springuel/bomb-canary/server/messagebus"
 )
 
-type code string
 type name string
 
 type messageDispatcher interface {
@@ -14,102 +13,83 @@ type messageDispatcher interface {
 }
 
 type clientStreamer struct {
-	mut                   *sync.RWMutex
-	clientOutByNameByCode map[code]map[name]chan []byte
-	messageDispatcher     messageDispatcher
+	mut               *sync.RWMutex
+	clientOutByName   map[name]chan []byte
+	messageDispatcher messageDispatcher
 }
 
 func NewClientsStreamer(messageDispatcher messageDispatcher) clientStreamer {
 	return clientStreamer{
-		mut:                   &sync.RWMutex{},
-		clientOutByNameByCode: make(map[code]map[name]chan []byte),
-		messageDispatcher:     messageDispatcher,
+		mut:               &sync.RWMutex{},
+		clientOutByName:   make(map[name]chan []byte),
+		messageDispatcher: messageDispatcher,
 	}
 }
 
-func (c clientStreamer) Add(partyCode, playerName string) (chan []byte, func()) {
+func (c clientStreamer) Add(playerName string) (chan []byte, func()) {
 	c.mut.Lock()
 	defer c.mut.Unlock()
 
 	clientOut := make(chan []byte)
-	clients, exists := c.clientOutByNameByCode[code(partyCode)]
-	if exists {
-		clients[name(playerName)] = clientOut
-	} else {
-		clients = map[name]chan []byte{
-			name(playerName): clientOut,
-		}
+	_, exists := c.clientOutByName[name(playerName)]
+	if !exists {
+		c.clientOutByName[name(playerName)] = clientOut
 	}
-	c.clientOutByNameByCode[code(partyCode)] = clients
 
-	c.dispatchConnectedMessage(partyCode, playerName)
+	c.dispatchConnectedMessage(playerName)
 
 	return clientOut, func() {
-		c.remove(partyCode, playerName)
+		c.remove(playerName)
 	}
 }
 
-func (c clientStreamer) remove(partyCode, playerName string) {
+func (c clientStreamer) remove(playerName string) {
 	c.mut.Lock()
 	defer c.mut.Unlock()
 
-	clients, exists := c.clientOutByNameByCode[code(partyCode)]
+	client, exists := c.clientOutByName[name(playerName)]
 	if exists {
-		out, exists := clients[name(playerName)]
-		if exists {
-			close(out)
-			delete(clients, name(playerName))
-			if len(clients) == 0 {
-				delete(c.clientOutByNameByCode, code(partyCode))
-			}
-			c.dispatchDisconnectedMessage(partyCode, playerName)
-		}
+		close(client)
+		c.dispatchDisconnectedMessage(playerName)
+	}
+	if exists {
 	}
 }
 
-func (c clientStreamer) Send(partyCode string, message []byte) {
+func (c clientStreamer) Send(message []byte) {
 	c.mut.RLock()
 	defer c.mut.RUnlock()
 
-	clients, exists := c.clientOutByNameByCode[code(partyCode)]
+	for _, out := range c.clientOutByName {
+		out <- []byte(message)
+	}
+}
+
+func (c clientStreamer) SendToPlayer(playerName string, message []byte) {
+	c.mut.RLock()
+	defer c.mut.RUnlock()
+
+	client, exists := c.clientOutByName[name(playerName)]
 	if exists {
-		for _, out := range clients {
+		client <- message
+	}
+}
+
+func (c clientStreamer) SendToAllButPlayer(playerName string, message []byte) {
+	c.mut.RLock()
+	defer c.mut.RUnlock()
+
+	for n, out := range c.clientOutByName {
+		if n != name(playerName) {
 			out <- []byte(message)
 		}
 	}
 }
 
-func (c clientStreamer) SendToPlayer(partyCode, playerName string, message []byte) {
-	c.mut.RLock()
-	defer c.mut.RUnlock()
-
-	clients, exists := c.clientOutByNameByCode[code(partyCode)]
-	if exists {
-		out, exists := clients[name(playerName)]
-		if exists {
-			out <- message
-		}
-	}
+func (c clientStreamer) dispatchConnectedMessage(name string) {
+	c.messageDispatcher.Dispatch(messagebus.PlayerConnected{Player: name})
 }
 
-func (c clientStreamer) SendToAllButPlayer(partyCode, playerName string, message []byte) {
-	c.mut.RLock()
-	defer c.mut.RUnlock()
-
-	clients, exists := c.clientOutByNameByCode[code(partyCode)]
-	if exists {
-		for n, out := range clients {
-			if n != name(playerName) {
-				out <- []byte(message)
-			}
-		}
-	}
-}
-
-func (c clientStreamer) dispatchConnectedMessage(code, name string) {
-	c.messageDispatcher.Dispatch(messagebus.PlayerConnected{Event: messagebus.Event{Party: messagebus.Party{Code: code}}, Player: name})
-}
-
-func (c clientStreamer) dispatchDisconnectedMessage(code, name string) {
-	c.messageDispatcher.Dispatch(messagebus.PlayerDisconnected{Event: messagebus.Event{Party: messagebus.Party{Code: code}}, Player: name})
+func (c clientStreamer) dispatchDisconnectedMessage(name string) {
+	c.messageDispatcher.Dispatch(messagebus.PlayerDisconnected{Player: name})
 }

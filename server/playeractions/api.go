@@ -7,7 +7,6 @@ import (
 )
 
 const (
-	partyCodeKey  = "partyCode"
 	playerNameKey = "playerName"
 )
 
@@ -16,18 +15,18 @@ type leaderSelectionRequest struct {
 }
 
 type sessionGetter interface {
-	Get(session string) (code string, name string, err error)
+	Get(session string) (name string, err error)
 }
 
 type actionBroker interface {
-	StartGame(code string)
-	LeaderSelectsMember(code string, leader string, member string)
-	LeaderDeselectsMember(code string, leader string, member string)
-	LeaderConfirmsTeam(code string, leader string)
-	ApproveTeam(code string, player string)
-	RejectTeam(code string, player string)
-	SucceedMission(code string, player string)
-	FailMission(code string, player string)
+	StartGame()
+	LeaderSelectsMember(leader string, member string)
+	LeaderDeselectsMember(leader string, member string)
+	LeaderConfirmsTeam(leader string)
+	ApproveTeam(player string)
+	RejectTeam(player string)
+	SucceedMission(player string)
+	FailMission(player string)
 }
 
 type playerActionServer struct {
@@ -61,32 +60,28 @@ func (p playerActionServer) checkSession(c *gin.Context) {
 		return
 	}
 
-	partyCode, playerName, err := p.sessionGetter.Get(session)
+	playerName, err := p.sessionGetter.Get(session)
 	if err != nil {
 		c.AbortWithStatus(403)
 		return
 	}
 
-	setCodeAndNameToContext(c, partyCode, playerName)
+	setCodeAndNameToContext(c, playerName)
 
 	c.Next()
 }
 
-func setCodeAndNameToContext(c *gin.Context, code, name string) {
-	c.Set(partyCodeKey, code)
+func setCodeAndNameToContext(c *gin.Context, name string) {
 	c.Set(playerNameKey, name)
 }
 
-func getCodeAndNameFromContext(c *gin.Context) (code, name string) {
-	code = c.GetString(partyCodeKey)
+func getNameFromContext(c *gin.Context) (name string) {
 	name = c.GetString(playerNameKey)
 	return
 }
 
 func (p playerActionServer) startGame(c *gin.Context) {
-	code, _ := getCodeAndNameFromContext(c)
-	p.actionBroker.StartGame(code)
-
+	p.actionBroker.StartGame()
 	c.JSON(200, gin.H{})
 }
 
@@ -103,8 +98,8 @@ func (p playerActionServer) leaderSelectsMember(c *gin.Context) {
 		return
 	}
 
-	code, name := getCodeAndNameFromContext(c)
-	p.actionBroker.LeaderSelectsMember(code, name, req.Member)
+	name := getNameFromContext(c)
+	p.actionBroker.LeaderSelectsMember(name, req.Member)
 
 	c.JSON(200, gin.H{})
 }
@@ -122,43 +117,43 @@ func (p playerActionServer) leaderDeselectsMember(c *gin.Context) {
 		return
 	}
 
-	code, name := getCodeAndNameFromContext(c)
-	p.actionBroker.LeaderDeselectsMember(code, name, req.Member)
+	name := getNameFromContext(c)
+	p.actionBroker.LeaderDeselectsMember(name, req.Member)
 
 	c.JSON(200, gin.H{})
 }
 
 func (p playerActionServer) leaderConfirmsTeam(c *gin.Context) {
-	code, name := getCodeAndNameFromContext(c)
-	p.actionBroker.LeaderConfirmsTeam(code, name)
+	name := getNameFromContext(c)
+	p.actionBroker.LeaderConfirmsTeam(name)
 
 	c.JSON(200, gin.H{})
 }
 
 func (p playerActionServer) approveTeam(c *gin.Context) {
-	code, name := getCodeAndNameFromContext(c)
-	p.actionBroker.ApproveTeam(code, name)
+	name := getNameFromContext(c)
+	p.actionBroker.ApproveTeam(name)
 
 	c.JSON(200, gin.H{})
 }
 
 func (p playerActionServer) rejectTeam(c *gin.Context) {
-	code, name := getCodeAndNameFromContext(c)
-	p.actionBroker.RejectTeam(code, name)
+	name := getNameFromContext(c)
+	p.actionBroker.RejectTeam(name)
 
 	c.JSON(200, gin.H{})
 }
 
 func (p playerActionServer) succeedMission(c *gin.Context) {
-	code, name := getCodeAndNameFromContext(c)
-	p.actionBroker.SucceedMission(code, name)
+	name := getNameFromContext(c)
+	p.actionBroker.SucceedMission(name)
 
 	c.JSON(200, gin.H{})
 }
 
 func (p playerActionServer) failMission(c *gin.Context) {
-	code, name := getCodeAndNameFromContext(c)
-	p.actionBroker.FailMission(code, name)
+	name := getNameFromContext(c)
+	p.actionBroker.FailMission(name)
 
 	c.JSON(200, gin.H{})
 }

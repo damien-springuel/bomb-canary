@@ -1,15 +1,9 @@
 package messagebus
 
-type Event struct {
-	Party
-}
+type Event struct{}
 
 func (e Event) Type() Type {
 	return EventMessage
-}
-
-type PartyCreated struct {
-	Event
 }
 
 type PlayerConnected struct {

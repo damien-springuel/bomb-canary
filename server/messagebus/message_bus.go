@@ -8,7 +8,6 @@ const (
 )
 
 type Message interface {
-	GetPartyCode() string
 	Type() Type
 }
 
