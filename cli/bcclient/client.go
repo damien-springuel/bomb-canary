@@ -4,21 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
 
-type createPartyRequest struct {
-	Name string `json:"name"`
-}
-
-type createPartyResponse struct {
-	Code string `json:"code"`
-}
-
 type joinPartyRequest struct {
-	Code string `json:"code"`
 	Name string `json:"name"`
 }
 
@@ -41,7 +32,7 @@ func makePartyRequest(path string, body interface{}, responseValue interface{}) 
 		log.Fatalf("can't do request: %+v\n", err)
 	}
 	if responseValue != nil {
-		responseBody, err := ioutil.ReadAll(response.Body)
+		responseBody, err := io.ReadAll(response.Body)
 		if err != nil {
 			log.Fatalf("can't read response body: %+v\n", err)
 		}
@@ -59,15 +50,8 @@ func makePartyRequest(path string, body interface{}, responseValue interface{}) 
 	panic("should have session")
 }
 
-func CreateGame(name string) (code string, session string) {
-	actualResponse := createPartyResponse{}
-	session = makePartyRequest("party/create", createPartyRequest{Name: name}, &actualResponse)
-	code = actualResponse.Code
-	return
-}
-
-func JoinGame(code, name string) (session string) {
-	session = makePartyRequest("party/join", joinPartyRequest{Code: code, Name: name}, nil)
+func JoinGame(name string) (session string) {
+	session = makePartyRequest("party/join", joinPartyRequest{Name: name}, nil)
 	return
 }
 

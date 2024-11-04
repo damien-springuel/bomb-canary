@@ -117,10 +117,6 @@ func setLeaderToContext(ctx context.Context, leader string) context.Context {
 	return setValueToContext(ctx, "leader", leader)
 }
 
-func setCodeToContext(ctx context.Context, code string) context.Context {
-	return setValueToContext(ctx, "code", code)
-}
-
 func createSetNameAction(name string) func(ctx context.Context) context.Context {
 	return func(ctx context.Context) context.Context {
 		ctx = setNameToContext(ctx, name)
@@ -149,42 +145,40 @@ func blankPreset(ctx context.Context) context.Context {
 
 func createdAndJoined5Players(ctx context.Context) context.Context {
 	ctx = setCurrentPageToContext(ctx, actions)
-	code, session := bcclient.CreateGame("Alice")
-	ctx = setCodeToContext(ctx, code)
+	session := bcclient.JoinGame("Alice")
 	ctx = setSessionToContext(ctx, "Alice", session)
-	session = bcclient.JoinGame(code, "Bob")
+	session = bcclient.JoinGame("Bob")
 	ctx = setSessionToContext(ctx, "Bob", session)
-	session = bcclient.JoinGame(code, "Charlie")
+	session = bcclient.JoinGame("Charlie")
 	ctx = setSessionToContext(ctx, "Charlie", session)
-	session = bcclient.JoinGame(code, "Dan")
+	session = bcclient.JoinGame("Dan")
 	ctx = setSessionToContext(ctx, "Dan", session)
-	session = bcclient.JoinGame(code, "Edith")
+	session = bcclient.JoinGame("Edith")
 	ctx = setSessionToContext(ctx, "Edith", session)
 	return ctx
 }
 
 func createdAndJoined10Players(ctx context.Context) context.Context {
 	ctx = setCurrentPageToContext(ctx, actions)
-	code, session := bcclient.CreateGame("Alice")
-	ctx = setCodeToContext(ctx, code)
+	session := bcclient.JoinGame("Alice")
 	ctx = setSessionToContext(ctx, "Alice", session)
-	session = bcclient.JoinGame(code, "Bob")
+	session = bcclient.JoinGame("Bob")
 	ctx = setSessionToContext(ctx, "Bob", session)
-	session = bcclient.JoinGame(code, "Charlie")
+	session = bcclient.JoinGame("Charlie")
 	ctx = setSessionToContext(ctx, "Charlie", session)
-	session = bcclient.JoinGame(code, "Dan")
+	session = bcclient.JoinGame("Dan")
 	ctx = setSessionToContext(ctx, "Dan", session)
-	session = bcclient.JoinGame(code, "Edith")
+	session = bcclient.JoinGame("Edith")
 	ctx = setSessionToContext(ctx, "Edith", session)
-	session = bcclient.JoinGame(code, "Frank")
+	session = bcclient.JoinGame("Frank")
 	ctx = setSessionToContext(ctx, "Frank", session)
-	session = bcclient.JoinGame(code, "Gus")
+	session = bcclient.JoinGame("Gus")
 	ctx = setSessionToContext(ctx, "Gus", session)
-	session = bcclient.JoinGame(code, "Henry")
+	session = bcclient.JoinGame("Henry")
 	ctx = setSessionToContext(ctx, "Henry", session)
-	session = bcclient.JoinGame(code, "Ian")
+	session = bcclient.JoinGame("Ian")
 	ctx = setSessionToContext(ctx, "Ian", session)
-	session = bcclient.JoinGame(code, "Jay")
+	session = bcclient.JoinGame("Jay")
 	ctx = setSessionToContext(ctx, "Jay", session)
 	return ctx
 }
