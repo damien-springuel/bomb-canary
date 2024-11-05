@@ -12,7 +12,6 @@ import {
 
 export interface StoreValues {
   pageToShow: Page
-  partyCode: string
   player: string
   players: string[]
   missionRequirements: MissionRequirement[]
@@ -36,7 +35,6 @@ export interface StoreValues {
 function defaultValues(): StoreValues {
   return {
     pageToShow: Page.Loading,
-    partyCode: "",
     player: "",
     players: [],
     missionRequirements: [],
@@ -132,10 +130,9 @@ function showLobby(this: Store) {
   });
 }
 
-function showPartyRoom(this: Store, code: string) {
+function showPartyRoom(this: Store) {
   this.update(v => {
     v.pageToShow = Page.PartyRoom
-    v.partyCode = code;
     return v;
   });
 }

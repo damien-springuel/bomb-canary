@@ -3,7 +3,6 @@ import type { Message } from "./message-bus";
 
 export class AppLoaded implements Message{}
 
-export class CreatePartySucceeded implements Message{}
 export class JoinPartySucceeded implements Message{}
 
 export class ServerConnectionClosed implements Message {}
@@ -14,9 +13,6 @@ export class EventsReplayStarted implements Message {
 }
 export class EventsReplayEnded implements Message {}
 
-export class PartyCreated implements Message{
-  constructor(readonly partyCode: string){}
-}
 export class PlayerConnected implements Message {
   constructor(readonly name: string){}
 }

@@ -1,4 +1,4 @@
-import { AppLoaded, CreatePartySucceeded, JoinPartySucceeded } from "../messages/events";
+import { AppLoaded, JoinPartySucceeded } from "../messages/events";
 import type { Message } from "../messages/message-bus";
 
 export class Opener {
@@ -6,7 +6,6 @@ export class Opener {
 
   consume(message: Message): void {
     if(message instanceof AppLoaded || 
-      message instanceof CreatePartySucceeded ||
       message instanceof JoinPartySucceeded) {
       this.creator.create();
     }

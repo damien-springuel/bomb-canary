@@ -1,8 +1,4 @@
 export interface ServerEvent {
-  PartyCreated?: {
-    Code: string
-  },
-  
   PlayerConnected?: {
     Name: string
   },

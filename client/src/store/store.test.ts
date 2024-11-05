@@ -9,7 +9,6 @@ test(`default values`, () => {
   expect(storeValues).to.deep.equal( 
     {
       pageToShow: Page.Loading,
-      partyCode: "",
       player: "",
       players: [],
       missionRequirements: [],
@@ -35,31 +34,28 @@ test(`default values`, () => {
 test(`endReplay`, () => {
   const store = new Store();
   store.startReplay();
-  store.showPartyRoom("test");
+  store.showPartyRoom();
   store.assignLeader("leader");
   
   let storeValues: StoreValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.Loading);
-  expect(storeValues.partyCode).to.equal("");
   expect(storeValues.leader).to.equal("");
 
   store.endReplay()
   
   storeValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.PartyRoom);
-  expect(storeValues.partyCode).to.equal("test");
   expect(storeValues.leader).to.equal("leader");
 });
 
 test(`endReplay twice`, () => {
   const store = new Store();
   store.startReplay();
-  store.showPartyRoom("test");
+  store.showPartyRoom();
   store.assignLeader("leader")
   
   let storeValues: StoreValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.Loading);
-  expect(storeValues.partyCode).to.equal("");
   expect(storeValues.leader).to.equal("");
 
   store.endReplay()
@@ -67,7 +63,6 @@ test(`endReplay twice`, () => {
 
   storeValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.PartyRoom);
-  expect(storeValues.partyCode).to.equal("test");
   expect(storeValues.leader).to.equal("leader");
 });
 
@@ -76,24 +71,22 @@ test(`startReplay twice`, () => {
   
   store.startReplay();
   store.startReplay();
-  store.showPartyRoom("test");
+  store.showPartyRoom();
   store.assignLeader("leader");
   
   let storeValues: StoreValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.Loading);
-  expect(storeValues.partyCode).to.equal("");
 
   store.endReplay()
   
   storeValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.PartyRoom);
-  expect(storeValues.partyCode).to.equal("test");
   expect(storeValues.leader).to.equal("leader");
 });
 
 test(`reset`, () => {
   const store = new Store();
-  store.showPartyRoom("test");
+  store.showPartyRoom();
   store.joinPlayer("name1");
   store.reset();
   let storeValues: StoreValues = get(store);
@@ -110,10 +103,9 @@ test(`showLobby`, () => {
 
 test(`showPartyRoom`, () => {
   const store = new Store();
-  store.showPartyRoom("testCode");
+  store.showPartyRoom();
   const storeValues: StoreValues = get(store);
   expect(storeValues.pageToShow).to.equal(Page.PartyRoom);
-  expect(storeValues.partyCode).to.equal("testCode");
 });
 
 test(`showGameRoom`, () => {

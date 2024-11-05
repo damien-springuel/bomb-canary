@@ -1,5 +1,5 @@
 import { CloseDialog, ViewIdentity, ViewMissionDetails } from "../messages/commands";
-import { PartyCreated, ServerConnectionClosed, SpiesRevealed } from "../messages/events";
+import { ServerConnectionClosed, SpiesRevealed } from "../messages/events";
 import type { Message } from "../messages/message-bus";
 
 export interface RoomStore {
@@ -19,9 +19,6 @@ export class PageConsumer {
     if (message instanceof ServerConnectionClosed) {
       this.store.showLobby();
     } 
-    else if(message instanceof PartyCreated) {
-      this.store.showPartyRoom(message.partyCode);
-    }
     else if(message instanceof SpiesRevealed) {
       this.store.showGameRoom();
       this.store.showIdentity();

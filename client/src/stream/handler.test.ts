@@ -11,7 +11,6 @@ import {
   LeaderStartedToSelectMembers, 
   MissionCompleted, 
   MissionStarted, 
-  PartyCreated, 
   PlayerConnected, 
   PlayerDisconnected, 
   PlayerJoined, 
@@ -49,13 +48,6 @@ test(`Handler - onEvent - EventsReplayEnded`, () => {
   const handler = new Handler(dispatcher);
   handler.onEvent({EventsReplayEnded: {}});
   expect(dispatcher.receivedMessage).to.deep.equal(new EventsReplayEnded());
-});
-
-test(`Handler - onEvent - PartyCreated`, () => {
-  const dispatcher: DispatcherMock = new DispatcherMock();
-  const handler = new Handler(dispatcher);
-  handler.onEvent({PartyCreated: {Code: "testCode"}});
-  expect(dispatcher.receivedMessage).to.deep.equal(new PartyCreated("testCode"));
 });
 
 test(`Handler - onEvent - PlayerConnected`, () => {

@@ -11,7 +11,6 @@ import {
   LeaderStartedToSelectMembers, 
   MissionCompleted, 
   MissionStarted, 
-  PartyCreated, 
   PlayerConnected, 
   PlayerDisconnected, 
   PlayerJoined, 
@@ -40,9 +39,6 @@ export class Handler {
     }
     else if (event.EventsReplayEnded) {
       this.dispatcher.dispatch(new EventsReplayEnded());
-    }
-    else if (event.PartyCreated) {
-      this.dispatcher.dispatch(new PartyCreated(event.PartyCreated.Code));
     }
     else if (event.PlayerConnected) {
       this.dispatcher.dispatch(new PlayerConnected(event.PlayerConnected.Name));

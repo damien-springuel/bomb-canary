@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import { CloseDialog, ViewIdentity, ViewMissionDetails } from "../messages/commands";
-import { PartyCreated, ServerConnectionClosed, SpiesRevealed } from "../messages/events";
+import { ServerConnectionClosed, SpiesRevealed } from "../messages/events";
 import { PageConsumer, type RoomStore } from "./page";
 
 test(`Page Manager - show lobby on server connection closed`, () => {
@@ -8,13 +8,6 @@ test(`Page Manager - show lobby on server connection closed`, () => {
   const pageConsumer = new PageConsumer({showLobby: ()=> {lobbyShown = true}} as RoomStore);
   pageConsumer.consume(new ServerConnectionClosed());
   expect(lobbyShown).to.be.true;
-});
-
-test(`Page Manager - show party room on party created`, () => {
-  let receivedPartyCode: string;
-  const pageConsumer = new PageConsumer({showPartyRoom: code => {receivedPartyCode = code}} as RoomStore);
-  pageConsumer.consume(new PartyCreated("testCode"));
-  expect(receivedPartyCode).to.equal("testCode");
 });
 
 test(`Page Manager - show game room on spies revealed`, () => {
