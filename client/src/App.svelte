@@ -4,16 +4,23 @@ import type { Store } from "./store/store";
 import { onMount } from "svelte";
 import type { Dispatcher } from "./messages/dispatcher";
 import { AppService } from "./App-service";
-import Page from "./components/Page.svelte";
 import { AppValuesBroker } from "./values-brokers";
+import Game from "./components/Game.svelte";
+import PartyRoom from "./components/PartyRoom.svelte";
 
 export let dispatcher: Dispatcher;
-let service = new AppService(dispatcher);
-
 export let store: Store;
 
 $: valuesBroker = new AppValuesBroker($store);
+$: service = new AppService(dispatcher, valuesBroker);
 
 onMount(() => service.appMounted());
 </script>
-<Page dispatcher={dispatcher} pageValues={valuesBroker.pageValues}/>
+
+{#if service.isPagePartyRoom}
+  <PartyRoom dispatcher={dispatcher} partyRoomValues={valuesBroker.partyRoomValues}/>
+{:else if service.isPageGame}
+  <Game dispatcher={dispatcher} gameValues={valuesBroker.gameValues}/>
+{:else}
+  Bomb canary loading
+{/if}

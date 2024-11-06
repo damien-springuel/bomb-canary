@@ -1,3 +1,4 @@
+import type { AppValues } from "./App-service";
 import type { EndGameValues } from "./components/EndGame-service";
 import type { GameValues } from "./components/Game-service";
 import type { IdentityValues } from "./components/Identity-service";
@@ -5,7 +6,6 @@ import type { LastMissionResultValues } from "./components/LastMissionResult-ser
 import type { MissionConductingValues } from "./components/MissionConducting-service";
 import { MissionTimeline, type MissionDetailsValues } from "./components/MissionDetails-service";
 import type { MissionTrackerValues } from "./components/MissionTracker-service";
-import type { PageValues } from "./components/Page-service";
 import type { PartyRoomValues } from "./components/PartyRoom-service";
 import type { TeamSelectionValues } from "./components/TeamSelection-service";
 import type { TeamVoteValues } from "./components/TeamVote-service";
@@ -221,9 +221,9 @@ export class PartyRoomValuesBroker implements PartyRoomValues {
   }
 }
 
-export class PageValuesBroker implements PageValues {
-  constructor(private readonly storeValues: StoreValues){}
-  
+export class AppValuesBroker implements AppValues {
+  constructor(private readonly storeValues: StoreValues) {}
+
   get pageToShow(): Page {
     return this.storeValues.pageToShow;
   };
@@ -234,13 +234,5 @@ export class PageValuesBroker implements PageValues {
   
   get partyRoomValues(): PartyRoomValues {
     return new PartyRoomValuesBroker(this.storeValues);
-  }
-}
-
-export class AppValuesBroker {
-  constructor(private readonly storeValues: StoreValues) {}
-
-  get pageValues(): PageValues {
-    return new PageValuesBroker(this.storeValues);
   }
 }

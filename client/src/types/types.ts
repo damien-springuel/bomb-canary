@@ -1,6 +1,5 @@
 export enum Page {
   Loading = "loading",
-  Lobby = "lobby",
   PartyRoom = "partyRoom",
   Game = "game",
 }
