@@ -1,10 +1,9 @@
 import { CloseDialog, ViewIdentity, ViewMissionDetails } from "../messages/commands";
-import { ServerConnectionClosed, SpiesRevealed } from "../messages/events";
+import { AppLoaded, JoinPartySucceeded, ServerConnectionClosed, SpiesRevealed } from "../messages/events";
 import type { Message } from "../messages/message-bus";
 
 export interface RoomStore {
-  showLobby(): void,
-  showPartyRoom(code: string): void,
+  showPartyRoom(): void,
   showGameRoom(): void,
   showIdentity(): void,
   showMissionDetails(mission: number): void,
@@ -16,8 +15,11 @@ export class PageConsumer {
   constructor(private readonly store: RoomStore) {}
 
   consume(message: Message): void {
-    if (message instanceof ServerConnectionClosed) {
-      this.store.showLobby();
+    if (message instanceof ServerConnectionClosed || message instanceof AppLoaded) {
+      this.store.showPartyRoom();
+    } 
+    if (message instanceof JoinPartySucceeded) {
+      this.store.showPartyRoom();
     } 
     else if(message instanceof SpiesRevealed) {
       this.store.showGameRoom();

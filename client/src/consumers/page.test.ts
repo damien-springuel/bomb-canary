@@ -3,9 +3,9 @@ import { CloseDialog, ViewIdentity, ViewMissionDetails } from "../messages/comma
 import { ServerConnectionClosed, SpiesRevealed } from "../messages/events";
 import { PageConsumer, type RoomStore } from "./page";
 
-test(`Page Manager - show lobby on server connection closed`, () => {
+test(`Page Manager - show party room on server connection closed`, () => {
   let lobbyShown = false
-  const pageConsumer = new PageConsumer({showLobby: ()=> {lobbyShown = true}} as RoomStore);
+  const pageConsumer = new PageConsumer({showPartyRoom: ()=> {lobbyShown = true}} as RoomStore);
   pageConsumer.consume(new ServerConnectionClosed());
   expect(lobbyShown).to.be.true;
 });

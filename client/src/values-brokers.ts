@@ -212,12 +212,12 @@ export class GameValuesBroker implements GameValues {
 export class PartyRoomValuesBroker implements PartyRoomValues {
   constructor(private readonly storeValues: StoreValues){}
   
-  get partyCode(): string {
-    return this.storeValues.partyCode;
-  }
-  
   get players(): string[] {
     return this.storeValues.players;
+  }
+
+  get hasPlayerJoined(): boolean {
+    return this.storeValues.players.includes(this.storeValues.player);
   }
 }
 
