@@ -116,3 +116,31 @@ func Test_AddAndRemoveDispatchPlayerConnectedDisconnectedMessage(t *testing.T) {
 		messagebus.PlayerDisconnected{Player: "p1"},
 	}))
 }
+func Test_AddAndRemove_AndReconnectASecondTime(t *testing.T) {
+	dispatcher := &mockMessageDispatcher{}
+	streamer := NewClientsStreamer(dispatcher)
+	testOut := make(chan [][]byte)
+	done := createAndPumpOut(streamer, "p1", testOut)
+
+	streamer.Send([]byte("message1"))
+	streamer.Send([]byte("message2"))
+
+	done()
+	<-testOut
+
+	testOut = make(chan [][]byte)
+	done = createAndPumpOut(streamer, "p1", testOut)
+	streamer.Send([]byte("message3"))
+	streamer.Send([]byte("message4"))
+
+	done()
+	<-testOut
+
+	g := NewWithT(t)
+	g.Expect(dispatcher.receivedMessages).To(Equal([]messagebus.Message{
+		messagebus.PlayerConnected{Player: "p1"},
+		messagebus.PlayerDisconnected{Player: "p1"},
+		messagebus.PlayerConnected{Player: "p1"},
+		messagebus.PlayerDisconnected{Player: "p1"},
+	}))
+}

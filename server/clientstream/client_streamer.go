@@ -31,10 +31,7 @@ func (c clientStreamer) Add(playerName string) (chan []byte, func()) {
 	defer c.mut.Unlock()
 
 	clientOut := make(chan []byte)
-	_, exists := c.clientOutByName[name(playerName)]
-	if !exists {
-		c.clientOutByName[name(playerName)] = clientOut
-	}
+	c.clientOutByName[name(playerName)] = clientOut
 
 	c.dispatchConnectedMessage(playerName)
 
@@ -51,8 +48,7 @@ func (c clientStreamer) remove(playerName string) {
 	if exists {
 		close(client)
 		c.dispatchDisconnectedMessage(playerName)
-	}
-	if exists {
+		delete(c.clientOutByName, name(playerName))
 	}
 }
 
