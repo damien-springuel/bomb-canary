@@ -9,30 +9,31 @@ let name: string;
 </script>
 
 
-<div class="flex flex-col items-center h-full bg-gray-900 text-blue-500 p-2 gap-5">
-  <div class="text-5xl">
+<div class="bc-flex-col">
+  <div class="bc-text-title">
     Bomb Canary
   </div>
-  <div class="text-2xl text-center text-blue-400">
+  <div class="">
     A real-time app to play "The Resistance" board game with friends.
   </div>
   {#if !service.hasPlayerJoined}
-    <div class="flex m-2">
-      <input type="text" placeholder="Name" class="bc-input m-2" bind:value={name}>
+    <div>
+      <input type="text" placeholder="Name" class="bc-input" bind:value={name}>
       <button class="bc-button bc-button-blue" on:click={()=>service.joinParty(name)}>Join</button>
     </div>
   {:else}
     <div>
-      <div class="text-2xl underline font-bold">
+      <div class="bc-font-emphasis">
         Players
       </div>
-      <ul class="text-2xl">
+      <div class="bc-line"></div>
+      <div>
         {#each service.players as player}
-          <li>{player}</li>
+          <div>{player}</div>
         {/each}
-      </ul>
+      </div>
     </div>
-    <div class="mt-6">
+    <div>
       <button class="bc-button bc-button-blue" disabled={!service.canStartGame} on:click={()=>service.startGame()}>
         Start Game
       </button>

@@ -1,47 +1,37 @@
 <script lang="ts">
 import type { Dispatcher } from "../messages/dispatcher";
 import { MissionConductingService, type MissionConductingValues } from "./MissionConducting-service";
+
 export let missionConductingValues: MissionConductingValues;
 export let dispatcher: Dispatcher;
-const service = new MissionConductingService(missionConductingValues, dispatcher);
+
+$: service = new MissionConductingService(missionConductingValues, dispatcher);
 </script>
 
-<div class="flex flex-col items-center h-full w-full">
-  <div class="text-3xl mt-8 mb-4">
-    Conducting Mission
-  </div>
-  <div class="grid grid-cols-2 w-full content-start gap-2 text-lg text-center">
-    {#each service.currentTeam as member}
-      <div 
-        class="bc-tag"
-        class:bc-tag-solid={service.hasGivenPlayerWorkedOnMission(member)}
-      >
-        {member}
-      </div>
-    {/each}
-  </div>
+<div class="bc-flex-col">
+  
   {#if service.isPlayerInCurrentMission}
-    <div class="flex-grow content-center flex flex-col justify-center">
-      <div class="text-4xl text-center mb-4">You are part of the mission!</div>
+    <div class="bc-flex-col">
+      <div class="bc-text-subtitle">You are part of the mission!</div>
       {#if service.hasPlayerWorkedOnMission}
-        <div class="text-center">
+        <div>
           You executed your part of the mission and made it
           {#if service.playerMissionSuccess}
-            <span class="text-green-400">Succeed</span>
+            <span class="bc-text-green">Succeed</span>
             {:else}
-            <span class="text-red-400">Fail</span>
+            <span class="bc-text-red">Fail</span>
           {/if}
           .
         </div>
       {:else}
-        <div class="text-2xl text-center mt-4">
+        <div>
           Do you want the mission to 
-          <span class="text-green-400">succeed</span> 
+          <span class="bc-text-green">succeed</span> 
           or to 
-          <span class="text-red-400">fail</span>
+          <span class="bc-text-red">fail</span>
           ?
         </div>
-        <div class="grid grid-cols-2 justify-center w-full gap-x-2 mt-4">
+        <div class="bc-grid bc-grid-cols-2">
           <button class="bc-button bc-button-green" on:click={()=> service.succeedMission()}>
             Succeed
           </button>
@@ -52,8 +42,19 @@ const service = new MissionConductingService(missionConductingValues, dispatcher
       {/if}
     </div>
   {:else}
-    <div class="flex-grow content-center flex flex-col justify-center text-center text-3xl">
+    <div class="bc-text-subtitle">
       {service.currentTeamAsString} are conducting the mission.
     </div>
+    <div class="bc-grid bc-grid-cols-2">
+    {#each service.currentTeam as member}
+      <div 
+        class="bc-tag"
+        class:bc-tag-solid={service.hasGivenPlayerWorkedOnMission(member)}
+      >
+        {member}
+      </div>
+    {/each}
+  </div>
   {/if}
+  
 </div>

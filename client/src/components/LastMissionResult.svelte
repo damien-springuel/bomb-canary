@@ -2,7 +2,8 @@
 import { LastMissionResultService, type LastMissionResultValues } from "./LastMissionResult-service";
 
 export let lastMissionResultValues: LastMissionResultValues;
-const service = new LastMissionResultService(lastMissionResultValues);
+
+$: service = new LastMissionResultService(lastMissionResultValues);
 </script>
   
 <div class="flex flex-col h-full items-center justify-center gap-y-8">

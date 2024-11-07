@@ -17,10 +17,13 @@ $: service = new AppService(dispatcher, valuesBroker);
 onMount(() => service.appMounted());
 </script>
 
-{#if service.isPagePartyRoom}
-  <PartyRoom dispatcher={dispatcher} partyRoomValues={valuesBroker.partyRoomValues}/>
-{:else if service.isPageGame}
-  <Game dispatcher={dispatcher} gameValues={valuesBroker.gameValues}/>
-{:else}
-  Bomb canary loading
-{/if}
+<div class="bc-app">
+  {#if service.isPagePartyRoom}
+    <PartyRoom dispatcher={dispatcher} partyRoomValues={valuesBroker.partyRoomValues}/>
+  {:else if service.isPageGame}
+    <Game dispatcher={dispatcher} gameValues={valuesBroker.gameValues}/>
+  {:else}
+    Bomb canary loading
+  {/if}
+
+</div>

@@ -8,8 +8,8 @@ import type { Dispatcher } from "../messages/dispatcher";
 import MissionTracker from "./MissionTracker.svelte";
 import { GameService, type GameValues } from "./Game-service";
 import MissionDetails from "./MissionDetails.svelte";
-    import LastMissionResult from "./LastMissionResult.svelte";
-    import EndGame from "./EndGame.svelte";
+import LastMissionResult from "./LastMissionResult.svelte";
+import EndGame from "./EndGame.svelte";
 
 export let gameValues: GameValues;
 export let dispatcher: Dispatcher;
@@ -17,7 +17,7 @@ export let dispatcher: Dispatcher;
 $: service = new GameService(gameValues, dispatcher);
 </script>
 
-<div class="flex flex-col items-center h-full bg-gray-900 p-6 text-blue-500 space-y-4 text-2xl">
+<div class="bc-flex-col">
   <button class="bc-button bc-button-blue" on:click={()=> service.viewIdentity()}>Identity</button>
   <MissionTracker missionTrackerValues={gameValues.missionTrackerValues} dispatcher={dispatcher}/>
   {#if service.isTeamSelectionPhase}

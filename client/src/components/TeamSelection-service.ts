@@ -35,12 +35,16 @@ export class TeamSelectionService {
     return this.values.players;
   }
 
+  get nbPeopleRequiredOnMission(): number {
+    return this.values.nbPeopleRequiredOnMission;
+  }
+
   isGivenPlayerSelectableForTeam(player: string): boolean {
     return this.isGivenPlayerInTeam(player) || this.values.currentTeam.size < this.values.nbPeopleRequiredOnMission;
   }
   
   get canConfirmTeam(): boolean {
-    return this.values.currentTeam.size === this.values.nbPeopleRequiredOnMission;
+    return this.values.currentTeam.size === this.nbPeopleRequiredOnMission;
   }
 
   togglePlayerSelection(player: string) {

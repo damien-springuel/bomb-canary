@@ -3,8 +3,11 @@
 @tailwind utilities;
 
 @layer components {
+  .bc-app {
+    @apply h-full bg-gray-900 text-blue-500 text-xl sm:text-2xl text-center p-4
+  }
   .bc-button {
-    @apply rounded-full px-6 py-4 text-2xl
+    @apply rounded-full px-3 py-3 sm:px-6 sm:py-4 relative
   }
   .bc-button:focus {
     @apply outline-none
@@ -22,7 +25,7 @@
     @apply bg-blue-300
   }
   .bc-button-empty {
-    @apply border border-blue-500
+    @apply border border-blue-500 p-6 sm:p-8
   }
   .bc-button-green {
     @apply bg-green-500 text-gray-900 border-none
@@ -43,7 +46,7 @@
     @apply bg-gray-500 text-gray-700 
   }
   .bc-input {
-    @apply bg-blue-400 rounded-lg px-2 text-gray-900 outline-none
+    @apply bg-blue-400 rounded-full p-4 text-gray-900 outline-none
   }
   .bc-input::placeholder {
     @apply text-gray-700
@@ -55,9 +58,42 @@
     @apply bg-blue-300
   }
   .bc-tag {
-    @apply border border-blue-500 rounded-lg p-2 text-2xl
+    @apply border border-blue-500 rounded-xl p-4
   }
   .bc-tag-solid {
     @apply bg-blue-500 text-gray-900
+  }
+  .bc-flex-col {
+    @apply flex flex-col items-center gap-5
+  }
+  .bc-grid {
+    @apply grid
+  }
+  .bc-grid-cols-5 {
+    @apply grid-cols-5 gap-8
+  }
+  .bc-grid-cols-2 {
+    @apply grid-cols-2 gap-3
+  }
+  .bc-text-title {
+    @apply text-3xl sm:text-5xl
+  }
+  .bc-text-subtitle {
+    @apply text-blue-400
+  }
+  .bc-text-icon {
+    @apply text-3xl sm:text-5xl p-0 absolute inset-1 sm:inset-2 leading-10
+  }
+  .bc-text-emphasis {
+    @apply font-semibold
+  }
+  .bc-text-green {
+    @apply text-green-500
+  }
+  .bc-text-red {
+    @apply text-red-500
+  }
+  .bc-line {
+    @apply border-solid border w-full border-blue-500
   }
 }

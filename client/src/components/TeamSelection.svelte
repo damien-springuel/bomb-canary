@@ -7,12 +7,13 @@ export let dispatcher: Dispatcher;
 $: service = new TeamSelectionService(teamSelectionValues, dispatcher);
 </script>
 
-<div class="flex flex-col items-center h-full w-full">
-  <div class="text-xl text-center">
-    <span class="font-bold">{service.leader}</span> is choosing current team.
-    <div>Tentative {service.currentTeamVoteNb} of 5</div>
+<div class="bc-flex-col">
+  <div class="bc-text-subtitle">
+    <span class="bc-text-emphasis">{service.leader}</span> is choosing current team 
+    of {service.nbPeopleRequiredOnMission} people.
+    <div>Tentative {service.currentTeamVoteNb} of 5.</div>
   </div>
-  <div class="flex-grow grid grid-cols-2 w-full content-start text-center gap-2 mt-2">
+  <div class="bc-grid bc-grid-cols-2">
     {#if service.isPlayerTheLeader}
       {#each service.players as player}
         <button 

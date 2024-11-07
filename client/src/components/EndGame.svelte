@@ -2,20 +2,11 @@
 import { EndGameService, type EndGameValues } from "./EndGame-service";
 
 export let endGameValues: EndGameValues;
-const service = new EndGameService(endGameValues);
+$: service = new EndGameService(endGameValues);
 </script>
 
-<div class="flex flex-col h-full justify-center text-center gap-8 text-3xl">
-  <div 
-    class="text-7xl" 
-  >
-    Game Over
-  </div>
-  <div 
-    class="text-5xl"
-    class:text-red-500={!service.playerHasWon}
-    class:text-green-500={service.playerHasWon}
-  >
+<div class="bc-flex-col">
+  <div class="bc-text-title">
     {#if service.playerHasWon}
     You won!
     {:else}
@@ -25,9 +16,9 @@ const service = new EndGameService(endGameValues);
   <div>
     The
     {#if service.spiesHaveWon}
-    <span class="text-red-500">Spies </span>
+    <span class="bc-text-red">Spies </span>
     {:else}
-    <span class="text-green-500">Resistance Agents </span>
+    <span class="bc-text-green">Resistance Agents </span>
     {/if}
     have won!
   </div>

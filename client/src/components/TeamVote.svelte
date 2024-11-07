@@ -7,15 +7,15 @@ export let dispatcher: Dispatcher;
 $: service = new TeamVoteService(teamVoteValues, dispatcher);
 </script>
 
-<div class="flex flex-col items-center h-full w-full">
-  <div class="text-3xl">
+<div class="bc-flex-col">
+  <div class="bc-text-emphasis">
     Team
   </div>
-  <div class="flex flex-row w-full text-blue-500 justify-center bc-tag mt-4 mb-4">
+  <div class="bc-tag">
     {service.currentTeamAsString}
   </div>
   {#if !service.hasCurrentPlayerVoted}
-    <div class="grid grid-cols-2 justify-center w-full gap-x-2">
+    <div class="bc-grid bc-grid-cols-2">
       <button class="bc-button bc-button-green" on:click={()=> service.approveTeam()}>
         Approve
       </button>
@@ -26,19 +26,19 @@ $: service = new TeamVoteService(teamVoteValues, dispatcher);
   {:else}
     {#if service.playerVote}
       <div>
-        You <span class="text-green-500">approved</span> the team.
+        You <span class="bc-text-green">approved</span> the team.
       </div> 
     {:else}
       <div>
-        You <span class="text-red-500">rejected</span> the team.
+        You <span class="bc-text-red">rejected</span> the team.
       </div> 
     {/if}
   {/if}
-  
-  <div class="text-3xl mt-8 mb-4">
-    Votes
+  <div class="bc-line"></div>
+  <div class="bc-text-emphasis">
+    Who voted?
   </div>
-  <div class="flex-grow grid grid-cols-3 w-full content-start gap-2 text-lg text-center">
+  <div class="bc-grid bc-grid-cols-2">
     {#each service.players as player}
       <div class="bc-tag" class:bc-tag-solid={service.hasGivenPlayerVoted(player)}>
         {player}

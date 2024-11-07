@@ -3,7 +3,7 @@ import { MissionDetailsService, type MissionDetailsValues } from "./MissionDetai
 
 export let missionDetailsValues: MissionDetailsValues;
 
-const service = new MissionDetailsService(missionDetailsValues);
+$: service = new MissionDetailsService(missionDetailsValues);
 </script>
 
 <div class="flex flex-col items-center h-full gap-y-8">
