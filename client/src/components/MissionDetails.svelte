@@ -6,45 +6,44 @@ export let missionDetailsValues: MissionDetailsValues;
 $: service = new MissionDetailsService(missionDetailsValues);
 </script>
 
-<div class="flex flex-col items-center h-full gap-y-8">
-  <div class="text-5xl my-2 underline">
+<div class="bc-flex-col">
+  <div class="bc-text-subtitle">
     Mission #{service.mission + 1} Details
   </div>
-  <div class="text-center text-xl">
-    <div class="text-3xl">Mission Requirements</div>
-    <div>The mission needs a team of <span class="font-bold">{service.teamSize}</span> people.</div>
-    <div>
-      The mission needs at least
-      <span class="font-bold">{service.nbFailuresRequiredToFail}</span>
-      <span class="text-red-500">failure{#if service.nbFailuresRequiredToFail > 1}<span>s</span>{/if}</span>
-      to fail.
+  <div>
+    <div class="bc-text-emphasis">Mission Requirements</div>
+    <div class="bc-text-details">
+      People needed on team: <span class="bc-text-emphasis">{service.teamSize}</span>
+    </div>
+    <div class="bc-text-details">
+      Failures needed to fail: <span class="bc-text-emphasis">{service.nbFailuresRequiredToFail}</span>
     </div>
   </div>
   {#if service.shouldShowVotes}
     <div>
-      <div class="text-3xl text-center">
+      <div class="bc-text-emphasis">
         Votes
       </div>
-      <div class="grid grid-cols-2 gap-2 text-2xl">
+      <div class="bc-grid bc-grid-cols-3 bc-text-details">
         {#each service.teamVotes.votes as teamVote, i}
         <div>
           <div>
-            Team #{i+1}: <span class="font-bold">{service.teamFromVoteAsString(i)}</span>
+            #{i+1}: <span>{service.teamFromVoteAsString(i)}</span>
           </div>
-          <div class="bc-tag flex flex-col">
-            <div class="font-bold text-center underline">
+          <div class="bc-tag">
+            <div class="bc-text-subtitle">
               {#if teamVote.approved}
-                <span class="text-green-500">Approved</span>
+                <span class="bc-text-green">&#x2713;</span>
               {/if}
               {#if !teamVote.approved}
-                <span class="text-red-500">Rejected</span>
+                <span class="bc-text-red">&#x2715;</span>
               {/if}
             </div>
-            <div class="grid grid-cols-2 gap-x-2">
+            <div class="bc-grid bc-grid-cols-2 bc-no-gap">
               {#each teamVote.playerVotes.entries() as [player, vote]}
                 <div 
-                  class:text-green-500={vote}
-                  class:text-red-500={!vote}
+                  class:bc-text-green={vote}
+                  class:bc-text-red={!vote}
                 >
                   {player}
                 </div>
@@ -57,26 +56,28 @@ $: service = new MissionDetailsService(missionDetailsValues);
     </div>
   {/if}
   {#if service.shouldShowMissionResult}
-    <div class="text-3xl my-2">
+    <div>
       <div>
-        Mission Result: 
+        <span class="bc-text-emphasis">Mission Result: </span>
         {#if service.hasMissionSucceeded}
-          <span class=text-green-500>Success</span>
+          <span class=bc-text-green>Success</span>
         {:else}
-          <span class=text-red-500>Failure</span>
+          <span class=bc-text-red>Failure</span>
         {/if}
       </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div class="flex flex-col text-center">
-          <span class="text-2xl underline">Successes</span>
+      <div class="bc-grid bc-grid-cols-2">
+        <div>
+          <div>Successes</div>
+          <div class="bc-line"></div>
           {#each Array(service.nbSuccesses) as i}
-            <span class="text-5xl text-green-500">&#x2713;</span>
+            <span class="bc-text-subtitle bc-text-green">&#x2713;</span>
           {/each}
         </div>
-        <div class="flex flex-col text-center">
-          <span class="text-2xl underline">Failures</span>
+        <div>
+          <div>Failures</div>
+          <div class="bc-line"></div>
           {#each Array(service.nbFailures) as i}
-            <span class="text-5xl text-red-500">&#x2715;</span>
+            <span class="bc-text-subtitle bc-text-red">&#x2715;</span>
           {/each}
         </div>
       </div>

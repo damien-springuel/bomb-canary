@@ -4,13 +4,13 @@ export let identityValues: IdentityValues;
 $: service = new IdentityService(identityValues);
 </script>
 
-<div class="flex flex-col h-full items-center justify-center">
-  <div class="text-3xl">You are a </div>
+<div class="bc-flex-col bc-justify-center">
+  <div>You are a </div>
   {#if service.isPlayerIsASpy()}
-    <div class="text-red-500 mt-4">Spy</div>
-    <div class="text-3xl mt-4">along with</div>
-    <div class="text-red-500 text-4xl mt-4">{service.otherSpies()}</div>
+    <div class="bc-text-title bc-text-red">Spy</div>
+    <div>along with</div>
+    <div class="bc-text-subtitle bc-text-red">{service.otherSpies()}</div>
   {:else}
-    <div class="text-blue-500 mt-4">Resistance Agent</div>
+    <div class="bc-text-title">Resistance Agent</div>
   {/if}
 </div>

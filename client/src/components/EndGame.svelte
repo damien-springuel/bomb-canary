@@ -6,7 +6,7 @@ $: service = new EndGameService(endGameValues);
 </script>
 
 <div class="bc-flex-col">
-  <div class="bc-text-title">
+  <div class="bc-text-subtitle">
     {#if service.playerHasWon}
     You won!
     {:else}
@@ -23,6 +23,6 @@ $: service = new EndGameService(endGameValues);
     have won!
   </div>
   <div>
-    The spies were {service.spiesAsString}
+    The spies were {service.spiesAsString}.
   </div>
 </div>

@@ -58,13 +58,16 @@
     @apply bg-blue-300
   }
   .bc-tag {
-    @apply border border-blue-500 rounded-xl p-4
+    @apply border border-blue-500 rounded-xl p-2 sm:p-4
   }
   .bc-tag-solid {
     @apply bg-blue-500 text-gray-900
   }
   .bc-flex-col {
-    @apply flex flex-col items-center gap-5
+    @apply flex flex-col items-center gap-3 sm:gap-5
+  }
+  .bc-justify-center {
+    @apply h-full justify-center
   }
   .bc-grid {
     @apply grid
@@ -76,13 +79,19 @@
     @apply grid-cols-3 gap-3
   }
   .bc-grid-cols-2 {
-    @apply grid-cols-2 gap-3
+    @apply grid-cols-2 gap-1 sm:gap-3
+  }
+  .bc-no-gap {
+    @apply gap-0
   }
   .bc-text-title {
     @apply text-3xl sm:text-5xl
   }
   .bc-text-subtitle {
-    @apply text-blue-400
+    @apply text-blue-400 text-2xl sm:text-4xl
+  }
+  .bc-text-details {
+    @apply text-base sm:text-xl
   }
   .bc-text-icon {
     @apply text-3xl sm:text-5xl p-0 absolute inset-1 sm:inset-2 leading-10
@@ -100,6 +109,9 @@
     @apply border-solid border w-full border-blue-500
   }
   .bc-dialog {
-    @apply fixed inset-0 z-10 bg-gray-800 text-blue-500 text-5xl
+    @apply fixed inset-0 z-10 bg-gray-800 text-blue-500 p-4
+  }
+  .bc-absolute-top-right {
+    @apply absolute top-0 right-0 mt-3 mr-3 h-12 sm:h-16 w-12 sm:w-16
   }
 }
