@@ -38,7 +38,7 @@ $: service = new TeamVoteService(teamVoteValues, dispatcher);
   <div class="bc-text-emphasis">
     Who voted?
   </div>
-  <div class="bc-grid bc-grid-cols-2">
+  <div class="bc-grid bc-grid-cols-3">
     {#each service.players as player}
       <div class="bc-tag" class:bc-tag-solid={service.hasGivenPlayerVoted(player)}>
         {player}

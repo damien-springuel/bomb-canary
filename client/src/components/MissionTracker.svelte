@@ -20,7 +20,11 @@ $: service = new MissionTrackerService(missionTrackerValues, dispatcher);
         on:click={()=>service.viewMissionDetails(m)}
       >
         {#if service.shouldMissionTagShowNbOfPeopleOnMission(m)}
-          <span class="bc-text-icon">{service.getNumberPeopleOnMission(m)} {#if service.doesMissionNeedMoreThanOneFail(m)}*{/if}</span>
+          {#if service.doesMissionNeedMoreThanOneFail(m)}
+            <span class="bc-text-icon">{service.getNumberPeopleOnMission(m)}*</span>
+          {:else}
+            <span class="bc-text-icon">{service.getNumberPeopleOnMission(m)}</span>
+          {/if}
         {:else if service.shouldMissionTagShowSuccess(m)}
           <span class="bc-text-icon">&#x2713;</span>
         {:else if service.shouldMissionTagShowFailure(m)}
