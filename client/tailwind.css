@@ -2,9 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer components {
+  .bc-font {
+    font-family: "Tomorrow", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
   .bc-app {
-    @apply h-full bg-gray-900 text-blue-500 text-xl sm:text-2xl text-center p-4
+    @apply h-full bg-gray-900 text-blue-500 text-xl sm:text-2xl text-center p-4 bc-font
   }
   .bc-button {
     @apply rounded-full px-3 py-3 sm:px-6 sm:py-4 relative
