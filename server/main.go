@@ -17,6 +17,7 @@ import (
 	"github.com/damien-springuel/bomb-canary/server/sessions"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/gookit/color"
 )
 
@@ -38,11 +39,11 @@ func (r randomAllegianceGenerator) Generate(nbPlayers, nbSpies int) []gamerules.
 	return allegiances
 }
 
-// type uuidV4 struct{}
+type uuidV4 struct{}
 
-// func (u uuidV4) Create() string {
-// 	return uuid.New().String()
-// }
+func (u uuidV4) Create() string {
+	return uuid.New().String()
+}
 
 type easySession struct {
 	mut       *sync.Mutex
@@ -74,16 +75,22 @@ func (c colorPrinter) PrintEvent(m messagebus.Message) {
 }
 
 func main() {
+	config := GetConfig()
+
 	bus := messagebus.NewMessageBus()
 	defer bus.Close()
 
-	bus.SubscribeConsumer(messagelogger.New(colorPrinter{}))
+	var sessionCreator interface{ Create() string }
+	if config.isProd {
+		sessionCreator = &uuidV4{}
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		bus.SubscribeConsumer(messagelogger.New(colorPrinter{}))
+		sessionCreator = &easySession{}
+	}
 
 	hub := gamehub.New(bus, randomAllegianceGenerator{})
 	bus.SubscribeConsumer(hub)
-
-	// sessions := sessions.New(uuidV4{})
-	sessions := sessions.New(&easySession{}) // for easy testing purposes
 
 	clientStreamer := clientstream.NewClientsStreamer(bus)
 	eventReplayer := clientstream.NewEventReplayer(clientStreamer)
@@ -94,14 +101,21 @@ func main() {
 	router := gin.Default()
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowOrigins = []string{"http://localhost:44322", "http://192.168.0.103:44322"}
+	corsConfig.AllowOrigins = config.allowedOrigins
 	router.Use(cors.New(corsConfig))
 
+	sessions := sessions.New(sessionCreator)
 	party.Register(router, party.NewPartyService(bus), sessions)
 	playeractions.Register(router, sessions, playeractions.NewActionService(bus))
 	clientstream.Register(router, sessions, clientStreamer)
 
-	port := ":44324"
+	router.LoadHTMLFiles(config.frontendBundlePath + "/index.html")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
+	router.StaticFS("/assets", http.Dir(config.frontendBundlePath+"/assets"))
+
+	port := fmt.Sprintf(":%d", config.port)
 	blackOnYellow.Printf("serving %s\n", port)
 	if err := http.ListenAndServe(port, router); err != nil {
 		blackOnYellow.Printf("error serving %v\n", err)

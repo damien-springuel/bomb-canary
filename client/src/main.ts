@@ -15,14 +15,16 @@ import { GameConsumer } from './consumers/game';
 
 const hostname = window.location.hostname;
 
-const axiosInstance = Axios.create({baseURL: `http://${hostname}:44324`, withCredentials: true});
+const axiosInstance = Axios.create({baseURL: `${import.meta.env.VITE_HTTP}://${hostname}${import.meta.env.VITE_SERVER_PORT}`, withCredentials: true});
 
 const store = new Store();
 
 const messageBus = new MessageBus();
-messageBus.subscribeConsumer({
-  consume: (m) => console.log(`Incoming Message: `, m)
-});
+if(import.meta.env.DEV) {
+  messageBus.subscribeConsumer({
+    consume: (m) => console.log(`Incoming Message: `, m)
+  });
+}
 
 const party = new Party(axiosInstance, messageBus);
 messageBus.subscribeConsumer(party);
@@ -31,7 +33,7 @@ const playerActions = new PlayerActions(axiosInstance);
 messageBus.subscribeConsumer(playerActions);
 
 const handler = new Handler(messageBus);
-const creator = new Creator(() => new WebSocket(`ws://${hostname}:44324/events`), handler);
+const creator = new Creator(() => new WebSocket(`${import.meta.env.VITE_WS}://${hostname}${import.meta.env.VITE_SERVER_PORT}/events`), handler);
 const opener = new Opener(creator);
 messageBus.subscribeConsumer(opener);
 

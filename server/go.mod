@@ -5,6 +5,7 @@ go 1.23
 require (
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.2
+	github.com/google/uuid v1.6.0
 	github.com/gookit/color v1.5.2
 	github.com/gorilla/websocket v1.5.0
 	github.com/onsi/gomega v1.26.0
