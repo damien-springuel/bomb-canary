@@ -13,9 +13,7 @@ import { PlayerActions } from './player-actions/player-actions';
 import { ResetConsumer } from './consumers/reset';
 import { GameConsumer } from './consumers/game';
 
-const hostname = window.location.hostname;
-
-const axiosInstance = Axios.create({baseURL: `${import.meta.env.VITE_HTTP}://${hostname}${import.meta.env.VITE_SERVER_PORT}`, withCredentials: true});
+const axiosInstance = Axios.create({baseURL: window.location.origin, withCredentials: true});
 
 const store = new Store();
 
@@ -33,7 +31,7 @@ const playerActions = new PlayerActions(axiosInstance);
 messageBus.subscribeConsumer(playerActions);
 
 const handler = new Handler(messageBus);
-const creator = new Creator(() => new WebSocket(`${import.meta.env.VITE_WS}://${hostname}${import.meta.env.VITE_SERVER_PORT}/events`), handler);
+const creator = new Creator(() => new WebSocket(`${window.location.origin.replace("http", "ws")}/events`), handler);
 const opener = new Opener(creator);
 messageBus.subscribeConsumer(opener);
 
