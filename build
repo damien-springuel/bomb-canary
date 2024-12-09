@@ -1,0 +1,10 @@
+rm -rf ./out
+mkdir ./out
+
+cd server
+go build -ldflags "-X main.IsProd=TRUE"
+mv ./server ../out/
+
+cd ../client
+npm run build
+cp -r ./dist/* ../out/

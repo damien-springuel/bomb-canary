@@ -2,8 +2,10 @@ package main
 
 import (
 	"flag"
-	"strings"
+	"strconv"
 )
+
+var IsProd string
 
 type config struct {
 	isProd             bool
@@ -13,18 +15,27 @@ type config struct {
 }
 
 func GetConfig() config {
-	isProd := flag.Bool("prod", false, "set the server to production mode")
-	port := flag.Int("port", 44324, "server port")
-	allowedOriginsString := flag.String("allowed-origins", "http://localhost:44322", "define the allowed origins for CORS")
-	allowedOrigins := strings.Split(*allowedOriginsString, ",")
-	frontendBundlePath := flag.String("fe-bundle-path", "../client/dist", "set the path to the frontend bundle")
+	isProd, err := strconv.ParseBool(IsProd)
+	if err != nil {
+		isProd = false
+	}
 
+	portFlag := flag.Int("port", 44333, "server port")
 	flag.Parse()
+	port := *portFlag
+
+	frontendBundlePath := "."
+	allowedOrigins := []string{"*"}
+	if !isProd {
+		frontendBundlePath = "../client/dist"
+		port = 44324
+		allowedOrigins = []string{"http://localhost:44322"}
+	}
 
 	return config{
-		isProd:             *isProd,
-		port:               *port,
+		isProd:             isProd,
+		port:               port,
 		allowedOrigins:     allowedOrigins,
-		frontendBundlePath: *frontendBundlePath,
+		frontendBundlePath: frontendBundlePath,
 	}
 }
